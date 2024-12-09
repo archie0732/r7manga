@@ -1,9 +1,9 @@
-"use client";
-import * as React from "react";
-import Image from "next/image";
+'use client';
+import * as React from 'react';
+import Image from 'next/image';
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Manga } from "../types/manga.interface";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import Manga from '../../lib/util/manga.interface';
 
 interface CarouselSizeProps {
   comic: Manga[];
@@ -13,7 +13,7 @@ export function CarouselSize({ comic }: CarouselSizeProps) {
   return (
     <Carousel
       opts={{
-        align: "start",
+        align: 'start',
       }}
       className="relative w-full max-w-5xl"
     >
@@ -37,12 +37,12 @@ export function CarouselSize({ comic }: CarouselSizeProps) {
                 {item.title}
               </div>
             </div>
-            
+
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="hover:bg-slate-600 border-0"/>
-      <CarouselNext className="hover:bg-slate-600 border-0"/>
+      <CarouselPrevious className="hover:bg-slate-600 border-0" />
+      <CarouselNext className="hover:bg-slate-600 border-0" />
     </Carousel>
   );
 }
