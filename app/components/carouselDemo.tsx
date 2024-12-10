@@ -1,18 +1,18 @@
 'use client';
-import { useWebMode } from '@/stores/webMode';
+import { useAppStore } from '@/stores/app';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 import Image from 'next/image';
-import Manga from '../../lib/util/manga.interface';
 
 import * as React from 'react';
+import { DoujinData } from '../api/nhentai/search/route';
 
 interface CarouselSizeProps {
-  comic: Manga[];
+  comic: DoujinData[];
 }
 
 export function CarouselSize({ comic }: CarouselSizeProps) {
-  const protectMode = useWebMode().protect;
+  const protectMode = useAppStore().protect;
   return (
     <Carousel
       opts={{
@@ -28,7 +28,7 @@ export function CarouselSize({ comic }: CarouselSizeProps) {
             </div>
             <div className="group relative overflow-hidden rounded-lg shadow-lg transition duration-300 ease-in-out hover:bg-slate-800">
               <Image
-                src={protectMode == true ? '/img/1280.png' : item.cover}
+                src={protectMode == true ? '/img/1210.png' : item.thumbnail}
                 alt={item.title}
                 layout="responsive"
                 objectFit="cover"

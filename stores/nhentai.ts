@@ -1,22 +1,26 @@
-import { APIfetchError, createArchieAPI } from '@/lib/util/fetchAPI';
 import { create } from 'zustand';
 
-import Manga from '@/lib/util/manga.interface';
+import { DoujinData } from '@/app/api/nhentai/search/route';
 
 interface MangaStoreState {
-  homeManga: Manga[];
+  doujin: Map<string, DoujinData>;
   fetchHome(): Promise<void>;
 }
 
-export const useNHentaiArtistStore = create<MangaStoreState>((set) => ({
-  homeManga: [],
+export const useNHentaiHomeStore = create<MangaStoreState>((set, get) => ({
+  doujin: new Map(),
   async fetchHome() {
-    const data = await createArchieAPI('nhentai').getHomepageManga();
-    if (!data.success) throw new APIfetchError('nhentai', 'manga type error', 200);
-    else {
-      set({
-        homeManga: data.data,
-      });
+    const response = await fetch('/api/nhentai/search?q=*');
+    if (!response.ok) throw await response.text();
+
+    const data = await response.json() as DoujinData[];
+
+    const doujin = get().doujin;
+
+    for (const item of data) {
+      doujin.set(item.id, item);
     }
+
+    set({ doujin });
   },
 }));
