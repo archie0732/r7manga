@@ -5,7 +5,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from 'next/image';
 
 import * as React from 'react';
-import { DoujinData } from '../api/nhentai/search/route';
+import { DoujinData } from '../app/api/nhentai/search/route';
 
 interface CarouselSizeProps {
   comic: DoujinData[];
@@ -40,7 +40,6 @@ export function CarouselSize({ comic }: CarouselSizeProps) {
                 {item.title}
               </div>
             </div>
-
           </CarouselItem>
         ))}
       </CarouselContent>

@@ -1,15 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { CarouselSize } from './components/carouselDemo';
-import { LoadingCarousel } from './components/loadingCarousel';
+import { CarouselSize } from '../components/carouselDemo';
+import { LoadingCarousel } from '../components/loadingCarousel';
 
 import { useAppStore } from '@/stores/app';
 import { APIfetchError } from '@/lib/util/fetchAPI';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useNHentaiHomeStore } from '@/stores/nhentai';
-import { SelectSort } from './components/selectSort';
-import { TitleDemo } from './components/title';
+import { SelectSort } from '../components/selectSort';
+import { TitleDemo } from '../components/mangaTitle';
+
+import Image from 'next/image';
 
 export default function Home() {
   const store = useNHentaiHomeStore();
@@ -37,7 +39,10 @@ export default function Home() {
     <div className="bg-slate-950 min-h-screen flex flex-col">
       <header className="mt-0 p-4 flex justify-between select-none">
         <div className="flex">
-          <h2 className="text-white text-xl sm:text-3xl font-semibold">R7 Manga</h2>
+          <Image className="filter invert mr-3" src="/book.svg" alt="book logo" width={30} height={40} />
+          <h1 className="text-white text-xl sm:text-3xl font-semibold flex-row">
+            R7 Manga
+          </h1>
           <p className="text-white sm:text-sm ">aaa</p>
         </div>
         <div className="flex items-center space-x-2">
@@ -53,7 +58,7 @@ export default function Home() {
       <div className="flex mb-10 justify-end mr-10">
         <SelectSort />
       </div>
-      <TitleDemo text="每日更新" />
+      <TitleDemo text="今日更新" url="/fire.svg" />
       <div className="flex justify-center">
         {isLoading || !store.doujin ? <LoadingCarousel /> : <CarouselSize comic={Array.from(store.doujin.values())} />}
       </div>
