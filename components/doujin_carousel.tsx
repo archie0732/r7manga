@@ -5,13 +5,14 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from 'next/image';
 
 import * as React from 'react';
-import { DoujinData } from '../app/api/nhentai/search/route';
+import { DoujinSearchResult } from '../app/api/nhentai/search/route';
+import Link from 'next/link';
 
 interface CarouselSizeProps {
-  comic: DoujinData[];
+  comic: DoujinSearchResult[];
 }
 
-export function CarouselSize({ comic }: CarouselSizeProps) {
+export function DoujinCarousel({ comic }: CarouselSizeProps) {
   const protectMode = useAppStore().protect;
   return (
     <Carousel
@@ -26,20 +27,23 @@ export function CarouselSize({ comic }: CarouselSizeProps) {
             <div className="mt-2 text-center text-sm text-gray-50 hover:text-teal-400">
               {item.lang.toUpperCase()}
             </div>
-            <div className="group relative overflow-hidden rounded-lg shadow-lg transition duration-300 ease-in-out hover:bg-slate-800">
-              <Image
-                src={protectMode == true ? '/img/1210.png' : item.thumbnail}
-                alt={item.title}
-                layout="responsive"
-                objectFit="cover"
-                width={300}
-                height={400}
-                className="rounded-lg group-hover:brightness-75 "
-              />
-              <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white text-sm p-2 truncate group-hover:bg-opacity-75">
-                {item.title}
+            <Link href={`/n/${item.id}`}>
+
+              <div className="group relative overflow-hidden rounded-lg shadow-lg transition duration-300 ease-in-out hover:bg-slate-800">
+                <Image
+                  src={protectMode == true ? '/img/1210.png' : item.thumbnail}
+                  alt={item.title}
+                  layout="responsive"
+                  objectFit="cover"
+                  width={300}
+                  height={400}
+                  className="rounded-lg group-hover:brightness-75 "
+                />
+                <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white text-sm p-2 truncate group-hover:bg-opacity-75">
+                  {item.title}
+                </div>
               </div>
-            </div>
+            </Link>
           </CarouselItem>
         ))}
       </CarouselContent>

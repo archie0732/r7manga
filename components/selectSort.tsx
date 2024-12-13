@@ -3,27 +3,26 @@ import * as React from 'react';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
 
-export function SelectSort() {
+export const SelectSort = React.forwardRef<
+  React.ComponentRef<typeof Select>,
+  React.ComponentPropsWithoutRef<typeof Select>
+>((props, ref) => {
+  void ref;
   return (
-    <Select>
-      <SelectTrigger className="w-[180px] bg-white select-none">
+    <Select {...props}>
+      <SelectTrigger className="w-[180px] text-white select-none">
         <SelectValue placeholder="sort" />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
-          <SelectLabel>sort</SelectLabel>
-          <SelectItem value="Recent">Recent</SelectItem>
-          <SelectItem value="PopularNow">Popular Now</SelectItem>
-          <SelectItem value="PopularWeek">Popular Week</SelectItem>
-        </SelectGroup>
+        <SelectItem value="recent">Recent</SelectItem>
+        <SelectItem value="popular-today">Popular Now</SelectItem>
+        <SelectItem value="popular-week">Popular Week</SelectItem>
       </SelectContent>
     </Select>
   );
-}
+});

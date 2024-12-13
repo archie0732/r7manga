@@ -4,7 +4,7 @@ import { toThumbnailUrl } from '../_model/_lib/util';
 import type { APISearchResultData } from '../_model/apitypes';
 import { z } from 'zod';
 
-export interface DoujinData {
+export interface DoujinSearchResult {
   title: string;
   id: string;
   thumbnail: string;
@@ -63,13 +63,13 @@ export const GET = async (req: NextRequest) => {
 
     const json = await response.json() as APISearchResultData;
 
-    const doujinlist: DoujinData[] = [];
+    const doujinlist: DoujinSearchResult[] = [];
 
     for (const doujin of json.result) {
       const langTag = doujin.tags.find((t) => t.type == 'language');
 
       doujinlist.push({
-        title: doujin.title.pretty,
+        title: doujin.title.japanese ?? doujin.title.english,
         id: doujin.id.toString(),
         thumbnail: toThumbnailUrl(doujin),
         lang: langTag ? languageMap[langTag.id] ?? 'ja' : 'ja',
