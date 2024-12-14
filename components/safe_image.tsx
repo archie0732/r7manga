@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Skeleton } from './ui/skeleton';
 
 import Image from 'next/image';
+import { twMerge } from 'tailwind-merge';
 
 export function SafeImage({ src = '/img/1210.png', width = 100, height = 100, alt = 'fail', className = '' }) {
   const [hasError, setHasError] = useState(false);
@@ -12,13 +12,13 @@ export function SafeImage({ src = '/img/1210.png', width = 100, height = 100, al
   }
 
   return (
-    <div className={`relative ${isLoading ? 'min-h-[100px]' : ''} ${className}`}>
+    <div className={twMerge(`relative rounded-lg ${isLoading ? 'min-h-[100px]' : ''}`, className)}>
       <Image
         src={src}
         width={width}
         height={height}
         alt={alt}
-        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+        className={`transition-opacity duration-300 rounded ${isLoading ? 'opacity-0' : 'opacity-100'}`}
         onError={() => {
           setHasError(true);
           setIsLoading(false);
@@ -29,7 +29,6 @@ export function SafeImage({ src = '/img/1210.png', width = 100, height = 100, al
       />
       {isLoading && (
         <div className="flex items-center justify-center">
-          <Skeleton className="w-[100px] h-[100px]" color="white" />
         </div>
       )}
     </div>

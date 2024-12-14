@@ -1,7 +1,6 @@
 'use client';
 
 import { Doujin } from '@/app/api/nhentai/[doujin]/route';
-import { HeadDemo } from '@/components/head_carouse';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/stores/app';
 import { DoujinDetail } from '@/components/doujin_detail';
@@ -16,7 +15,7 @@ type Props = Readonly<{
 export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<Doujin | null>(null);
   const protect = useAppStore().protect;
-  const imageURL = 'https://i3.nhentai.net/galleries/';
+  const imageURL = 'https://t3.nhentai.net/galleries/';
 
   useEffect(() => {
     void (async () => {
@@ -34,15 +33,13 @@ export default function Page({ params }: Props) {
 
   if (!doujin) {
     return (
-      <div className="bg-black min-h-screen">
-        <HeadDemo />
+      <div>
       </div>
     );
   }
 
   return (
-    <main className="bg-black min-h-screen">
-      <HeadDemo />
+    <main>
       <div className="flex flex-col items-center mt-10">
         <div className="container flex flex-col gap-4">
           <div className="flex gap-4">
@@ -62,18 +59,15 @@ export default function Page({ params }: Props) {
               {doujin.images.slice(0, 12).map((url, i) => (
                 <SafeImage
                   key={i}
-                  src={protect ? '/img/1210.png' : imageURL + url}
+                  src={protect ? '/img/1210.png' : imageURL + url.split('.')[0] + 't.' + url.split('.')[1]}
                   width={200}
                   height={200}
                   alt={`img-${i}`}
-                  className="bg-gray-900"
+                  className="bg-gray-900 rounded-lg"
                 />
               ))}
 
             </div>
-          </div>
-          <div className="mt-30 mb-5 flex justify-center">
-            <footer className="text-gray-400 mt-10">archie manga</footer>
           </div>
 
         </div>

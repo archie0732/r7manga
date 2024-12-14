@@ -16,7 +16,7 @@ export function GithubButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="default" className="bg-sky-950 border-white border-solid border">關於本站</Button>
+        <Button variant="outline">關於本站</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

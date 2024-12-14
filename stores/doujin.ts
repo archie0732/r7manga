@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-
 import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 
 export interface DoujinStoreState {
@@ -11,7 +10,7 @@ export interface DoujinStoreState {
   fetchHome(sort?: string): Promise<DoujinSearchResult[]>;
 }
 
-export const useDoujinStore = create<DoujinStoreState>((set, get) => ({
+export const useDoujinStore = create < DoujinStoreState > ((set, get) => ({
   doujin: new Map(),
   recent: new Set(),
   popular: new Set(),

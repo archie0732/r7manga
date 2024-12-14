@@ -1,6 +1,13 @@
-import type { Metadata } from 'next';
+import { ThemeProvider } from '@/components/theme-provider';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
+import { HeadDemo } from '@/components/head_carouse';
+
 import localFont from 'next/font/local';
 import './globals.css';
+
+import type { Metadata } from 'next';
+import { Copyright } from 'lucide-react';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -26,10 +33,30 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider defaultOpen={false}>
+            <AppSidebar />
+            <div className="flex flex-col flex-1">
+              <div className="flex flex-col min-h-svh">
+                <HeadDemo />
+                {children}
+              </div>
+              <footer className="flex justify-center items-center gap-1 mt-10 select-none">
+                <Copyright size={10} />
+                <span>archie0732 manga</span>
+              </footer>
+            </div>
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
+
     </html>
   );
 }

@@ -12,7 +12,7 @@ export function TitleDemo({ text, protectTitle, url }: TitleProps) {
   const protect = useAppStore().protect;
   return (
     <div className="flex justify-center select-none">
-      <h1 className="text-white text-3xl flex items-center">
+      <h1 className="text-3xl flex items-center">
         <Image
           className="filter invert"
           src={url}

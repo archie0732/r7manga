@@ -8,7 +8,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
 
 interface Tag {
   id: number;
@@ -28,58 +28,51 @@ interface TagMatrixPro {
 
 type Props = (TagPro | TagMatrixPro) & {
   type: string;
-  icon: string;
+  icon: React.ReactNode;
 };
 
 export function TagedDemo({ tagged, type, icon }: Props) {
   return (
-    <div className="flex items-center mt-2">
-      <Image
-        src={icon}
-        width={15}
-        height={15}
-        alt="tagged"
-        className="invert mr-1"
-      />
-      <p className="text-white mr-3">
+    <div className="flex items-center mt-2 gap-2">
+      {icon}
+      <p className=" mr-3">
         {type}
-        :
       </p>
       {Array.isArray(tagged)
         ? (
             tagged.slice(0, 4).map((tag) => (
-              <button
+              <Badge
                 key={tag.id}
-                className="text-gray-400 font-bold bg-gray-700 hover:text-white rounded-xl mr-2 p-1"
+                variant="secondary"
               >
                 {tag.name}
-              </button>
+              </Badge>
 
             ))
 
           )
         : (
-            <button className="text-gray-400 font-bold bg-opacity-0 hover:text-white">
-              {tagged.name }
-            </button>
+            <Badge variant="secondary">
+              {(tagged?.name) ? tagged.name : 'origin'}
+            </Badge>
           )}
       {Array.isArray(tagged) && tagged.length > 4
         ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="text-gray-400 font-bold bg-opacity-0 hover:text-white">...Watch all</button>
+                <span className="text-gray-400 font-bold bg-opacity-0 ">...Watch all</span>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-slate-900">
+              <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="text-white">{type}</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogTitle>{type}</AlertDialogTitle>
+                  <AlertDialogDescription className="flex flex-wrap gap-2">
                     {tagged.map((tag) => (
-                      <button
+                      <Badge
                         key={tag.id}
-                        className="text-gray-400 font-bold bg-gray-700 hover:text-white rounded-xl mr-2 p-1 mt-2"
+                        variant="secondary"
                       >
                         {tag.name}
-                      </button>
+                      </Badge>
                     ))}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
