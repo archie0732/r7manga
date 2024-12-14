@@ -7,7 +7,7 @@ import { SelectSort } from '../components/selectSort';
 import { TitleDemo } from '../components/mangaTitle';
 
 import { DoujinCarousel } from '@/components/doujin_carousel';
-import { HeaderDemo } from '@/components/head_carouse';
+import { HeadDemo } from '@/components/head_carouse';
 
 export default function Home() {
   const store = useDoujinStore();
@@ -27,13 +27,16 @@ export default function Home() {
 
   return (
     <div className="bg-slate-950 min-h-screen flex flex-col">
-      <HeaderDemo />
+      <HeadDemo />
       <div className="flex mb-10 justify-end mr-10">
         <SelectSort value={sort} onValueChange={setSort} />
       </div>
-      <TitleDemo text="今日更新" url="/fire.svg" />
+      <TitleDemo text="nhentai 今日更新" protectTitle="今日更新" url="/fire.svg" />
       <div className="flex justify-center">
         <DoujinCarousel comic={doujin} />
+      </div>
+      <div className="mt-30 mb-5 flex justify-center">
+        <footer className="text-gray-400 mt-10">archie manga</footer>
       </div>
     </div>
   );

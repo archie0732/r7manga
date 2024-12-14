@@ -2,11 +2,10 @@
 import { useAppStore } from '@/stores/app';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
-import Image from 'next/image';
-
 import * as React from 'react';
 import { DoujinSearchResult } from '../app/api/nhentai/search/route';
 import Link from 'next/link';
+import { SafeImage } from './safe_image';
 
 interface CarouselSizeProps {
   comic: DoujinSearchResult[];
@@ -30,15 +29,7 @@ export function DoujinCarousel({ comic }: CarouselSizeProps) {
             <Link href={`/n/${item.id}`}>
 
               <div className="group relative overflow-hidden rounded-lg shadow-lg transition duration-300 ease-in-out hover:bg-slate-800">
-                <Image
-                  src={protectMode == true ? '/img/1210.png' : item.thumbnail}
-                  alt={item.title}
-                  layout="responsive"
-                  objectFit="cover"
-                  width={300}
-                  height={400}
-                  className="rounded-lg group-hover:brightness-75 "
-                />
+                <SafeImage src={protectMode == true ? '/img/1210.png' : item.thumbnail} alt="cover" width={200} height={200} className=" bg-gray-900 rounded-lg group-hover:brightness-75 select-none" />
                 <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white text-sm p-2 truncate group-hover:bg-opacity-75">
                   {item.title}
                 </div>

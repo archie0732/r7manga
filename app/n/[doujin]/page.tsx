@@ -1,44 +1,11 @@
 'use client';
 
 import { Doujin } from '@/app/api/nhentai/[doujin]/route';
-import { HeaderDemo } from '@/components/head_carouse';
+import { HeadDemo } from '@/components/head_carouse';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useAppStore } from '@/stores/app';
 import { DoujinDetail } from '@/components/doujin_detail';
-
-const SafeImage = ({ src = '/img/1210.png', width = 100, height = 100, alt = 'fail', className = '' }) => {
-  const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  if (hasError || !src) {
-    return null;
-  }
-
-  return (
-    <div className={`relative ${isLoading ? 'min-h-[100px]' : ''} ${className}`}>
-      <Image
-        src={src}
-        width={width}
-        height={height}
-        alt={alt}
-        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-        onError={() => {
-          setHasError(true);
-          setIsLoading(false);
-        }}
-        onLoad={() => {
-          setIsLoading(false);
-        }}
-      />
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
-        </div>
-      )}
-    </div>
-  );
-};
+import { SafeImage } from '@/components/safe_image';
 
 type Props = Readonly<{
   params: Promise<{
@@ -68,21 +35,21 @@ export default function Page({ params }: Props) {
   if (!doujin) {
     return (
       <div className="bg-black min-h-screen">
-        <HeaderDemo />
+        <HeadDemo />
       </div>
     );
   }
 
   return (
     <main className="bg-black min-h-screen">
-      <HeaderDemo />
-      <div className="flex flex-col items-center">
+      <HeadDemo />
+      <div className="flex flex-col items-center mt-10">
         <div className="container flex flex-col gap-4">
           <div className="flex gap-4">
             <SafeImage
               src={(protect || !doujin.cover) ? '/img/1210.png' : doujin.cover}
-              width={200}
-              height={200}
+              width={250}
+              height={250}
               alt="cover"
             />
             <div>
@@ -90,18 +57,25 @@ export default function Page({ params }: Props) {
             </div>
           </div>
           <div>
-            <div className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-2">
-              {doujin.images.map((url, i) => (
+            <h1 className="text-white mt-10 text-xl">漫畫預覽:</h1>
+            <div className="flex flex-wrap justify-start gap-4 mt-4">
+              {doujin.images.slice(0, 12).map((url, i) => (
                 <SafeImage
                   key={i}
-                  src={(protect || !(imageURL + url)) ? '/img/1210.png' : imageURL + url}
-                  width={100}
-                  height={100}
-                  alt="img"
+                  src={protect ? '/img/1210.png' : imageURL + url}
+                  width={200}
+                  height={200}
+                  alt={`img-${i}`}
+                  className="bg-gray-900"
                 />
               ))}
+
             </div>
           </div>
+          <div className="mt-30 mb-5 flex justify-center">
+            <footer className="text-gray-400 mt-10">archie manga</footer>
+          </div>
+
         </div>
       </div>
     </main>

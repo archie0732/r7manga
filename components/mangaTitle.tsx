@@ -1,11 +1,15 @@
+import { useAppStore } from '@/stores/app';
+
 import Image from 'next/image';
 
 interface TitleProps {
   text: string;
+  protectTitle: string;
   url: string;
 }
 
-export function TitleDemo({ text, url }: TitleProps) {
+export function TitleDemo({ text, protectTitle, url }: TitleProps) {
+  const protect = useAppStore().protect;
   return (
     <div className="flex justify-center select-none">
       <h1 className="text-white text-3xl flex items-center">
@@ -16,7 +20,7 @@ export function TitleDemo({ text, url }: TitleProps) {
           width={20}
           height={10}
         />
-        <span className="ml-2">{text}</span>
+        {protect ? <span className="ml-2">{protectTitle}</span> : <span className="ml-2">{text}</span>}
       </h1>
     </div>
   );
