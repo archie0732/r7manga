@@ -16,13 +16,13 @@ import {
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 
 type Props = Readonly<{
-  params: Promise< { doujin: string }>;
+  params: Promise<{ doujin: string }>;
 }>;
 
 export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<string[] | null>(null);
   const [value, setValue] = useState<string>('無');
-  const [id, setId] = useState<string>('543435');
+  const [id, setId] = useState<string>('');
   const protectMode = useAppStore();
   const router = useRouter();
   const selectRef = useRef<HTMLButtonElement>(null);
@@ -55,30 +55,37 @@ export default function Page({ params }: Props) {
     resetValue();
   };
 
-  const resetValue = () => {
-    setValue('無');
-  };
+  const resetValue = () => setValue('無');
 
   useEffect(() => {
     const fetchDoujin = async () => {
-      const doujinId = (await params).doujin;
-      setId(doujinId);
-      const response = await fetch(`/api/nhentai/${id}`);
+      try {
+        const doujinId = (await params).doujin;
+        setId(doujinId); // Set ID from params first
+        const response = await fetch(`/api/nhentai/${doujinId}`);
 
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}: ${await response.text()}`);
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}: ${await response.text()}`);
+        }
+
+        const data = (await response.json()) as Doujin;
+        setDoujin(data.images);
       }
-
-      const data = (await response.json()) as Doujin;
-      setDoujin(data.images);
+      catch (error) {
+        console.error('Failed to fetch doujin:', error);
+      }
     };
 
     void fetchDoujin();
-  }, [id]);
+  }, [params]); // Use params as a dependency since it’s asynchronous
+
+  if (!doujin) {
+    return <div className="mt-10 text-gray-500">Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center mt-10">
-      {doujin?.map((url, i) => (
+      {doujin.map((url, i) => (
         <SafeImage
           src={protectMode.protect ? '/img/1210.png' : imageURL + url}
           width={600}
@@ -94,7 +101,7 @@ export default function Page({ params }: Props) {
           }}
           value={value}
         >
-          <SelectTrigger ref={selectRef} className="rounded-full border-2 px-4 py-2 ">
+          <SelectTrigger ref={selectRef} className="rounded-full border-2 px-4 py-2">
             <SelectValue placeholder="選擇操作" />
           </SelectTrigger>
           <SelectContent>

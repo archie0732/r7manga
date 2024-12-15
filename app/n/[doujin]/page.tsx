@@ -42,7 +42,7 @@ export default function Page({ params }: Props) {
     <main>
       <div className="flex flex-col items-center mt-10">
         <div className="container flex flex-col gap-4">
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <SafeImage
               src={(protect || !doujin.cover) ? '/img/1210.png' : doujin.cover}
               width={250}
