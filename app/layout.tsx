@@ -1,13 +1,14 @@
 import { ThemeProvider } from '@/components/theme-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/app-sidebar';
-import { HeadDemo } from '@/components/head_carouse';
+import { AppSidebar } from '@/components/app/app-sidebar';
+import { AppHeader } from '@/components/app/app-header';
 
 import localFont from 'next/font/local';
 import './globals.css';
 
 import type { Metadata } from 'next';
-import { Copyright } from 'lucide-react';
+import AppFooter from '@/components/app/app-footer';
+import AppCommand from '@/components/app/app-command';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -43,20 +44,17 @@ export default function RootLayout({
         >
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 w-svw">
               <div className="flex flex-col min-h-svh">
-                <HeadDemo />
+                <AppHeader />
                 {children}
               </div>
-              <footer className="flex justify-center items-center gap-1 mt-10 select-none">
-                <Copyright size={10} />
-                <span>archie0732 manga</span>
-              </footer>
+              <AppFooter />
             </div>
+            <AppCommand />
           </SidebarProvider>
         </ThemeProvider>
       </body>
-
     </html>
   );
 }

@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 
 import { useDoujinStore } from '@/stores/doujin';
 import { SelectSort } from '../components/selectSort';
-import { TitleDemo } from '../components/mangaTitle';
 
-import { DoujinCarousel } from '@/components/doujin_carousel';
+import { DoujinCarousel } from '@/components/doujin-carousel';
+import { Heading1 } from '@/components/ui/typography';
+import { Flame } from 'lucide-react';
 
 export default function Home() {
   const store = useDoujinStore();
@@ -25,14 +26,21 @@ export default function Home() {
   }, [sort]);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex mb-10 justify-end mr-10">
-        <SelectSort value={sort} onValueChange={setSort} />
-      </div>
-      <TitleDemo text="nhentai 今日更新" protectTitle="今日更新" url="/fire.svg" />
-      <div className="flex justify-center">
-        <DoujinCarousel comic={doujin} />
-      </div>
+    <div className="flex flex-col items-center">
+      <main className="container flex flex-col">
+        <div className="flex flex-col">
+          <Heading1 className="relative flex items-center justify-center gap-2">
+            <div className="flex items-center gap-2">
+              <Flame size={48} />
+              <span>今日更新</span>
+            </div>
+            <div className="md:absolute md:right-0">
+              <SelectSort value={sort} onValueChange={setSort} />
+            </div>
+          </Heading1>
+          <DoujinCarousel comic={doujin} />
+        </div>
+      </main>
     </div>
   );
 }
