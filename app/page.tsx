@@ -29,7 +29,7 @@ export default function Home() {
     <div className="flex flex-col items-center">
       <main className="container flex flex-col">
         <div className="flex flex-col">
-          <Heading1 className="relative flex items-center justify-center gap-2">
+          <Heading1 className="relative flex flex-col md:flex-row items-center justify-center gap-8">
             <div className="flex items-center gap-2">
               <Flame size={48} />
               <span>今日更新</span>

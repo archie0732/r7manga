@@ -12,9 +12,9 @@ export interface TagData {
 export interface Doujin extends Omit<APIDoujinData, 'id' | 'media_id' | 'images' | 'num_pages'> {
   id: string;
   images: string[];
-  category: APIDoujinTagData;
-  parody: APIDoujinTagData;
-  language: APIDoujinTagData;
+  category: APIDoujinTagData[];
+  parody: APIDoujinTagData[];
+  language: APIDoujinTagData[];
   artists: APIDoujinTagData[];
   characters: APIDoujinTagData[];
   translated: boolean;
@@ -39,9 +39,9 @@ export async function GET(req: Request, { params }: Params) {
 
   const json = await response.json() as APIDoujinData;
   const images: string[] = [];
-  const category = json.tags.find((t) => t.type == 'category');
-  const parody = json.tags.find((t) => t.type == 'parody');
-  const language = json.tags.find((t) => t.type == 'language' && t.name != 'tranlated');
+  const category = json.tags.filter((t) => t.type == 'category');
+  const parody = json.tags.filter((t) => t.type == 'parody');
+  const language = json.tags.filter((t) => t.type == 'language' && t.name != 'tranlated');
   const artists = json.tags.filter((t) => t.type == 'artist');
   const characters = json.tags.filter((t) => t.type == 'character');
 

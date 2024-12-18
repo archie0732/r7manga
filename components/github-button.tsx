@@ -10,13 +10,11 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
-import { Button } from './ui/button';
-
 export function GithubButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">關於本站</Button>
+        <span>關於本站</span>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

@@ -15,7 +15,7 @@ export const SelectSort = React.forwardRef<
   void ref;
   return (
     <Select {...props}>
-      <SelectTrigger className="w-[180px] text-white select-none">
+      <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="sort" />
       </SelectTrigger>
       <SelectContent>

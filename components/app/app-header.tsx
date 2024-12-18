@@ -1,29 +1,21 @@
 'use client';
-import { Book, Moon, Search, Sun } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+
+import { Book, Search, Shield, ShieldOff } from 'lucide-react';
 import { useAppStore } from '@/stores/app';
-import { useTheme } from 'next-themes';
-import { Button } from '../ui/button';
-import { SidebarTrigger } from '../ui/sidebar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 import Link from 'next/link';
+import { Toggle } from '@/components/ui/toggle';
+import Row from '@/components/layout/row';
 
 export function AppHeader() {
   const appStore = useAppStore();
-  const { setTheme } = useTheme();
+
   return (
     <header className="mt-0 p-4 flex justify-between select-none ">
       <div className="flex gap-2 items-center">
-        <SidebarTrigger>
-          <Book />
-        </SidebarTrigger>
+        <SidebarTrigger><Book /></SidebarTrigger>
         <Link href="/">
           <div className="flex">
             <h1 className=" text-xl sm:text-3xl font-semibold flex-row mr-1">
@@ -32,45 +24,27 @@ export function AppHeader() {
           </div>
         </Link>
       </div>
-      <div>
+      <Row className="gap-2">
         <Button
           variant="outline"
-          className="flex justify-start gap-2 w-[20svw] text-muted-foreground"
+          size="icon"
+          className="flex md:justify-start gap-2 md:w-[12svw] text-muted-foreground md:h-9 md:px-4 md:py-2"
           onClick={() => appStore.setCommandPanelVisible(true)}
         >
           <Search />
-          <span>搜尋</span>
+          <span className="hidden md:inline">搜尋</span>
         </Button>
-      </div>
-      <div className="flex items-center space-x-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">切換主題</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme('light')}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('dark')}>
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('system')}>
-              System
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Switch
-          id="protect-mode"
-          defaultChecked={appStore.protect}
-          onCheckedChange={() => appStore.toggleProtect()}
-          className="data-[state=unchecked]:bg-slate-500 data-[state=checked]:bg-cyan-600 border border-white"
-        />
-        <Label htmlFor="protect-mode">Protect Mode</Label>
-      </div>
+        <Toggle
+          pressed={appStore.protect}
+          onPressedChange={appStore.toggleProtect}
+          variant="outline"
+          className="data-[state=on]:bg-green-500 data-[state=off]:border-red-500 data-[state=off]:text-red-500"
+        >
+          {
+            appStore.protect ? <Shield /> : <ShieldOff />
+          }
+        </Toggle>
+      </Row>
     </header>
   );
 }
