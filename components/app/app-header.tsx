@@ -13,12 +13,16 @@ export function AppHeader() {
   const appStore = useAppStore();
 
   return (
-    <header className="mt-0 p-4 flex justify-between select-none ">
-      <div className="flex gap-2 items-center">
+    <header className="mt-0 flex select-none justify-between p-4">
+      <div className="flex items-center gap-2">
         <SidebarTrigger><Book /></SidebarTrigger>
         <Link href="/">
           <div className="flex">
-            <h1 className=" text-xl sm:text-3xl font-semibold flex-row mr-1">
+            <h1 className={`
+              mr-1 flex-row text-xl font-semibold
+              sm:text-3xl
+            `}
+            >
               R7 Manga
             </h1>
           </div>
@@ -28,17 +32,29 @@ export function AppHeader() {
         <Button
           variant="outline"
           size="icon"
-          className="flex md:justify-start gap-2 md:w-[12svw] text-muted-foreground md:h-9 md:px-4 md:py-2"
-          onClick={() => appStore.setCommandPanelVisible(true)}
+          className={`
+            flex gap-2 text-muted-foreground
+            md:h-9 md:w-[12svw] md:justify-start md:px-4 md:py-2
+          `}
+          onClick={() => { appStore.setCommandPanelVisible(true); }}
         >
           <Search />
-          <span className="hidden md:inline">搜尋</span>
+          <span className={`
+            hidden
+            md:inline
+          `}
+          >
+            搜尋
+          </span>
         </Button>
         <Toggle
           pressed={appStore.protect}
           onPressedChange={appStore.toggleProtect}
           variant="outline"
-          className="data-[state=on]:bg-green-500 data-[state=off]:border-red-500 data-[state=off]:text-red-500"
+          className={`
+            data-[state=off]:border-red-500 data-[state=off]:text-red-500
+            data-[state=on]:bg-green-500
+          `}
         >
           {
             appStore.protect ? <Shield /> : <ShieldOff />

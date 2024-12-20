@@ -34,7 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased select-none`}
+        className={`
+          ${geistSans.variable}
+          ${geistMono.variable}
+          select-none antialiased
+        `}
       >
         <ThemeProvider
           attribute="class"
@@ -44,8 +48,8 @@ export default function RootLayout({
         >
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
-            <div className="flex flex-col flex-1 w-svw">
-              <div className="flex flex-col min-h-svh">
+            <div className="flex w-svw flex-1 flex-col">
+              <div className="flex min-h-svh flex-col">
                 <AppHeader />
                 {children}
               </div>

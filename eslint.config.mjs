@@ -1,6 +1,5 @@
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
-import tsParser from '@typescript-eslint/parser';
 import style from '@stylistic/eslint-plugin';
 import tailwind from 'eslint-plugin-readable-tailwind';
 
@@ -20,14 +19,14 @@ export default ts.config(
     ],
   },
   js.configs.recommended,
-  ...ts.configs.recommendedTypeChecked,
+  ...ts.configs.strictTypeChecked,
+  ...ts.configs.stylisticTypeChecked,
   style.configs.customize({
     semi: true,
     arrowParens: true,
     flat: true,
   }),
   {
-    files: ['**/*.{ts,tsx,cts,mts}'],
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -36,20 +35,20 @@ export default ts.config(
     },
   },
   {
-    files: ["**/*.{jsx,tsx}"],
+    files: ['**/*.{jsx,tsx}'],
     languageOptions: {
       parserOptions: {
         ecmaFeatures: {
-          jsx: true
-        }
-      }
+          jsx: true,
+        },
+      },
     },
     plugins: {
       'readable-tailwind': tailwind,
-      'rules': {
-        ...tailwind.configs.warning.rules,
-        'readable-tailwind/multiline': ['warn', { group: 'newLine' }],
-      },
+    },
+    rules: {
+      ...tailwind.configs.warning.rules,
+      'readable-tailwind/multiline': ['warn', { group: 'newLine' }],
     },
   },
 );

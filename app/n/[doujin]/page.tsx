@@ -23,7 +23,7 @@ export default function Page({ params }: Props) {
       const response = await fetch(`/api/nhentai/${id}`);
 
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}: ${await response.text()}`);
+        throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);
       }
 
       const data = await response.json() as Doujin;
@@ -40,13 +40,13 @@ export default function Page({ params }: Props) {
 
   return (
     <main>
-      <div className="flex flex-col items-center mt-10">
+      <div className="mt-10 flex flex-col items-center">
         <div className="container flex flex-col gap-4">
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex flex-wrap gap-4">
             <SafeImage
               src={(protect || !doujin.cover) ? '/img/1210.png' : doujin.cover}
-              width={250}
-              height={250}
+              width={100}
+              height={100}
               alt="cover"
             />
             <div>
@@ -54,16 +54,16 @@ export default function Page({ params }: Props) {
             </div>
           </div>
           <div>
-            <h1 className="text-white mt-10 text-xl">漫畫預覽:</h1>
-            <div className="flex flex-wrap justify-start gap-4 mt-4">
+            <h1 className="mt-10 text-xl text-white">漫畫預覽:</h1>
+            <div className="mt-4 flex flex-wrap justify-start gap-4">
               {doujin.images.slice(0, 12).map((url, i) => (
                 <SafeImage
                   key={i}
                   src={protect ? '/img/1210.png' : imageURL + url.split('.')[0] + 't.' + url.split('.')[1]}
-                  width={200}
-                  height={200}
-                  alt={`img-${i}`}
-                  className="bg-gray-900 rounded-lg"
+                  width={20}
+                  height={50}
+                  alt={`img-${i.toString()}`}
+                  className="rounded-lg bg-blue-950"
                 />
               ))}
 
