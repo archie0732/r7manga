@@ -16,7 +16,7 @@ export const useDoujinStore = create < DoujinStoreState > ((set, get) => ({
   popular: new Set(),
   popularToday: new Set(),
   popularWeek: new Set(),
-  async fetchHome(sort: string = 'recent') {
+  async fetchHome(sort = 'recent') {
     const response = await fetch(`/api/nhentai/search?q=*&sort=${sort}`);
     if (!response.ok) throw await response.text();
 

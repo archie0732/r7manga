@@ -3,22 +3,44 @@
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { useAppStore } from '@/stores/app';
 import { Home, Paintbrush2 } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function AppCommand() {
   const router = useRouter();
   const commandPanelVisible = useAppStore((state) => state.commandPanelVisible);
   const setCommandPanelVisible = useAppStore((state) => state.setCommandPanelVisible);
+  const { setTheme, theme } = useTheme();
+  const [keyword, setKeyword] = useState<string>('*');
+  const changeTheme = () => {
+    if (theme === 'dark') {
+      setTheme('light');
+    }
+    else {
+      setTheme('dark');
+    }
+  };
+
   return (
     <CommandDialog
       open={commandPanelVisible}
       onOpenChange={setCommandPanelVisible}
     >
-      <CommandInput placeholder="搜尋或輸入指令..." />
+      <CommandInput
+        placeholder="搜尋或輸入指令..."
+        onValueChange={(e) => { setKeyword(e); }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            router.push(`/search?q=${keyword}`);
+            setCommandPanelVisible(false);
+          }
+        }}
+      />
       <CommandList>
         <CommandEmpty>沒有結果</CommandEmpty>
         <CommandGroup heading="建議">
-          <CommandItem onSelect={() => router.push('/')}>
+          <CommandItem onSelect={() => { router.push('/'); }}>
             <Home />
             <span>首頁</span>
           </CommandItem>
@@ -27,7 +49,7 @@ export default function AppCommand() {
         <CommandGroup heading="設定">
           <CommandItem>
             <Paintbrush2 />
-            <span>變更主題色</span>
+            <span onClick={changeTheme}>變更主題色</span>
           </CommandItem>
         </CommandGroup>
       </CommandList>

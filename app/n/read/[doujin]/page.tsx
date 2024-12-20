@@ -55,17 +55,19 @@ export default function Page({ params }: Props) {
     resetValue();
   };
 
-  const resetValue = () => setValue('無');
+  const resetValue = () => {
+    setValue('無');
+  };
 
   useEffect(() => {
     const fetchDoujin = async () => {
       try {
         const doujinId = (await params).doujin;
-        setId(doujinId); // Set ID from params first
+        setId(doujinId);
         const response = await fetch(`/api/nhentai/${doujinId}`);
 
         if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}: ${await response.text()}`);
+          throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);
         }
 
         const data = (await response.json()) as Doujin;
@@ -77,21 +79,21 @@ export default function Page({ params }: Props) {
     };
 
     void fetchDoujin();
-  }, [params]); // Use params as a dependency since it’s asynchronous
+  }, [params]);
 
   if (!doujin) {
-    return <div className="mt-10 text-gray-500">Loading...</div>;
+    return <div className="mt-10 flex justify-center text-gray-500"><span>Loading...</span></div>;
   }
 
   return (
-    <div className="flex flex-col items-center mt-10">
+    <div className="mt-10 flex flex-col items-center">
       {doujin.map((url, i) => (
         <SafeImage
           src={protectMode.protect ? '/img/1210.png' : imageURL + url}
           width={600}
           height={800}
           key={i}
-          className="bg-gray-900 rounded-lg"
+          className="rounded-lg bg-gray-900"
         />
       ))}
       <div className="fixed bottom-4 right-4">
@@ -101,7 +103,10 @@ export default function Page({ params }: Props) {
           }}
           value={value}
         >
-          <SelectTrigger ref={selectRef} className="rounded-full border-2 px-4 py-2">
+          <SelectTrigger
+            ref={selectRef}
+            className="rounded-full border-2 px-4 py-2"
+          >
             <SelectValue placeholder="選擇操作" />
           </SelectTrigger>
           <SelectContent>

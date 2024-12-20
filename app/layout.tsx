@@ -9,6 +9,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import AppFooter from '@/components/app/app-footer';
 import AppCommand from '@/components/app/app-command';
+import { Toaster } from '@/components/ui/toaster';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -33,6 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/img/1210.png" />
+        <title>R7 Manga</title>
+      </head>
       <body
         className={`
           ${geistSans.variable}
@@ -52,6 +57,7 @@ export default function RootLayout({
               <div className="flex min-h-svh flex-col">
                 <AppHeader />
                 {children}
+                <Toaster />
               </div>
               <AppFooter />
             </div>

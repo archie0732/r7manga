@@ -12,7 +12,11 @@ export default function DoujinCard({ doujin }: Props) {
   const protect = useAppStore((state) => state.protect);
 
   return (
-    <div className="relative group hover:z-10 scale-[0.98] hover:scale-100 transition">
+    <div className={`
+      group relative scale-[0.98] transition
+      hover:z-10 hover:scale-100
+    `}
+    >
       <Link
         key={doujin.id}
         href={`/n/${doujin.id}`}
@@ -26,12 +30,16 @@ export default function DoujinCard({ doujin }: Props) {
           </div>
           <SafeImage
             src={protect ? '/img/1210.png' : doujin.thumbnail}
-            className="flex-1 justify-center aspect-[5/7]"
+            className="aspect-[5/7] flex-1 justify-center"
             alt="cover"
             width={250}
             height={300}
           />
-          <div className="truncate group-hover:[text-overflow:auto] group-hover:text-wrap text-center">
+          <div className={`
+            truncate text-center
+            group-hover:text-wrap group-hover:[text-overflow:auto]
+          `}
+          >
             {doujin.title}
           </div>
         </Card>

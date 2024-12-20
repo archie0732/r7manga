@@ -1,4 +1,4 @@
-import { Calendar, Home, HandHeart, Search, Settings } from 'lucide-react';
+import { Calendar, Home, BookHeart, Search, Settings } from 'lucide-react';
 
 import {
   Sidebar,
@@ -20,7 +20,7 @@ const items = [
   {
     title: 'nhentai',
     url: '/n',
-    icon: HandHeart,
+    icon: BookHeart,
   },
   {
     title: 'Calendar',

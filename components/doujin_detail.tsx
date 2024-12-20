@@ -1,11 +1,15 @@
+'use client';
+
 import { BookText, Copy, Download, Eye, Heart, Languages, Pen, Star, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TagedDemo } from './taged_button';
 
-import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import Link from 'next/link';
 import Column from './layout/column';
 import { Heading3 } from './ui/typography';
+import { useToast } from '@/components/ui/hooks/use-toast';
+
+import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 
 interface DoujinDemo {
   doujin: Doujin;
@@ -16,12 +20,19 @@ const copyText = async (text: string) => {
 };
 
 export function DoujinDetail({ doujin }: DoujinDemo) {
+  const { toast } = useToast();
   return (
     <Column className="items-start gap-2">
       <Heading3 className="select-text">{doujin.title.japanese ? doujin.title.japanese : doujin.title.english}</Heading3>
       <button
         className="group flex items-center text-muted-foreground"
-        onClick={() => void copyText(doujin.id)}
+        onClick={() => {
+          toast({
+            title: '已複製文字內容',
+            description: doujin.id,
+          });
+          void copyText(doujin.id);
+        }}
       >
         <Copy
           className={`
