@@ -8,6 +8,7 @@ export function SafeImage({ src = '/img/1210.png', alt = 'fail', className, widt
       <img
         src={src}
         alt={alt}
+        loading="lazy"
         width={width}
         height={height}
         className="rounded object-conver"

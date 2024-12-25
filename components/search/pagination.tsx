@@ -7,30 +7,36 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Button } from '../ui/button';
 
-export function PaginationDemo() {
+interface PaginPro {
+  url: string;
+  nowPage: number;
+}
+
+export function PaginationDemo({ url, nowPage }: PaginPro) {
   return (
     <Pagination className="mt-10">
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          {nowPage == 1 ? <Button disabled variant="ghost" /> : <PaginationPrevious href={`${url}&page=${(nowPage - 1).toString()}`} />}
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
+          {nowPage == 1 ? <Button disabled variant="ghost">0</Button> : <PaginationLink href={`${url}&page=${(nowPage - 1).toString()}`}>{(nowPage - 1).toString()}</PaginationLink>}
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="&page=2" isActive>
-            2
+          <PaginationLink href={`${url}&page=${(nowPage).toString()}`} isActive>
+            {(nowPage).toString()}
           </PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
+          <PaginationLink href={`${url}&page=${(nowPage + 1).toString()}`}>{(nowPage + 1).toString()}</PaginationLink>
         </PaginationItem>
         <PaginationItem>
           <PaginationEllipsis />
         </PaginationItem>
         <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext href={`${url}&page=${(nowPage + 1).toString()}`} />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

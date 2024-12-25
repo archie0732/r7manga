@@ -19,25 +19,35 @@ export function HomePageCarousel({ doujin }: Props) {
       opts={{
         align: 'start',
       }}
-      className="w-full max-w-max"
+      className="w-full max-w-max gap-0"
     >
       <CarouselContent>
         {doujin.slice(0, 10).map((url, index) => (
           <CarouselItem
             key={index}
             className={`
-              basis-1/2
+              mr-0 basis-1/2
               lg:basis-1/6
             `}
           >
-            <div className="p-1">
-              <DoujinCard doujin={url} />
-            </div>
+
+            <DoujinCard doujin={url} />
+
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="overflow-hidden" />
-      <CarouselNext className="overflow-x-hidden" />
+      <CarouselPrevious className={`
+        hidden basis-0
+        lg:block
+        md:block
+      `}
+      />
+      <CarouselNext className={`
+        hidden basis-0
+        lg:block
+        md:block
+      `}
+      />
     </Carousel>
   );
 }

@@ -8,6 +8,9 @@ import { DoujinSearchResult } from '../api/nhentai/search/route';
 import { DoujinCarousel } from '@/components/doujin-carousel';
 import { Button } from '@/components/ui/button';
 
+import Image from 'next/image';
+import Link from 'next/link';
+
 const webSite = {
   n: 'nhentai',
   d: 'dlsite',
@@ -34,7 +37,7 @@ export default function Page() {
       );
       if (!response.ok) {
         console.error(`Error: ${response.statusText}`);
-        return;
+        return (<div className="flex items-center justify-center"><span>發生錯誤</span></div>);
       }
       const data = (await response.json()) as DoujinSearchResult[];
       setDoujin(data);
@@ -55,6 +58,18 @@ export default function Page() {
       void fetchSearch(website, q, sort ?? '', page ?? '1');
     }
   }, [q, w, sort, page]);
+
+  if (doujin.length == 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4">
+        <span className="mb-6 text-xl">沒有結果</span>
+        <Image src="/img/1210.png" alt="good" width={100} height={100} />
+        <Link href="https://youtu.be/dQw4w9WgXcQ?si=khh7Cnz3zHogopVQ">
+          <Button variant="secondary">查看更多</Button>
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col justify-center">
       <div className="mr-5 flex justify-between">
@@ -67,7 +82,7 @@ export default function Page() {
         <SelectDemo />
       </div>
       <DoujinCarousel comic={doujin} />
-      <PaginationDemo />
+      <PaginationDemo url={`/search?q=${q ?? '*'}&w=${w ?? 'n'}&sort=${sort ?? ''}`} nowPage={Number(page) ? Number(page) : 1} />
     </div>
   );
 }

@@ -52,7 +52,7 @@ export default function Home() {
                   <HomePageLodingCarousel />
                 )
               : (
-                  <div className="flex">
+                  <div className="m-3 flex p-4">
                     <HomePageCarousel doujin={doujin} />
                   </div>
                 )}

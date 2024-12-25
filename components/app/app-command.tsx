@@ -2,7 +2,7 @@
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { useAppStore } from '@/stores/app';
-import { Home, Paintbrush2 } from 'lucide-react';
+import { BookHeart, Home, Paintbrush2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -40,9 +40,21 @@ export default function AppCommand() {
       <CommandList>
         <CommandEmpty>沒有結果</CommandEmpty>
         <CommandGroup heading="建議">
-          <CommandItem onSelect={() => { router.push('/'); }}>
+          <CommandItem onSelect={() => {
+            router.push('/');
+            setCommandPanelVisible(false);
+          }}
+          >
             <Home />
             <span>首頁</span>
+          </CommandItem>
+          <CommandItem onSelect={() => {
+            router.push('/n/');
+            setCommandPanelVisible(false);
+          }}
+          >
+            <BookHeart />
+            <span>nhentai</span>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />

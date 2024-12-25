@@ -1,6 +1,6 @@
 'use client';
 
-import { BookText, Copy, Download, Eye, Heart, Languages, Pen, Star, Tag, User } from 'lucide-react';
+import { BookOpenText, BookText, Copy, Download, Eye, Heart, Languages, Pen, Star, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TagedDemo } from './taged_button';
 
@@ -10,6 +10,7 @@ import { Heading3 } from './ui/typography';
 import { useToast } from '@/components/ui/hooks/use-toast';
 
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
+import { LinkCarouselDemo } from './button/link-carousel';
 
 interface DoujinDemo {
   doujin: Doujin;
@@ -49,6 +50,8 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
       <TagedDemo tag={doujin.language} icon={<Languages />} type="語言" />
       <TagedDemo tag={doujin.tags} icon={<Tag />} type="標籤" />
       <div className="mt-2 flex gap-2">
+        <BookOpenText />
+        <span>{doujin.images.length}</span>
         <Heart />
         <span>{doujin.num_favorites}</span>
       </div>
@@ -66,6 +69,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         <Button className="hover:bg-amber-400 hover:text-black" size="icon" variant="secondary">
           <Star />
         </Button>
+        <LinkCarouselDemo selfRelateURL={`/n/${doujin.id}/related`} outRelateURL="a" />
       </div>
     </Column>
   );

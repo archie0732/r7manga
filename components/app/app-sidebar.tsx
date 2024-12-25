@@ -29,7 +29,7 @@ const items = [
   },
   {
     title: 'Search',
-    url: '/search',
+    url: '/search?q=*',
     icon: Search,
   },
   {
@@ -41,7 +41,7 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar variant="floating">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Archie Manga</SidebarGroupLabel>

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
-import { SafeImage } from '@/components/safe_image';
+import { Button } from '@/components/ui/button';
+import { useEffect, useState, useRef } from 'react';
 import { useAppStore } from '@/stores/app';
 import { useRouter } from 'next/navigation';
 import {
@@ -13,6 +13,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import Image from 'next/image';
+import Link from 'next/link';
+
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 
 type Props = Readonly<{
@@ -20,42 +23,25 @@ type Props = Readonly<{
 }>;
 
 export default function Page({ params }: Props) {
-  const [doujin, setDoujin] = useState<string[] | null>(null);
+  const [doujin, setDoujin] = useState<string[]>();
   const [value, setValue] = useState<string>('無');
   const [id, setId] = useState<string>('');
   const protectMode = useAppStore();
   const router = useRouter();
   const selectRef = useRef<HTMLButtonElement>(null);
 
-  const imageURL = 'https://i3.nhentai.net/galleries/';
+  const imageURL = 'https://i3.nhentai.net/galleries';
 
-  const handleSetting = (value: 'top' | 'home' | 'overview' | 'protect' | 'bottom') => {
-    switch (value) {
-      case 'protect':
-        protectMode.toggleProtect(!protectMode.protect);
-        break;
-      case 'top':
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        break;
-      case 'home':
-        router.push('/');
-        break;
-      case 'overview':
-        router.push(`/n/${id}`);
-        break;
-      case 'bottom':
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: 'smooth',
-        });
-        break;
-      default:
-        break;
-    }
-    resetValue();
-  };
+  const handleSetting = (value: 'top' | 'home' | 'overview' | 'protect' | 'bottom', id: string) => {
+    const actions = {
+      protect: () => { protectMode.toggleProtect(!protectMode.protect); },
+      top: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); },
+      home: () => { router.push('/'); },
+      overview: () => { router.push(`/n/${id}`); },
+      bottom: () => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); },
+    };
 
-  const resetValue = () => {
+    actions[value]();
     setValue('無');
   };
 
@@ -79,7 +65,7 @@ export default function Page({ params }: Props) {
     };
 
     void fetchDoujin();
-  }, [params]);
+  }, []);
 
   if (!doujin) {
     return <div className="mt-10 flex justify-center text-gray-500"><span>Loading...</span></div>;
@@ -88,18 +74,23 @@ export default function Page({ params }: Props) {
   return (
     <div className="mt-10 flex flex-col items-center">
       {doujin.map((url, i) => (
-        <SafeImage
-          src={protectMode.protect ? '/img/1210.png' : imageURL + url}
-          width={600}
-          height={800}
-          key={i}
-          className="rounded-lg bg-gray-900"
-        />
+        (
+          <Image
+            key={(i + 1).toString()}
+            src={protectMode.protect ? '/img/1210.png' : imageURL + url}
+            alt={i.toString()}
+            width={800}
+            height={1000}
+            loading="lazy"
+            className="bg-gray-800"
+            onError={() => { setDoujin((prev) => prev?.filter((item) => item !== url)); }}
+          />
+        )
       ))}
       <div className="fixed bottom-4 right-4">
         <Select
           onValueChange={(value) => {
-            handleSetting(value as 'top' | 'home' | 'overview' | 'protect' | 'bottom');
+            handleSetting(value as 'top' | 'home' | 'overview' | 'protect' | 'bottom', id);
           }}
           value={value}
         >
@@ -120,6 +111,16 @@ export default function Page({ params }: Props) {
           </SelectContent>
         </Select>
       </div>
+      <span className="mt-5">漫畫結束了喔! 你可以:</span>
+      <div className="flex gap-5">
+        <Link href={`/n/${id}/related`}>
+          <Button>瀏覽相關漫畫</Button>
+        </Link>
+        <Link href="https://youtu.be/dQw4w9WgXcQ?si=hS6FB_mz7pU6XiRA">
+          <Button>支持我們</Button>
+        </Link>
+      </div>
+
     </div>
   );
 }

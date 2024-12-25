@@ -11,7 +11,7 @@ export interface DoujinSearchResult {
   lang: 'ja' | 'zh' | 'en';
 }
 
-const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
+export const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
   6346: 'ja',
   29963: 'zh',
   12227: 'en',
@@ -58,7 +58,7 @@ export const GET = async (req: NextRequest) => {
     const response = await fetch(`https://nhentai.net/api/galleries/search?${params.toString()}`);
 
     if (!response.ok) {
-      throw new Error(`Request failed with status ${response.status}: ${await response.text()}`);
+      throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);
     }
 
     const json = await response.json() as APISearchResultData;

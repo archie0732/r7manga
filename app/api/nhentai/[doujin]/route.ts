@@ -52,7 +52,7 @@ export async function GET(req: Request, { params }: Params) {
   const { num_pages, media_id, ...data } = json;
   void [num_pages, media_id];
 
-  return Response.json(<Doujin>{
+  return Response.json(({
     ...data,
     id: data.id.toString(),
     tags: data.tags.filter((t) => t.type == 'tag'),
@@ -65,5 +65,5 @@ export async function GET(req: Request, { params }: Params) {
     translated: !!data.tags.find((t) => t.name == 'translated'),
     thumbnail: toThumbnailUrl(json),
     cover: toCoverUrl(json),
-  });
+  } as Doujin));
 }

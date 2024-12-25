@@ -8,13 +8,14 @@ import { SelectSort } from '@/components/selectSort';
 import { DoujinCarousel } from '@/components/doujin-carousel';
 import { Heading1 } from '@/components/ui/typography';
 import { BookHeart } from 'lucide-react';
+import { DoujinLodingCard } from '@/components/doujin-loading-card';
 
 export default function Home() {
   const store = useDoujinStore();
 
   const [sort, setSort] = useState('recent');
   const [ids, setIds] = useState(new Set<string>());
-  const [loing, setLoding] = useState(true);
+  const [loding, setLoding] = useState(true);
   const doujin = Array.from(ids.values())
     .map((id) => store.doujin.get(id))
     .filter((v) => !!v);
@@ -29,6 +30,17 @@ export default function Home() {
   useEffect(() => {
     void update();
   }, [sort]);
+
+  if (loding) {
+    return (
+      <div>
+
+        <div className="flex justify-center gap-2">
+          {Array.from({ length: 5 }).map(() => <DoujinLodingCard />)}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -48,15 +60,7 @@ export default function Home() {
               <SelectSort value={sort} onValueChange={setSort} />
             </div>
           </Heading1>
-          { loing
-            ? (
-                <div className="flex items-center justify-center">
-                  <span className="text-gray-400">
-                    Loding....
-                  </span>
-                </div>
-              )
-            : <DoujinCarousel comic={doujin} />}
+          <DoujinCarousel comic={doujin} />
         </div>
       </main>
     </div>
