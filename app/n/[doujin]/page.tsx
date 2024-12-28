@@ -39,7 +39,10 @@ export default function Page({ params }: Props) {
       <div className="ml-20">
         <div className="flex">
           <Skeleton className="h-[400px] w-[300px]" />
-          <Skeleton className="ml-5 mt-5 h-[30px] w-[600px]" />
+          <div className="ml-5 gap-3">
+            <Skeleton className="mt-2 h-[30px] w-[600px]" />
+            <Skeleton className="mt-2 h-[30px] w-[200px]" />
+          </div>
         </div>
       </div>
     );
@@ -63,10 +66,10 @@ export default function Page({ params }: Props) {
           </div>
           <div>
             <h1 className="mt-10 text-xl">漫畫預覽:</h1>
-            <div className="mt-4 flex flex-wrap justify-start gap-4" key="view">
+            <div className="mt-4 flex flex-wrap justify-start gap-4">
 
               {doujin.images.slice(0, 14).map((url, i) => (
-                <Link href={`/n/read/${doujin.id}`}>
+                <Link href={`/n/read/${doujin.id}`} key={i}>
                   <Image
                     key={i}
                     src={protect ? '/img/1210.png' : imageURL + url.split('.')[0] + 't.' + url.split('.')[1]}

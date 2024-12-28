@@ -44,11 +44,11 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         />
         <span>{doujin.id}</span>
       </button>
-      <TagedDemo tag={doujin.parody} icon={<BookText />} type="系列" />
-      <TagedDemo tag={doujin.artists} icon={<Pen />} type="作者" />
-      <TagedDemo tag={doujin.characters} icon={<User />} type="角色" />
-      <TagedDemo tag={doujin.language} icon={<Languages />} type="語言" />
-      <TagedDemo tag={doujin.tags} icon={<Tag />} type="標籤" />
+      <TagedDemo tag={doujin.parody} icon={<BookText />} label="系列" />
+      <TagedDemo tag={doujin.artists} icon={<Pen />} label="作者" />
+      <TagedDemo tag={doujin.characters} icon={<User />} label="角色" />
+      <TagedDemo tag={doujin.language} icon={<Languages />} label="語言" />
+      <TagedDemo tag={doujin.tags} icon={<Tag />} label="標籤" />
       <div className="mt-2 flex gap-2">
         <BookOpenText />
         <span>{doujin.images.length}</span>

@@ -2,7 +2,7 @@
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { useAppStore } from '@/stores/app';
-import { BookHeart, Home, Paintbrush2 } from 'lucide-react';
+import { Book, BookHeart, Home, Paintbrush2, Search } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -11,8 +11,9 @@ export default function AppCommand() {
   const router = useRouter();
   const commandPanelVisible = useAppStore((state) => state.commandPanelVisible);
   const setCommandPanelVisible = useAppStore((state) => state.setCommandPanelVisible);
+  const [keyword, setKeyword] = useState('');
   const { setTheme, theme } = useTheme();
-  const [keyword, setKeyword] = useState<string>('*');
+
   const changeTheme = () => {
     if (theme === 'dark') {
       setTheme('light');
@@ -29,13 +30,8 @@ export default function AppCommand() {
     >
       <CommandInput
         placeholder="搜尋或輸入指令..."
-        onValueChange={(e) => { setKeyword(e); }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            router.push(`/search?q=${keyword}`);
-            setCommandPanelVisible(false);
-          }
-        }}
+        value={keyword}
+        onValueChange={setKeyword}
       />
       <CommandList>
         <CommandEmpty>沒有結果</CommandEmpty>
@@ -64,6 +60,40 @@ export default function AppCommand() {
             <span onClick={changeTheme}>變更主題色</span>
           </CommandItem>
         </CommandGroup>
+        {keyword.length > 0 && !/^\d+$/.test(keyword) && (
+          <CommandItem onSelect={() => {
+            router.push(`/n/search?q=${keyword}`);
+            setCommandPanelVisible(false);
+          }}
+          >
+            <Search />
+            <span>
+              搜尋
+              <strong>
+                「
+                {keyword}
+                」
+              </strong>
+            </span>
+          </CommandItem>
+        )}
+        {keyword.length > 0 && /^\d+$/.test(keyword) && (
+          <CommandItem onSelect={() => {
+            router.push(`/n/${keyword}`);
+            setCommandPanelVisible(false);
+          }}
+          >
+            <Book />
+            <span>
+              前往
+              <strong>
+                「
+                {keyword}
+                」
+              </strong>
+            </span>
+          </CommandItem>
+        )}
       </CommandList>
     </CommandDialog>
   );

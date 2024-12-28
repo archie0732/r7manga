@@ -19,7 +19,7 @@ export default ts.config(
     ],
   },
   js.configs.recommended,
-  ...ts.configs.strictTypeChecked,
+  ...ts.configs.recommendedTypeChecked,
   ...ts.configs.stylisticTypeChecked,
   style.configs.customize({
     semi: true,

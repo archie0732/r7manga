@@ -18,7 +18,11 @@ export const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
 };
 
 const ParameterSchema = z.object({
-  q: z.string().min(1),
+  q: z.string().nullable(),
+  tag: z.string().nullable(),
+  parody: z.string().nullable(),
+  artist: z.string().nullable(),
+  character: z.string().nullable(),
   sort: z.string().nullable().refine((val) => {
     if (!val) return true;
     return ['recent', 'popular', 'popular-today', 'popular-week'].includes(val);
@@ -33,9 +37,15 @@ const ParameterSchema = z.object({
   }),
 });
 
+const buildQuery = (type: string, v: string) => v.startsWith('-') ? `-${type}:"${v.slice(1)}"` : `${type}:"${v}"`;
+
 export const GET = async (req: NextRequest) => {
   const queries = ParameterSchema.safeParse({
     q: req.nextUrl.searchParams.get('q'),
+    tag: req.nextUrl.searchParams.get('tag'),
+    character: req.nextUrl.searchParams.get('character'),
+    artist: req.nextUrl.searchParams.get('artist'),
+    parody: req.nextUrl.searchParams.get('parody'),
     sort: req.nextUrl.searchParams.get('sort'),
     page: req.nextUrl.searchParams.get('page'),
   });
@@ -48,14 +58,33 @@ export const GET = async (req: NextRequest) => {
     });
   }
 
+  const data = queries.data;
+
   try {
+    const tag = data.tag?.split(',') ?? [];
+    const artist = data.artist?.split(',') ?? [];
+    const parody = data.parody?.split(',') ?? [];
+    const character = data.character?.split(',') ?? [];
+
+    const query = [
+      data.q ?? '*',
+      ...tag.map((v) => buildQuery('tag', v)),
+      ...artist.map((v) => buildQuery('artist', v)),
+      ...parody.map((v) => buildQuery('parody', v)),
+      ...character.map((v) => buildQuery('character', v)),
+    ].join(' ');
+
     const params = new URLSearchParams({
-      query: queries.data.q,
+      query: query,
       sort: queries.data.sort ?? 'popular-today',
       page: queries.data.page ?? '1',
     });
 
-    const response = await fetch(`https://nhentai.net/api/galleries/search?${params.toString()}`);
+    const url = `https://nhentai.net/api/galleries/search?${params.toString()}`;
+
+    console.log('Server fetch url: ', url);
+
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);

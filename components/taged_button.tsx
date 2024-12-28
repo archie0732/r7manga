@@ -1,29 +1,33 @@
 import { TagData } from '@/app/api/nhentai/[doujin]/route';
 import { Badge } from '@/components/ui/badge';
+
 import Row from './layout/row';
+import Link from 'next/link';
 
 type Props = Readonly<{
   tag: TagData[];
-  type: string;
+  label: string;
   icon: React.ReactNode;
 }>;
 
-export function TagedDemo({ tag, type, icon }: Props) {
+export function TagedDemo({ tag, label, icon }: Props) {
   return (
     <div className="flex gap-2">
       <Row className="gap-2">
         {icon}
-        <span>{type}</span>
+        <span>{label}</span>
       </Row>
       <div className="flex flex-wrap gap-2">
         {
           tag.map((tag) => (
-            <Badge
+            <Link
               key={tag.id}
-              variant="secondary"
+              href={`/search?${tag.type}=${tag.name}`}
             >
-              {tag.name}
-            </Badge>
+              <Badge variant="secondary">
+                {tag.name}
+              </Badge>
+            </Link>
           ))
         }
       </div>
