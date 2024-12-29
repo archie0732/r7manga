@@ -7,9 +7,10 @@ import Image from 'next/image';
 
 type Props = Readonly<{
   doujin: DoujinSearchResult;
+  website: string;
 }>;
 
-export default function DoujinCard({ doujin }: Props) {
+export default function DoujinCard({ doujin, website }: Props) {
   const protect = useAppStore((state) => state.protect);
 
   return (
@@ -20,7 +21,7 @@ export default function DoujinCard({ doujin }: Props) {
     >
       <Link
         key={doujin.id}
-        href={`/n/${doujin.id}`}
+        href={`/${website}/${doujin.id}`}
         className="group-hover:absolute"
       >
         <Card

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Book } from 'lucide-react';
+import { PenTool } from 'lucide-react';
 
 type Props = Readonly<{
   searchParams: Promise<{
@@ -17,10 +17,9 @@ type Props = Readonly<{
 export default async function Page({ searchParams }: Props) {
   const search = await searchParams;
 
-  const sort = search.sort ?? 'recent';
   const page = search.page ?? '1';
 
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/nhentai/search?q=*&sort=${sort}&page=${page}`;
+  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/wnacg?page=${page}`;
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -44,28 +43,12 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div className="flex flex-col justify-center">
-      <div className="mr-5 flex justify-between">
-        <div>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/n?page=${page}`}>最近</Link>
-          </Button>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/n?page=${page}&sort=popular-today`}>本日</Link>
-          </Button>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/n?page=${page}&sort=popular-week`}>這周</Link>
-          </Button>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/n?page=${page}&sort=popular`}>所有時間</Link>
-          </Button>
-        </div>
-      </div>
       <div className="flex items-center justify-center">
-        <Book size={40} />
-        <span className="text-5xl">nhentai</span>
+        <PenTool size={45} />
+        <span className="text-5xl">Wnacg</span>
       </div>
-      <DoujinCarousel comic={doujin} />
-      <PaginationDemo url={`/n?sort=${sort}`} nowPage={Number(page) ? Number(page) : 1} />
+      <DoujinCarousel comic={doujin} website="w" />
+      <PaginationDemo url="/w?" nowPage={Number(page) ? Number(page) : 1} />
     </div>
   );
 }
