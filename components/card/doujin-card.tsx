@@ -3,8 +3,6 @@ import Link from 'next/link';
 import { useAppStore } from '@/stores/app';
 import { Card } from '@/components/ui/card';
 
-import Image from 'next/image';
-
 type Props = Readonly<{
   doujin: DoujinSearchResult;
   website: string;
@@ -30,7 +28,7 @@ export default function DoujinCard({ doujin, website }: Props) {
           <div className="text-center">
             {doujin.lang.toUpperCase()}
           </div>
-          <Image
+          <img
             src={protect ? '/img/1210.png' : doujin.thumbnail}
             className="aspect-[5/7] flex-1 justify-center object-cover"
             alt="cover"
