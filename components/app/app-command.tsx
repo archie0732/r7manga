@@ -62,7 +62,8 @@ export default function AppCommand() {
         </CommandGroup>
         {keyword.length > 0 && !/^\d+$/.test(keyword) && (
           <CommandItem onSelect={() => {
-            router.push(`/n/search?q=${keyword}`);
+            { /* TO Do fix to handle other side */ }
+            router.push(`/search?q=${keyword}`);
             setCommandPanelVisible(false);
           }}
           >
