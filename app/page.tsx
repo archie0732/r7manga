@@ -73,14 +73,14 @@ export default function Home() {
                   <Button variant="ghost">查看更多</Button>
                 </Link>
               </div>
-              <HomePageCarousel doujin={doujin} />
+              <HomePageCarousel doujin={doujin} website="n" />
               <div className="flex justify-between">
                 <span className="text-4xl font-bold">wnacg</span>
                 <Link href="/w">
                   <Button variant="ghost">查看更多</Button>
                 </Link>
               </div>
-              <HomePageCarousel doujin={wnacg} />
+              <HomePageCarousel doujin={wnacg} website="w" />
             </div>
           </div>
         </div>

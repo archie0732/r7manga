@@ -11,9 +11,10 @@ import DoujinCard from './card/doujin-card';
 
 interface Props {
   doujin: DoujinSearchResult[];
+  website: string;
 }
 
-export function HomePageCarousel({ doujin }: Props) {
+export function HomePageCarousel({ doujin, website }: Props) {
   return (
     <Carousel
       opts={{
@@ -31,7 +32,7 @@ export function HomePageCarousel({ doujin }: Props) {
             `}
           >
 
-            <DoujinCard doujin={url} website="n" />
+            <DoujinCard doujin={url} website={website} />
 
           </CarouselItem>
         ))}
