@@ -64,7 +64,7 @@ export default async function Page({ searchParams }: Props) {
         <Book size={40} />
         <span className="text-5xl">nhentai</span>
       </div>
-      <DoujinCarousel comic={doujin} />
+      <DoujinCarousel comic={doujin} website="n" />
       <PaginationDemo url={`/n?sort=${sort}`} nowPage={Number(page) ? Number(page) : 1} />
     </div>
   );

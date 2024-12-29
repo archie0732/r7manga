@@ -27,3 +27,9 @@ export const throwErrorAPI = (sourceWeb: string, status: number, message: string
     detail: message,
   };
 };
+
+export const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
+  6346: 'ja',
+  29963: 'zh',
+  12227: 'en',
+};

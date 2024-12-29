@@ -31,7 +31,7 @@ export function HomePageCarousel({ doujin }: Props) {
             `}
           >
 
-            <DoujinCard doujin={url} />
+            <DoujinCard doujin={url} website="n" />
 
           </CarouselItem>
         ))}

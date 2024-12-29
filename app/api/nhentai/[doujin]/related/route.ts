@@ -1,6 +1,8 @@
 import { APISearchResultData } from '../../_model/apitypes';
-import { DoujinSearchResult, languageMap } from '../../search/route';
+import { DoujinSearchResult } from '../../search/route';
 import { toThumbnailUrl } from '../../_model/_lib/util';
+
+import { languageMap } from '../../_model/_lib/util';
 
 interface Params {
   params: Promise<{ doujin: string }>;

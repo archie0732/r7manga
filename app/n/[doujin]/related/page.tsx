@@ -8,7 +8,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { DoujinCarousel } from '@/components/doujin-carousel';
-import { DoujinLodingCard } from '@/components/doujin-loading-card';
 
 interface RelateProp {
   params: Promise<{ doujin: string }>;
@@ -37,7 +36,6 @@ export default function Page({ params }: RelateProp) {
       <div className="flex flex-col items-center justify-center gap-3">
         <h1 className="mb-15 text-4xl">相關漫畫</h1>
         <div className="flex justify-center gap-3">
-          {Array.from({ length: 3 }).map((v, i) => (<DoujinLodingCard key={i} />))}
         </div>
       </div>
     );
@@ -58,7 +56,7 @@ export default function Page({ params }: RelateProp) {
   return (
     <div className="flex flex-col items-center justify-center gap-3">
       <h1 className="mb-15 text-4xl">相關漫畫</h1>
-      <DoujinCarousel comic={doujin} />
+      <DoujinCarousel comic={doujin} website="n" />
       <div className="flex gap-4">
         <Button onClick={() => { router.push(`/n/${doujinId}/`); }}>回預覽畫面</Button>
         <Button onClick={() => { router.push('/'); }}>回首頁</Button>

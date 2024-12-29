@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { toThumbnailUrl } from '../_model/_lib/util';
+import { languageMap } from '../_model/_lib/util';
 
 import type { APISearchResultData } from '../_model/apitypes';
 import { z } from 'zod';
@@ -10,12 +11,6 @@ export interface DoujinSearchResult {
   thumbnail: string;
   lang: 'ja' | 'zh' | 'en';
 }
-
-export const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
-  6346: 'ja',
-  29963: 'zh',
-  12227: 'en',
-};
 
 const ParameterSchema = z.object({
   q: z.string().nullable(),
