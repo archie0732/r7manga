@@ -11,7 +11,7 @@ export const getPicture = (id: string, page: number, extension: string) => {
   const readpage = [];
 
   for (let i = 0; i < page; i++) {
-    const num = (i + 1).toString().padStart(2, '0');
+    const num = (i + 1).toString().padStart(page.toString().length, '0');
     readpage.push(`https://img5.qy0.ru/data/${id}/${num}.${extension}`);
   }
   return readpage;
