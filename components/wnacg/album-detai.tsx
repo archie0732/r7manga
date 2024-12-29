@@ -55,7 +55,7 @@ export function AlbumDetail({ album }: AlbumProp) {
         <Link href={'/w/read/' + album.id}>
           <Button variant="aaa" className="font-bold">
             <Eye />
-            <span>Read Now</span>
+            <span>Read Now!</span>
           </Button>
         </Link>
         <Button size="icon" variant="secondary">
