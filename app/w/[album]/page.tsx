@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/stores/app';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Album } from '@/app/api/wnacg/[doujin]/route';
@@ -52,7 +51,7 @@ export default function Page({ params }: Props) {
       <div className="ml-1.5 mt-10 flex flex-col items-center justify-center">
         <div className="container flex flex-col gap-4">
           <div className="flex flex-wrap gap-4">
-            <Image
+            <img
               src={(protect || !album.cover) ? '/img/1210.png' : 'https:' + album.cover}
               width={300}
               height={300}
@@ -68,7 +67,7 @@ export default function Page({ params }: Props) {
             <div className="mt-4 flex flex-wrap justify-start gap-4">
               {album.view.slice(0, 14).map((url, i) => (
                 <Link href={`/w/read/${album.id}`} key={i}>
-                  <Image
+                  <img
                     key={i}
                     src={protect ? '/img/1210.png' : 'https:' + url}
                     width={180}

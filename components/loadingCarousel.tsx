@@ -12,18 +12,32 @@ export function LoadingCarousel() {
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
           <CarouselItem key={index} className="basis-1/5 py-1">
-            <div className="mt-2 h-4 w-1/2 mx-auto bg-gray-700 rounded animate-pulse"></div>
-            <div className="relative mt-4 h-64 bg-gray-800 rounded-lg shadow-lg animate-pulse"></div>
+            <div className={`
+              mx-auto mt-2 h-4 w-1/2 animate-pulse rounded bg-gray-700
+            `}
+            >
+            </div>
+            <div className={`
+              relative mt-4 h-64 animate-pulse rounded-lg bg-gray-800 shadow-lg
+            `}
+            >
+            </div>
           </CarouselItem>
         ))}
       </CarouselContent>
       <CarouselPrevious
         disabled
-        className="hover:bg-gray-500 border-0 cursor-not-allowed opacity-50"
+        className={`
+          cursor-not-allowed border-0 opacity-50
+          hover:bg-gray-500
+        `}
       />
       <CarouselNext
         disabled
-        className="hover:bg-gray-500 border-0 cursor-not-allowed opacity-50"
+        className={`
+          cursor-not-allowed border-0 opacity-50
+          hover:bg-gray-500
+        `}
       />
     </Carousel>
   );

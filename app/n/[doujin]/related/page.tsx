@@ -4,7 +4,6 @@ import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { DoujinCarousel } from '@/components/doujin-carousel';
@@ -45,7 +44,7 @@ export default function Page({ params }: RelateProp) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <span className="mb-6 text-xl">沒有結果</span>
-        <Image src="/img/1210.png" alt="good" width={400} height={400} />
+        <img src="/img/1210.png" alt="good" width={400} height={400} />
         <Link href="https://youtu.be/dQw4w9WgXcQ?si=khh7Cnz3zHogopVQ">
           <Button variant="secondary">查看更多</Button>
         </Link>

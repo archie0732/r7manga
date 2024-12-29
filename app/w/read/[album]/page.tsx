@@ -13,7 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 import type { Album } from '@/app/api/wnacg/[doujin]/route';
@@ -73,7 +72,7 @@ export default function Page({ params }: Props) {
     <div className="mt-10 flex flex-col items-center">
       {doujin.map((url, i) => (
         (
-          <Image
+          <img
             key={(i + 1).toString()}
             src={protectMode.protect ? '/img/1210.png' : url}
             alt={i.toString()}

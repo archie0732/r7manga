@@ -3,7 +3,6 @@ import { DoujinSearchResult } from '../api/nhentai/search/route';
 import { DoujinCarousel } from '@/components/doujin-carousel';
 import { Button } from '@/components/ui/button';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { PenTool } from 'lucide-react';
 
@@ -33,7 +32,7 @@ export default async function Page({ searchParams }: Props) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <span className="mb-6 text-xl">沒有結果</span>
-        <Image src="/img/1210.png" alt="good" width={100} height={100} />
+        <img src="/img/1210.png" alt="good" width={100} height={100} />
         <Link href="https://youtu.be/dQw4w9WgXcQ?si=khh7Cnz3zHogopVQ">
           <Button variant="secondary">查看更多</Button>
         </Link>
