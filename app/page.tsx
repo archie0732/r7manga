@@ -1,34 +1,51 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import { useDoujinStore } from '@/stores/doujin';
-
 import { Heading1 } from '@/components/ui/typography';
 import { Flame } from 'lucide-react';
 import { HomePageCarousel } from '@/components/homepage-carousel';
-import { HomePageLodingCarousel } from '@/components/homepage-loding-carousel';
+
+import { useState, useEffect } from 'react';
+
+import type { DoujinSearchResult } from './api/nhentai/search/route';
+import { HomeLoading } from '@/components/home/home-loading';
 
 export default function Home() {
-  const store = useDoujinStore();
+  const [doujin, setDoujin] = useState<DoujinSearchResult[]>([]);
+  const [wnacg, setWnacg] = useState<DoujinSearchResult[]>([]);
 
-  const [sort] = useState('recent');
-  const [ids, setIds] = useState(new Set<string>());
-  const [loading, setLoading] = useState(true);
-  const doujin = Array.from(ids.values())
-    .map((id) => store.doujin.get(id))
-    .filter((v) => !!v);
+  const [loading, setloading] = useState(false);
 
-  const update = async () => {
-    setLoading(true);
-    const data = await store.fetchHome(sort);
-    setIds(new Set(data.map((v) => v.id)));
-    setLoading(false);
+  const url = `/api/nhentai/search?q=*&sort=recent`;
+  const wurl = `/api/wnacg/`;
+
+  const updateData = async () => {
+    setloading(false);
+    const response = await fetch(url);
+    const wresponse = await fetch(wurl);
+
+    if (!response.ok) {
+      console.error(`Error: ${response.statusText}`);
+      return;
+    }
+    if (!wresponse.ok) {
+      console.error(response.statusText);
+      return;
+    }
+    const raw = await response.json() as DoujinSearchResult[];
+    const wraw = await wresponse.json() as DoujinSearchResult[];
+
+    setDoujin(raw);
+    setWnacg(wraw);
+    setloading(true);
   };
 
   useEffect(() => {
-    void update();
-  }, [sort]);
+    void updateData();
+  }, []);
+
+  if (!loading) {
+    return <HomeLoading />;
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -47,15 +64,12 @@ export default function Home() {
             <div className="md:absolute md:right-0"></div>
           </Heading1>
           <div>
-            {loading
-              ? (
-                  <HomePageLodingCarousel />
-                )
-              : (
-                  <div className="m-3 flex p-4">
-                    <HomePageCarousel doujin={doujin} />
-                  </div>
-                )}
+            <div className="m-3 flex flex-col gap-5 p-4">
+              <span className="text-4xl font-bold">nhentai</span>
+              <HomePageCarousel doujin={doujin} />
+              <span className="text-4xl font-bold">wnacg</span>
+              <HomePageCarousel doujin={wnacg} />
+            </div>
           </div>
         </div>
       </main>

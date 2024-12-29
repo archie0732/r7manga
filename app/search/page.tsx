@@ -81,7 +81,6 @@ export default async function Page({ searchParams }: Props) {
         <SelectDemo />
       </div>
       <DoujinCarousel comic={doujin} />
-      {/* TODO: fix pagination */}
       <PaginationDemo url={`/search?${query}&sort=${sort}`} nowPage={Number(page) ? Number(page) : 1} />
     </div>
   );
