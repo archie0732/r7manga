@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 
 import type { DoujinSearchResult } from './api/nhentai/search/route';
 import { HomeLoading } from '@/components/home/home-loading';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function Home() {
   const [doujin, setDoujin] = useState<DoujinSearchResult[]>([]);
@@ -65,9 +67,19 @@ export default function Home() {
           </Heading1>
           <div>
             <div className="m-3 flex flex-col gap-5 p-4">
-              <span className="text-4xl font-bold">nhentai</span>
+              <div className="flex justify-between">
+                <span className="text-4xl font-bold">nhentai</span>
+                <Link href="/n">
+                  <Button variant="ghost">查看更多</Button>
+                </Link>
+              </div>
               <HomePageCarousel doujin={doujin} />
-              <span className="text-4xl font-bold">wnacg</span>
+              <div className="flex justify-between">
+                <span className="text-4xl font-bold">wnacg</span>
+                <Link href="/w">
+                  <Button variant="ghost">查看更多</Button>
+                </Link>
+              </div>
               <HomePageCarousel doujin={wnacg} />
             </div>
           </div>
