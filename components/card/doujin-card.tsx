@@ -1,7 +1,7 @@
 import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 import Link from 'next/link';
-import { useAppStore } from '@/stores/app';
 import { Card } from '@/components/ui/card';
+import { SafeImage } from '../doujin/safe-image';
 
 type Props = Readonly<{
   doujin: DoujinSearchResult;
@@ -9,8 +9,6 @@ type Props = Readonly<{
 }>;
 
 export default function DoujinCard({ doujin, website }: Props) {
-  const protect = useAppStore((state) => state.protect);
-
   return (
     <div className={`
       group relative scale-[0.98] transition
@@ -28,8 +26,8 @@ export default function DoujinCard({ doujin, website }: Props) {
           <div className="text-center">
             {doujin.lang.toUpperCase()}
           </div>
-          <img
-            src={protect ? '/img/1210.png' : doujin.thumbnail}
+          <SafeImage
+            src={doujin.thumbnail}
             className="aspect-[5/7] flex-1 justify-center object-cover"
             alt="cover"
             width={200}

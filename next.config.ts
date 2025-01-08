@@ -2,7 +2,32 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['t1.nhentai.net', 't2.nhentai.net', 't3.nhentai.net', 't4.nhentai.net', 'i3.nhentai.net', 'i5.nhentai.net', 't4.qy0.ru', 'img5.qy0.ru'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 't3.nhentai.net',
+        port: '',
+        pathname: '/galleries/**',
+        search: '',
+      }, {
+        protocol: 'https',
+        hostname: 'i3.nhentai.net',
+        port: '',
+        pathname: '/galleries/**',
+        search: '',
+      }, {
+        protocol: 'https',
+        hostname: 't4.qy0.ru',
+        port: '',
+        pathname: '/**',
+        search: '',
+      }, {
+        protocol: 'https',
+        hostname: 't4.qy0.ru',
+        port: '',
+        pathname: '/**',
+        search: '',
+      }],
   },
 };
 

@@ -12,11 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { readDoujinURL } from '@/lib/const';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
+
+import Image from 'next/image';
 
 type Props = Readonly<{
   params: Promise<{ doujin: string }>;
@@ -29,8 +31,6 @@ export default function Page({ params }: Props) {
   const protectMode = useAppStore();
   const router = useRouter();
   const selectRef = useRef<HTMLButtonElement>(null);
-
-  const imageURL = 'https://i3.nhentai.net/galleries';
 
   const handleSetting = (value: 'top' | 'home' | 'overview' | 'protect' | 'bottom', id: string) => {
     const actions = {
@@ -77,13 +77,13 @@ export default function Page({ params }: Props) {
         (
           <Image
             key={(i + 1).toString()}
-            src={protectMode.protect ? '/img/1210.png' : imageURL + url}
+            src={protectMode.protect ? '/img/1210.png' : readDoujinURL + url}
             alt={i.toString()}
             width={800}
             height={1000}
-            loading="lazy"
-            className="bg-gray-800"
-            onError={() => { setDoujin((prev) => prev?.filter((item) => item !== url)); }}
+            priority={true}
+            blurDataURL="/img/20250108.jpg"
+            placeholder="blur"
           />
         )
       ))}

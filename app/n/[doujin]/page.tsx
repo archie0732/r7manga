@@ -2,11 +2,12 @@
 
 import { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import { useEffect, useState } from 'react';
-import { useAppStore } from '@/stores/app';
 import { DoujinDetail } from '@/components/doujin_detail';
+import { viewDoujinURL } from '@/lib/const';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
+import { SafeImage } from '@/components/doujin/safe-image';
 
 type Props = Readonly<{
   params: Promise<{
@@ -16,8 +17,6 @@ type Props = Readonly<{
 
 export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<Doujin | null>(null);
-  const protect = useAppStore().protect;
-  const imageURL = 'https://t3.nhentai.net/galleries/';
 
   useEffect(() => {
     void (async () => {
@@ -53,7 +52,7 @@ export default function Page({ params }: Props) {
         <div className="container flex flex-col gap-4">
           <div className="flex flex-wrap gap-4">
             <img
-              src={(protect || !doujin.cover) ? '/img/1210.png' : doujin.cover}
+              src={doujin.cover}
               width={300}
               height={300}
               alt="cover"
@@ -69,13 +68,12 @@ export default function Page({ params }: Props) {
 
               {doujin.images.slice(0, 14).map((url, i) => (
                 <Link href={`/n/read/${doujin.id}`} key={i}>
-                  <img
+                  <SafeImage
                     key={i}
-                    src={protect ? '/img/1210.png' : imageURL + url.split('.')[0] + 't.' + url.split('.')[1]}
+                    src={viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1]}
                     width={180}
                     height={200}
                     alt={`img-${i.toString()}`}
-                    className="rounded-lg bg-gray-800"
                   />
                 </Link>
               ))}
