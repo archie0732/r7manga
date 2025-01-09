@@ -13,12 +13,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { loadingPic, readDoujinURL } from '@/lib/const';
+import { SafeImage } from '@/components/doujin/safe-image';
 
 import Link from 'next/link';
 
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
-
-import Image from 'next/image';
 
 type Props = Readonly<{
   params: Promise<{ doujin: string }>;
@@ -75,15 +74,12 @@ export default function Page({ params }: Props) {
     <div className="mt-10 flex flex-col items-center">
       {doujin.map((url, i) => (
         (
-          <Image
+          <SafeImage
             src={readDoujinURL + url}
             alt={`img-alt-${i}`}
             key={'img-' + i}
             width={800}
             height={800}
-            priority={true}
-            blurDataURL="/img/20250108.jpg"
-            placeholder="blur"
             title={readDoujinURL + url}
             onError={(e) => { e.currentTarget.src = loadingPic; }}
           />
