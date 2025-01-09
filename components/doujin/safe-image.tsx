@@ -5,7 +5,7 @@ import { blankNice, errorPic } from '@/lib/const';
 
 type Props = Readonly<React.ImgHTMLAttributes<HTMLImageElement>>;
 
-export function SafeImage({ src = '/img/1210.png', alt = 'empty-image', className, width, height }: Props) {
+export function SafeImage({ src = errorPic, alt = 'empty-image', className, width, height }: Props) {
   const { protect } = useAppStore();
   return (
     <div className={twMerge('flex flex-col', className)}>

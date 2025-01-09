@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { loadingPic, readDoujinURL } from '@/lib/const';
+import { readDoujinURL } from '@/lib/const';
 import { SafeImage } from '@/components/doujin/safe-image';
 
 import Link from 'next/link';
@@ -81,7 +81,7 @@ export default function Page({ params }: Props) {
             width={800}
             height={800}
             title={readDoujinURL + url}
-            onError={(e) => { e.currentTarget.src = loadingPic; }}
+
           />
         )
       ))}

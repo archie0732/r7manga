@@ -30,6 +30,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -48,6 +49,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
             <div className="flex w-svw flex-1 flex-col">
@@ -60,6 +62,7 @@ export default function RootLayout({
             </div>
             <AppCommand />
           </SidebarProvider>
+
         </ThemeProvider>
       </body>
     </html>

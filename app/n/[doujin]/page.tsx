@@ -51,7 +51,7 @@ export default function Page({ params }: Props) {
       <div className="ml-1.5 mt-10 flex flex-col items-center justify-center">
         <div className="container flex flex-col gap-4">
           <div className="flex flex-wrap gap-4">
-            <img
+            <SafeImage
               src={doujin.cover}
               width={300}
               height={300}

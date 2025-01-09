@@ -3,13 +3,13 @@
 import { Heading1 } from '@/components/ui/typography';
 import { Flame } from 'lucide-react';
 import { HomePageCarousel } from '@/components/homepage-carousel';
-
-import { useState, useEffect } from 'react';
-
-import type { DoujinSearchResult } from './api/nhentai/search/route';
 import { HomeLoading } from '@/components/home/home-loading';
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
+
+import type { DoujinSearchResult } from './api/nhentai/search/route';
 
 export default function Home() {
   const [doujin, setDoujin] = useState<DoujinSearchResult[]>([]);
