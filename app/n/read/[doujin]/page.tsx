@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { readDoujinURL } from '@/lib/const';
+import { loadingPic, readDoujinURL } from '@/lib/const';
 
 import Link from 'next/link';
 
@@ -76,14 +76,16 @@ export default function Page({ params }: Props) {
       {doujin.map((url, i) => (
         (
           <Image
-            key={(i + 1).toString()}
-            src={protectMode.protect ? '/img/1210.png' : readDoujinURL + url}
-            alt={i.toString()}
+            src={readDoujinURL + url}
+            alt={`img-alt-${i}`}
+            key={'img-' + i}
             width={800}
-            height={1000}
+            height={800}
             priority={true}
             blurDataURL="/img/20250108.jpg"
             placeholder="blur"
+            title={readDoujinURL + url}
+            onError={(e) => { e.currentTarget.src = loadingPic; }}
           />
         )
       ))}
