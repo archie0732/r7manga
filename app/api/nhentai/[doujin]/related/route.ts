@@ -20,12 +20,19 @@ export const GET = async (req: Request, { params }: Params) => {
 
   for (const doujin of raw.result) {
     const langTag = doujin.tags.find((t) => t.type == 'language');
+    const banTag = doujin.tags.reduce((acc, val) => {
+      if (val.type === 'tag' && val.name === 'male only') {
+        acc.push(val.name);
+      }
+      return acc;
+    }, [] as string[]);
 
     doujinlist.push({
       title: doujin.title.japanese ?? doujin.title.english,
       id: doujin.id.toString(),
       thumbnail: toThumbnailUrl(doujin),
       lang: langTag ? languageMap[langTag.id] ?? 'ja' : 'ja',
+      banTag,
     });
   }
 

@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
       title,
       id,
       thumbnail,
+      banTag: [],
     });
   });
 
