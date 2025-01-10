@@ -1,18 +1,18 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { signIn } from '@/auth';
+'use client';
+import { signIn } from 'next-auth/react';
 import { Button } from '../ui/button';
+import { LogIn } from 'lucide-react';
 
 export function Login() {
   return (
     <Button
       type="submit"
-      onClick={async () => {
-        'use server';
-        await signIn('google');
+      onClick={() => {
+        void signIn('google');
       }}
+      variant="outline"
     >
-      Google
+      <LogIn />
     </Button>
 
   );

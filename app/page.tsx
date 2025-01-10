@@ -70,14 +70,14 @@ export default function Home() {
               <div className="flex justify-between">
                 <span className="text-4xl font-bold">nhentai</span>
                 <Link href="/n">
-                  <Button variant="ghost">查看更多</Button>
+                  <Button variant="link">查看更多</Button>
                 </Link>
               </div>
               <HomePageCarousel doujin={doujin} website="n" />
               <div className="flex justify-between">
                 <span className="text-4xl font-bold">wnacg</span>
                 <Link href="/w">
-                  <Button variant="ghost">查看更多</Button>
+                  <Button variant="link">查看更多</Button>
                 </Link>
               </div>
               <HomePageCarousel doujin={wnacg} website="w" />

@@ -64,7 +64,13 @@ export default function Page({ params }: Props) {
           </div>
           <div>
             <h1 className="mt-10 text-xl">漫畫預覽:</h1>
-            <div className="mt-4 flex flex-wrap justify-start gap-4">
+            <div className={`
+              mt-4 grid gap-1
+              lg:grid-cols-5
+              md:grid-cols-2
+              sm:grid-cols-2
+            `}
+            >
 
               {doujin.images.slice(0, 14).map((url, i) => (
                 <Link href={`/n/read/${doujin.id}`} key={i}>
@@ -79,9 +85,7 @@ export default function Page({ params }: Props) {
               ))}
 
             </div>
-
           </div>
-
         </div>
       </div>
     </main>

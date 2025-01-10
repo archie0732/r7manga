@@ -1,22 +1,11 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useEffect, useState, useRef } from 'react';
-import { useAppStore } from '@/stores/app';
-import { useRouter } from 'next/navigation';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { readDoujinURL } from '@/lib/const';
-import { SafeImage } from '@/components/doujin/safe-image';
-
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { APPSelection } from '@/components/app/app-select';
 
+import { errorPic, readDoujinURL } from '@/lib/const';
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 
 type Props = Readonly<{
@@ -24,39 +13,31 @@ type Props = Readonly<{
 }>;
 
 export default function Page({ params }: Props) {
-  const [doujin, setDoujin] = useState<string[]>();
-  const [value, setValue] = useState<string>('無');
+  const [doujin, setDoujin] = useState<string[]>([]);
+  const [visibleItems, setVisibleItems] = useState<string[]>([]);
   const [id, setId] = useState<string>('');
-  const protectMode = useAppStore();
-  const router = useRouter();
-  const selectRef = useRef<HTMLButtonElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSetting = (value: 'top' | 'home' | 'overview' | 'protect' | 'bottom', id: string) => {
-    const actions = {
-      protect: () => { protectMode.toggleProtect(!protectMode.protect); },
-      top: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); },
-      home: () => { router.push('/'); },
-      overview: () => { router.push(`/n/${id}`); },
-      bottom: () => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); },
-    };
-
-    actions[value]();
-    setValue('無');
-  };
+  const itemsPerLoad = 3;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchDoujin = async () => {
       try {
         const doujinId = (await params).doujin;
         setId(doujinId);
-        const response = await fetch(`/api/nhentai/${doujinId}`);
 
+        const response = await fetch(`/api/nhentai/${doujinId}`);
         if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);
+          throw new Error(
+            `Request failed with status ${response.status.toString()}: ${await response.text()}`,
+          );
         }
 
         const data = (await response.json()) as Doujin;
         setDoujin(data.images);
+        setVisibleItems(data.images.slice(0, itemsPerLoad));
+        setCurrentIndex(itemsPerLoad);
       }
       catch (error) {
         console.error('Failed to fetch doujin:', error);
@@ -66,59 +47,79 @@ export default function Page({ params }: Props) {
     void fetchDoujin();
   }, []);
 
-  if (!doujin) {
-    return <div className="mt-10 flex justify-center text-gray-500"><span>Loading...</span></div>;
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isLoading || currentIndex >= doujin.length) return;
+
+      const { scrollTop, scrollHeight } = document.documentElement;
+      const windowHeight = window.innerHeight;
+
+      if (scrollTop + windowHeight >= scrollHeight - 10) {
+        setIsLoading(true);
+        setTimeout(() => {
+          const nextItems = doujin.slice(
+            currentIndex,
+            currentIndex + itemsPerLoad,
+          );
+          setVisibleItems((prev) => [...prev, ...nextItems]);
+          setCurrentIndex((prev) => prev + itemsPerLoad);
+          setIsLoading(false);
+        }, 500);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [doujin, isLoading, currentIndex]);
+
+  if (!doujin.length) {
+    return (
+      <div className="mt-10 flex justify-center text-gray-500">
+        <span>Loading...</span>
+      </div>
+    );
   }
 
   return (
     <div className="mt-10 flex flex-col items-center">
-      {doujin.map((url, i) => (
-        (
-          <SafeImage
-            src={readDoujinURL + url}
-            alt={`img-alt-${i}`}
-            key={'img-' + i}
-            width={800}
-            height={800}
-            title={readDoujinURL + url}
-
-          />
-        )
+      {visibleItems.map((url, index) => (
+        <img
+          src={`${readDoujinURL}${url}`}
+          alt={`img-alt-${index}`}
+          key={`img-${index}`}
+          width={800}
+          height={800}
+          title={`${readDoujinURL}${url}`}
+          onError={(e) => e.currentTarget.src = errorPic}
+        />
       ))}
-      <div className="fixed bottom-4 right-4">
-        <Select
-          onValueChange={(value) => {
-            handleSetting(value as 'top' | 'home' | 'overview' | 'protect' | 'bottom', id);
-          }}
-          value={value}
-        >
-          <SelectTrigger
-            ref={selectRef}
-            className="rounded-full border-2 px-4 py-2"
-          >
-            <SelectValue placeholder="選擇操作" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="top">回頂部</SelectItem>
-              <SelectItem value="overview">回預覽</SelectItem>
-              <SelectItem value="home">回首頁</SelectItem>
-              <SelectItem value="protect">切換保護模式</SelectItem>
-              <SelectItem value="bottom">切換至底部</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-      <span className="mt-5">漫畫結束了喔! 你可以:</span>
-      <div className="flex gap-5">
-        <Link href={`/n/${id}/related`}>
-          <Button>瀏覽相關漫畫</Button>
-        </Link>
-        <Link href="https://youtu.be/dQw4w9WgXcQ?si=hS6FB_mz7pU6XiRA">
-          <Button>支持我們</Button>
-        </Link>
-      </div>
 
+      {isLoading && (
+        <div className="mt-5 text-gray-500">
+          <span>Loading more...</span>
+        </div>
+      )}
+
+      {currentIndex >= doujin.length && (
+        <div className={`
+          mt-5 flex flex-col justify-center text-center text-gray-500
+        `}
+        >
+          <span>漫畫結束了喔! 你可以:</span>
+          <div className="flex gap-5">
+            <Link href={`/n/${id}/related`}>
+              <Button>瀏覽相關漫畫</Button>
+            </Link>
+            <Link href="https://youtu.be/dQw4w9WgXcQ?si=hS6FB_mz7pU6XiRA">
+              <Button>支持我們</Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      <div className="fixed bottom-6 right-7">
+        <APPSelection id={id} />
+      </div>
     </div>
   );
 }

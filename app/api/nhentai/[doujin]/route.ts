@@ -20,6 +20,7 @@ export interface Doujin extends Omit<APIDoujinData, 'id' | 'media_id' | 'images'
   translated: boolean;
   thumbnail: string;
   cover: string;
+  banTag: APIDoujinTagData[];
 }
 
 type Params = Readonly<{
@@ -52,6 +53,13 @@ export async function GET(req: Request, { params }: Params) {
   const { num_pages, media_id, ...data } = json;
   void [num_pages, media_id];
 
+  const banTag = json.tags.reduce((acc, val) => {
+    if (val.name === 'males only') {
+      acc.push(val);
+    }
+    return acc;
+  }, [] as APIDoujinTagData[]);
+
   return Response.json(({
     ...data,
     id: data.id.toString(),
@@ -65,5 +73,6 @@ export async function GET(req: Request, { params }: Params) {
     translated: !!data.tags.find((t) => t.name == 'translated'),
     thumbnail: toThumbnailUrl(json),
     cover: toCoverUrl(json),
+    banTag,
   } as Doujin));
 }

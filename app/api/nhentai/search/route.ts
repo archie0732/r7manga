@@ -9,6 +9,7 @@ export interface DoujinSearchResult {
   title: string;
   id: string;
   thumbnail: string;
+  banTag: string[];
   lang: 'ja' | 'zh' | 'en';
 }
 
@@ -77,8 +78,6 @@ export const GET = async (req: NextRequest) => {
 
     const url = `https://nhentai.net/api/galleries/search?${params.toString()}`;
 
-    console.log('Server fetch url: ', url);
-
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -90,12 +89,20 @@ export const GET = async (req: NextRequest) => {
     const doujinlist: DoujinSearchResult[] = [];
 
     for (const doujin of json.result) {
-      const langTag = doujin.tags.find((t) => t.type == 'language');
+      const langTag = doujin.tags.find((t) => t.type == 'language' && t.name !== 'translated');
+
+      const banTag = doujin.tags.reduce((acc, val) => {
+        if (val.type === 'tag' && val.name === 'male only') {
+          acc.push(val.name);
+        }
+        return acc;
+      }, [] as string[]);
 
       doujinlist.push({
         title: doujin.title.japanese ?? doujin.title.english,
         id: doujin.id.toString(),
         thumbnail: toThumbnailUrl(doujin),
+        banTag,
         lang: langTag ? languageMap[langTag.id] ?? 'ja' : 'ja',
       });
     }
