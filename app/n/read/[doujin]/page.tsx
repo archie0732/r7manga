@@ -73,6 +73,7 @@ export default function Page({ params }: Props) {
           title={`https://i3.nehntai.net/galleries${url}`}
           alt={`alt-${index + 1}`}
           key={`img-${index + 1}`}
+          loading="lazy"
           width={800}
           height={800}
         />
