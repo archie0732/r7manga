@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['t2.nhentai.net'], // 如果您想使用较简单的配置方式
+    domains: ['t2.nhentai.net', 'i3.nhentai.net', 't3.nhentai.net', 't3.nhentai.net'],
     remotePatterns: [
       {
         protocol: 'https',
