@@ -15,7 +15,6 @@ export function SafeImage({ src = errorPic, alt = 'empty-image', className, widt
         alt={alt}
         width={typeof width === 'number' ? width : 200}
         height={typeof height === 'number' ? height : 200}
-        className="rounded object-conver"
         title={src}
         placeholder="blur"
         blurDataURL={errorPic}
