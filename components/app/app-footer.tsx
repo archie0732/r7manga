@@ -2,7 +2,7 @@
 
 import { SiGithub } from '@icons-pack/react-simple-icons';
 import { Computer, Moon, Sun } from 'lucide-react';
-import { GithubButton } from '@/components/github-button';
+import { GithubButton } from '@/components/button/github-button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';

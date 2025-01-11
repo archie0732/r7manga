@@ -1,4 +1,3 @@
-import { Book } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 import Link from 'next/link';
@@ -11,7 +10,7 @@ export function AppHeader() {
   return (
     <header className="mt-0 flex select-none justify-between p-4">
       <div className="flex items-center gap-2">
-        <SidebarTrigger><Book /></SidebarTrigger>
+        <SidebarTrigger />
         <Link href="/">
           <div className="flex">
             <h1 className={`

@@ -10,23 +10,26 @@ import {
 
 import Link from 'next/link';
 
-interface urlProp {
-  selfRelateURL: string;
-  outRelateURL: string;
+interface idProp {
+  id: string;
+  title: string;
 }
 
-export function LinkCarouselDemo({ selfRelateURL }: urlProp) {
+export function LinkCarouselDemo({ id, title }: idProp) {
+  void title;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger><EllipsisVertical /></DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>related</DropdownMenuLabel>
+        <DropdownMenuLabel>其他功能</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={selfRelateURL}>
-          <DropdownMenuItem>nhentai</DropdownMenuItem>
+        <Link href={`/n/${id}`}>
+          <DropdownMenuItem>查看 nhentai 相關</DropdownMenuItem>
         </Link>
-        <DropdownMenuItem>紳士漫畫</DropdownMenuItem>
-        <DropdownMenuItem>hitomi</DropdownMenuItem>
+        <DropdownMenuItem>在 紳士漫畫 搜尋</DropdownMenuItem>
+        <Link href={`https://nhentai.net/g/${id}`}>
+          <DropdownMenuItem>前往原網站</DropdownMenuItem>
+        </Link>
       </DropdownMenuContent>
     </DropdownMenu>
   );

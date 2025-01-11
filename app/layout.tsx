@@ -10,6 +10,7 @@ import type { Metadata } from 'next';
 import AppFooter from '@/components/app/app-footer';
 import AppCommand from '@/components/app/app-command';
 import { Toaster } from '@/components/ui/toaster';
+import { SessionProvider } from 'next-auth/react';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -49,20 +50,21 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <SessionProvider>
 
-          <SidebarProvider defaultOpen={false}>
-            <AppSidebar />
-            <div className="flex w-svw flex-1 flex-col">
-              <div className="flex min-h-svh flex-col">
-                <AppHeader />
-                {children}
-                <Toaster />
+            <SidebarProvider defaultOpen={false}>
+              <AppSidebar />
+              <div className="flex w-svw flex-1 flex-col">
+                <div className="flex min-h-svh flex-col">
+                  <AppHeader />
+                  {children}
+                  <Toaster />
+                </div>
+                <AppFooter />
               </div>
-              <AppFooter />
-            </div>
-            <AppCommand />
-          </SidebarProvider>
-
+              <AppCommand />
+            </SidebarProvider>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

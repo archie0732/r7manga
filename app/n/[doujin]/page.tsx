@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import Link from 'next/link';
 import { SafeImage } from '@/components/doujin/safe-image';
+import { Button } from '@/components/ui/button';
 
 type Props = Readonly<{
   params: Promise<{
@@ -17,6 +18,7 @@ type Props = Readonly<{
 
 export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<Doujin | null>(null);
+  const [readMore, setReadMore] = useState<boolean>(false);
 
   useEffect(() => {
     void (async () => {
@@ -72,19 +74,52 @@ export default function Page({ params }: Props) {
             `}
             >
 
-              {doujin.images.slice(0, 14).map((url, i) => (
+              {doujin.images.slice(0, 10).map((url, i) => (
                 <Link href={`/n/read/${doujin.id}`} key={i}>
                   <SafeImage
                     key={i}
                     src={viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1]}
                     width={180}
                     height={200}
-                    alt={`img-${i.toString()}`}
+                    alt={`alt-${i.toString()}`}
                   />
                 </Link>
               ))}
-
             </div>
+            <div className={`
+              mt-4 grid gap-1
+              lg:grid-cols-5
+              md:grid-cols-2
+              sm:grid-cols-2
+            `}
+            >
+              {
+                readMore
+                  ? doujin.images.slice(11, 21).map((url, i) => (
+                      <Link href={`/n/read/${doujin.id}`} key={i}>
+                        <SafeImage
+                          key={`img-${i}`}
+                          src={viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1]}
+                          width={180}
+                          height={200}
+                          alt={`alt-${i.toString()}`}
+                        />
+                      </Link>
+
+                    ))
+                  : <div />
+              }
+            </div>
+            {
+              readMore == false
+                ? (
+                    <div className="flex justify-end">
+                      <Button onClick={() => void setReadMore(true)} variant="outline">view More</Button>
+                    </div>
+                  )
+                : <div />
+            }
+
           </div>
         </div>
       </div>

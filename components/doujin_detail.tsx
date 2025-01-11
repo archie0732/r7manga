@@ -10,7 +10,7 @@ import { Heading3 } from './ui/typography';
 import { useToast } from '@/components/ui/hooks/use-toast';
 
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
-import { LinkCarouselDemo } from './button/link-carousel';
+import { LinkCarouselDemo } from './nhentai/link-carousel';
 
 interface DoujinDemo {
   doujin: Doujin;
@@ -69,7 +69,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         <Button className="hover:bg-amber-400 hover:text-black" size="icon" variant="secondary">
           <Star />
         </Button>
-        <LinkCarouselDemo selfRelateURL={`/n/${doujin.id}/related`} outRelateURL="a" />
+        <LinkCarouselDemo id={doujin.id} title={doujin.title.pretty} />
       </div>
     </Column>
   );
