@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { APPSelection } from '@/components/app/app-select';
 
-import { readDoujinURL } from '@/lib/const';
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import Image from 'next/image';
 
@@ -70,9 +69,10 @@ export default function Page({ params }: Props) {
     <div className="mt-10 flex flex-col items-center">
       {doujin.map((url, index) => (
         <Image
-          src={readDoujinURL + url}
-          alt={`漫畫圖片 ${index + 1}`}
-          key={`img-${index}`}
+          src={`https://i3.nhentai.net/galleries${url}`}
+          title={`https://i3.nehntai.net/galleries${url}`}
+          alt={`alt-${index + 1}`}
+          key={`img-${index + 1}`}
           width={800}
           height={800}
         />
