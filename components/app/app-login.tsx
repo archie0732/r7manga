@@ -47,6 +47,7 @@ export function Login() {
             )
           : (
               <Button
+                title="登入"
                 type="submit"
                 onClick={() => {
                   void signIn('google');

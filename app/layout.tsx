@@ -2,15 +2,16 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app/app-sidebar';
 import { AppHeader } from '@/components/app/app-header';
+import { SessionProvider } from 'next-auth/react';
+import { Toaster } from '@/components/ui/toaster';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import localFont from 'next/font/local';
+import AppCommand from '@/components/app/app-command';
+import AppFooter from '@/components/app/app-footer';
 import './globals.css';
 
 import type { Metadata } from 'next';
-import AppFooter from '@/components/app/app-footer';
-import AppCommand from '@/components/app/app-command';
-import { Toaster } from '@/components/ui/toaster';
-import { SessionProvider } from 'next-auth/react';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -58,12 +59,14 @@ export default function RootLayout({
                 <div className="flex min-h-svh flex-col">
                   <AppHeader />
                   {children}
+                  <SpeedInsights />
                   <Toaster />
                 </div>
                 <AppFooter />
               </div>
               <AppCommand />
             </SidebarProvider>
+
           </SessionProvider>
         </ThemeProvider>
       </body>
