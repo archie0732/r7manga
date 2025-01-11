@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 import Link from 'next/link';
 import { Book } from 'lucide-react';
-import { SafeImage } from '@/components/doujin/safe-image';
+import Image from 'next/image';
 
 type Props = Readonly<{
   searchParams: Promise<{
@@ -34,7 +34,7 @@ export default async function Page({ searchParams }: Props) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
         <span className="mb-6 text-xl">沒有結果</span>
-        <SafeImage src="/img/1210.png" alt="good" width={100} height={100} />
+        <Image src="/img/1210.png" alt="good" width={100} height={100} />
         <Link href="https://youtu.be/dQw4w9WgXcQ?si=khh7Cnz3zHogopVQ">
           <Button variant="secondary">查看更多</Button>
         </Link>
