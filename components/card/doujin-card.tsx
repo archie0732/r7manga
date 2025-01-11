@@ -1,7 +1,7 @@
 import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
-import { SafeImage } from '../doujin/safe-image';
+import Image from 'next/image';
 
 type Props = Readonly<{
   doujin: DoujinSearchResult;
@@ -23,7 +23,7 @@ export default function DoujinCard({ doujin, website }: Props) {
       >
         <Card className="flex flex-col gap-2 p-4">
           <div className="text-center">{doujin.lang.toUpperCase()}</div>
-          <SafeImage
+          <Image
             src={doujin.thumbnail}
             className="aspect-[5/7] flex-1 justify-center object-cover"
             alt="cover"

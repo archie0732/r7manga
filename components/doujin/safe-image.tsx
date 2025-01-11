@@ -18,7 +18,6 @@ export function SafeImage({ src = errorPic, alt = 'empty-image', width, height }
         placeholder="blur"
         blurDataURL={errorPic}
         loading="lazy"
-        onError={(e) => { e.currentTarget.src = errorPic; }}
       />
     </div>
   );
