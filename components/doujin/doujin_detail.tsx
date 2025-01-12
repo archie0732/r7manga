@@ -1,19 +1,20 @@
 'use client';
 
-import { BookOpenText, BookText, Copy, Download, Eye, Heart, Languages, Pen, Star, Tag, User } from 'lucide-react';
+import { BookOpenText, BookText, Copy, Download, Heart, Languages, Pen, Star, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { TagedDemo } from './taged_button';
+import { TagedDemo } from '../taged_button';
 
-import Link from 'next/link';
-import Column from './layout/column';
-import { Heading3 } from './ui/typography';
+import Column from '../layout/column';
+import { Heading3 } from '../ui/typography';
 import { useToast } from '@/components/ui/hooks/use-toast';
+import { ViewNowButtonA } from './viewnow-button';
 
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
-import { LinkCarouselDemo } from './nhentai/link-carousel';
+import { LinkCarouselDemo } from '../nhentai/link-carousel';
 
 interface DoujinDemo {
   doujin: Doujin;
+  readMode: string;
 }
 
 const copyText = async (text: string) => {
@@ -57,12 +58,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
       </div>
 
       <div className="mt-7 flex gap-2 selection-none">
-        <Link href={'/n/read/' + doujin.id}>
-          <Button variant="aaa" className="font-bold">
-            <Eye />
-            <span>Read Now</span>
-          </Button>
-        </Link>
+        <ViewNowButtonA id={doujin.id} />
         <Button size="icon" variant="secondary">
           <Download />
         </Button>

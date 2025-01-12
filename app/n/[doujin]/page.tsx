@@ -2,13 +2,14 @@
 
 import { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import { useEffect, useState } from 'react';
-import { DoujinDetail } from '@/components/doujin_detail';
+import { DoujinDetail } from '@/components/doujin/doujin_detail';
 import { viewDoujinURL } from '@/lib/const';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import Link from 'next/link';
 import { SafeImage } from '@/components/doujin/safe-image';
 import { Button } from '@/components/ui/button';
+import { useAppStore } from '@/stores/app';
 
 type Props = Readonly<{
   params: Promise<{
@@ -19,6 +20,7 @@ type Props = Readonly<{
 export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<Doujin | null>(null);
   const [readMore, setReadMore] = useState<boolean>(false);
+  const { readMode } = useAppStore();
 
   useEffect(() => {
     void (async () => {
@@ -61,7 +63,7 @@ export default function Page({ params }: Props) {
               className="rounded bg-gray-800"
             />
             <div>
-              <DoujinDetail doujin={doujin} />
+              <DoujinDetail doujin={doujin} readMode={readMode} />
             </div>
           </div>
           <div>
@@ -96,7 +98,7 @@ export default function Page({ params }: Props) {
               {
                 readMore
                   ? doujin.images.slice(11, 21).map((url, i) => (
-                      <Link href={`/n/read/${doujin.id}`} key={i}>
+                      <Link href={`/n/${doujin.id}/${readMode}`} key={i}>
                         <SafeImage
                           key={`img-${i}`}
                           src={viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1]}
