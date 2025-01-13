@@ -14,6 +14,8 @@ interface AppStoreState {
   protectImage: ProtectImage;
   readMode: ReadMode;
   readModeCheck: boolean;
+  kindkey: string;
+  ok: boolean;
   toggleProtect(this: void, state?: boolean): void;
   setTheme(this: void, theme: ThemeMode): void;
   setCommandPanelVisible(this: void, visible: boolean): void;
@@ -21,6 +23,8 @@ interface AppStoreState {
   setProtectImage(this: void, state: ProtectImage): void;
   setReadMode(this: void, state: ReadMode): void;
   showreadModeCheck(this: void, state?: boolean): void;
+  setKindKey(this: void, state: string): void;
+  setOK(this: void): void;
 }
 
 export const useAppStore = create(
@@ -33,6 +37,8 @@ export const useAppStore = create(
       protectImage: '/img/1210.png',
       readMode: 'scroll',
       readModeCheck: true,
+      kindkey: '',
+      ok: false,
 
       toggleProtect(state) {
         set({
@@ -67,6 +73,14 @@ export const useAppStore = create(
       showreadModeCheck(state) {
         set({
           readModeCheck: state ?? !get().readModeCheck,
+        });
+      },
+      setKindKey(state) {
+        set({ kindkey: state });
+      },
+      setOK() {
+        set({
+          ok: !get().ok,
         });
       },
 

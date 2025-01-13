@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpenText, BookText, Copy, Download, Heart, Languages, Pen, Star, Tag, User } from 'lucide-react';
+import { BookOpenText, BookText, Copy, Download, Heart, Languages, Pen, Tag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TagedDemo } from '../taged_button';
 
@@ -11,6 +11,7 @@ import { ViewNowButtonA } from './viewnow-button';
 
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import { LinkCarouselDemo } from '../nhentai/link-carousel';
+import { AddFavoriteButton } from './add-favorite-button';
 
 interface DoujinDemo {
   doujin: Doujin;
@@ -62,9 +63,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         <Button size="icon" variant="secondary">
           <Download />
         </Button>
-        <Button className="hover:bg-amber-400 hover:text-black" size="icon" variant="secondary">
-          <Star />
-        </Button>
+        <AddFavoriteButton id={doujin.id} title={doujin.title.pretty} cover={doujin.thumbnail} lang="ja" />
         <LinkCarouselDemo id={doujin.id} title={doujin.title.pretty} />
       </div>
     </Column>
