@@ -10,7 +10,11 @@
         "lang": ""
       }
     ],
-    "artist": [],
+    "artist": [
+      "test",
+      "test",
+      "test"
+    ],
     "character": []
   }
 }
