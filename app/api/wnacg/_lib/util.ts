@@ -7,12 +7,13 @@ export const formatId = (id: string): string => {
   return `${part1}/${part2}`;
 };
 
-export const getPicture = (id: string, page: number, extension: string) => {
+export const getPicture = (id: string, page: number, extension: string, extension1: string) => {
   const readpage = [];
 
-  for (let i = 0; i < page; i++) {
+  readpage.push(`https://img5.qy0.ru/data/${id}/${(1).toString().padStart(page.toString().length, '0')}.${extension}`);
+  for (let i = 1; i < page; i++) {
     const num = (i + 1).toString().padStart(page.toString().length, '0');
-    readpage.push(`https://img5.qy0.ru/data/${id}/${num}.${extension}`);
+    readpage.push(`https://img5.qy0.ru/data/${id}/${num}.${extension1}`);
   }
   return readpage;
 };

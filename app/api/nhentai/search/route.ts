@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { toThumbnailUrl } from '../_model/_lib/util';
 import { languageMap } from '../_model/_lib/util';
+import { LRUCache } from 'lru-cache';
 
 import type { APISearchResultData } from '../_model/apitypes';
 import { z } from 'zod';
@@ -12,6 +13,11 @@ export interface DoujinSearchResult {
   banTag: string[];
   lang: 'ja' | 'zh' | 'en';
 }
+
+const cache = new LRUCache<string, { timestamp: number; data: DoujinSearchResult[] }>({
+  max: 100,
+  ttl: 60 * 1000,
+});
 
 const ParameterSchema = z.object({
   q: z.string().nullable(),
@@ -48,13 +54,19 @@ export const GET = async (req: NextRequest) => {
 
   if (!queries.success) {
     const formatted = queries.error.format();
-
-    return Response.json(formatted, {
-      status: 400,
-    });
+    return Response.json(formatted, { status: 400 });
   }
 
   const data = queries.data;
+
+  const cacheKey = JSON.stringify(data);
+
+  const cached = cache.get(cacheKey);
+  const now = Date.now();
+
+  if (cached && now - cached.timestamp < 60000) {
+    return Response.json(cached.data);
+  }
 
   try {
     const tag = data.tag?.split(',') ?? [];
@@ -107,13 +119,12 @@ export const GET = async (req: NextRequest) => {
       });
     }
 
+    cache.set(cacheKey, { timestamp: now, data: doujinlist });
+
     return Response.json(doujinlist);
   }
   catch (error) {
     console.error(error);
-
-    return new Response('Internal Server Error', {
-      status: 500,
-    });
+    return new Response('Internal Server Error', { status: 500 });
   }
 };

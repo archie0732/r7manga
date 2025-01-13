@@ -15,7 +15,8 @@ import {
 
 import Link from 'next/link';
 
-import type { Album } from '@/app/api/wnacg/[doujin]/route';
+import type { Album } from '@/app/api/wnacg/[album]/route';
+import Image from 'next/image';
 
 type Props = Readonly<{
   params: Promise<{ album: string }>;
@@ -25,13 +26,14 @@ export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<string[]>();
   const [value, setValue] = useState<string>('無');
   const [id, setId] = useState<string>('');
-  const protectMode = useAppStore();
+  const [source, setSource] = useState<string>('');
+  const { protect, protectImage, toggleProtect } = useAppStore();
   const router = useRouter();
   const selectRef = useRef<HTMLButtonElement>(null);
 
   const handleSetting = (value: 'top' | 'home' | 'overview' | 'protect' | 'bottom', id: string) => {
     const actions = {
-      protect: () => { protectMode.toggleProtect(!protectMode.protect); },
+      protect: () => { toggleProtect(!protect); },
       top: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); },
       home: () => { router.push('/'); },
       overview: () => { router.push(`/n/${id}`); },
@@ -55,6 +57,7 @@ export default function Page({ params }: Props) {
 
         const data = (await response.json()) as Album;
         setDoujin(data.readPage);
+        setSource(data.source);
       }
       catch (error) {
         console.error('Failed to fetch doujin:', error);
@@ -70,17 +73,23 @@ export default function Page({ params }: Props) {
 
   return (
     <div className="mt-10 flex flex-col items-center">
+      <div className="flex items-center">
+        <span>if image cannot load, please go to source website</span>
+        <Link href={source}>
+          <Button variant="link">click me </Button>
+        </Link>
+      </div>
       {doujin.map((url, i) => (
         (
-          <img
+          <Image
             key={(i + 1).toString()}
-            src={protectMode.protect ? '/img/1210.png' : url}
+            src={protect ? protectImage : url}
+            title={url}
             alt={i.toString()}
             width={800}
             height={1000}
             loading="lazy"
             className="bg-gray-800"
-            onError={() => { setDoujin((prev) => prev?.filter((item) => item !== url)); }}
           />
         )
       ))}

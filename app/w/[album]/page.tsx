@@ -5,8 +5,9 @@ import { useAppStore } from '@/stores/app';
 
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Album } from '@/app/api/wnacg/[doujin]/route';
+import { Album } from '@/app/api/wnacg/[album]/route';
 import { AlbumDetail } from '@/components/wnacg/album-detai';
+import Image from 'next/image';
 
 type Props = Readonly<{
   params: Promise<{
@@ -67,7 +68,7 @@ export default function Page({ params }: Props) {
             <div className="mt-4 flex flex-wrap justify-start gap-4">
               {album.view.slice(0, 14).map((url, i) => (
                 <Link href={`/w/read/${album.id}`} key={i}>
-                  <img
+                  <Image
                     key={i}
                     src={protect ? '/img/1210.png' : 'https:' + url}
                     width={180}

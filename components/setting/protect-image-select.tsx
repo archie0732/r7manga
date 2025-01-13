@@ -25,6 +25,7 @@ export function ProtectImageSelect() {
             <DropdownMenuItem onClick={() => setProtectImage('/img/1210.png')}>Blank Nice</DropdownMenuItem>
             <DropdownMenuItem onClick={() => setProtectImage('/img/1280.png')}>Midoriya</DropdownMenuItem>
             <DropdownMenuItem onClick={() => setProtectImage('/img/20250108.jpg')}>Yoimiya</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setProtectImage('/img/8_20250113-2.jpg')}>Yanami anna</DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

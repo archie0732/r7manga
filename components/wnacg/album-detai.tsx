@@ -9,7 +9,7 @@ import Column from '../layout/column';
 import { Heading3 } from '../ui/typography';
 import { useToast } from '@/components/ui/hooks/use-toast';
 
-import { Album } from '@/app/api/wnacg/[doujin]/route';
+import { Album } from '@/app/api/wnacg/[album]/route';
 
 interface AlbumProp {
   album: Album;

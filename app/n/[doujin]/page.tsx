@@ -7,9 +7,9 @@ import { viewDoujinURL } from '@/lib/const';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import Link from 'next/link';
-import { SafeImage } from '@/components/doujin/safe-image';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/stores/app';
+import Image from 'next/image';
 
 type Props = Readonly<{
   params: Promise<{
@@ -20,7 +20,7 @@ type Props = Readonly<{
 export default function Page({ params }: Props) {
   const [doujin, setDoujin] = useState<Doujin | null>(null);
   const [readMore, setReadMore] = useState<boolean>(false);
-  const { readMode } = useAppStore();
+  const { protect, protectImage, readMode } = useAppStore();
 
   useEffect(() => {
     void (async () => {
@@ -55,8 +55,8 @@ export default function Page({ params }: Props) {
       <div className="ml-1.5 mt-10 flex flex-col items-center justify-center">
         <div className="container flex flex-col gap-4">
           <div className="flex flex-wrap gap-4">
-            <SafeImage
-              src={doujin.cover}
+            <Image
+              src={protect ? protectImage : doujin.cover}
               width={300}
               height={300}
               alt="cover"
@@ -69,18 +69,16 @@ export default function Page({ params }: Props) {
           <div>
             <h1 className="mt-10 text-xl">漫畫預覽:</h1>
             <div className={`
-              mt-4 grid gap-1
-              lg:grid-cols-5
-              md:grid-cols-2
-              sm:grid-cols-2
+              mt-4 grid grid-cols-2 gap-4
+              md:grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] md:gap-4
             `}
             >
 
-              {doujin.images.slice(0, 10).map((url, i) => (
+              {doujin.images.slice(0, 12).map((url, i) => (
                 <Link href={`/n/read/${doujin.id}`} key={i}>
-                  <SafeImage
+                  <Image
                     key={i}
-                    src={viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1]}
+                    src={protect ? protectImage : (viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1])}
                     width={180}
                     height={200}
                     alt={`alt-${i.toString()}`}
@@ -89,19 +87,17 @@ export default function Page({ params }: Props) {
               ))}
             </div>
             <div className={`
-              mt-4 grid gap-1
-              lg:grid-cols-5
-              md:grid-cols-2
-              sm:grid-cols-2
+              mt-4 grid grid-cols-2 gap-4
+              md:grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] md:gap-4
             `}
             >
               {
                 readMore
-                  ? doujin.images.slice(11, 21).map((url, i) => (
+                  ? doujin.images.slice(13, 25).map((url, i) => (
                       <Link href={`/n/${doujin.id}/${readMode}`} key={i}>
-                        <SafeImage
+                        <Image
                           key={`img-${i}`}
-                          src={viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1]}
+                          src={protect ? protectImage : (viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1])}
                           width={180}
                           height={200}
                           alt={`alt-${i.toString()}`}

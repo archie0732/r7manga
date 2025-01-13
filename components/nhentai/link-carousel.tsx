@@ -23,7 +23,7 @@ export function LinkCarouselDemo({ id, title }: idProp) {
       <DropdownMenuContent>
         <DropdownMenuLabel>其他功能</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href={`/n/${id}`}>
+        <Link href={`/n/${id}/related`}>
           <DropdownMenuItem>查看 nhentai 相關</DropdownMenuItem>
         </Link>
         <DropdownMenuItem>在 紳士漫畫 搜尋</DropdownMenuItem>

@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 type ThemeMode = 'light' | 'dark' | 'system';
 export type NhentaiURL = 'https://i1.nhentai.net/galleries' | 'https://i2.nhentai.net/galleries' | 'https://i3.nhentai.net/galleries';
-export type ProtectImage = '/img/1210.png' | '/img/1280.png' | '/img/20250108.jpg';
+export type ProtectImage = '/img/1210.png' | '/img/1280.png' | '/img/20250108.jpg' | '/img/8_20250113-2.jpg';
 export type ReadMode = 'scroll' | 'pagination';
 
 interface AppStoreState {

@@ -27,10 +27,17 @@ type Params = Readonly<{
   params: Promise<{ doujin: string }>;
 }>;
 
+let cacheId = '', cache: Doujin, lastestTime = 0;
+
 export async function GET(req: Request, { params }: Params) {
   const id = (await params).doujin;
 
+  if (cache && cacheId == id && Date.now() - lastestTime <= 6_000) {
+    return Response.json((cache));
+  }
+
   const response = await fetch(`https://nhentai.net/api/gallery/${id}`);
+  cacheId = id;
 
   if (!response.ok) {
     return new Response(
@@ -59,6 +66,24 @@ export async function GET(req: Request, { params }: Params) {
     }
     return acc;
   }, [] as APIDoujinTagData[]);
+
+  cache = ({
+    ...data,
+    id: data.id.toString(),
+    tags: data.tags.filter((t) => t.type == 'tag'),
+    images,
+    category,
+    parody,
+    language,
+    artists,
+    characters,
+    translated: !!data.tags.find((t) => t.name == 'translated'),
+    thumbnail: toThumbnailUrl(json),
+    cover: toCoverUrl(json),
+    banTag,
+  } as Doujin);
+
+  lastestTime = Date.now();
 
   return Response.json(({
     ...data,

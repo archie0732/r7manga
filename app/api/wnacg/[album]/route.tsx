@@ -2,10 +2,11 @@ import { load } from 'cheerio';
 import { formatId, getPicture } from '../_lib/util';
 
 type Params = Readonly<{
-  params: Promise<{ doujin: string }>;
+  params: Promise<{ album: string }>;
 }>;
 
 export interface Album {
+  source: string;
   id: string;
   title: string;
   cover: string;
@@ -17,7 +18,7 @@ export interface Album {
 }
 
 export async function GET(req: Request, { params }: Params) {
-  const id = (await params).doujin;
+  const id = (await params).album;
 
   const response = await fetch(`https://www.wnacg.com/photos-index-aid-${id}.html`);
 
@@ -50,11 +51,13 @@ export async function GET(req: Request, { params }: Params) {
     return Response.json('this album is not exist', { status: 500 });
   }
 
-  const extension = cover.split('.').pop() ?? 'webp';
+  const extension0 = cover.split('.').pop() ?? 'webp';
+  const extension1 = view[1].split('.').pop() ?? 'webp';
 
-  const readPage = getPicture(formatId(id), Number(page), extension);
+  const readPage = getPicture(formatId(id), Number(page), extension0, extension1);
 
   return Response.json({
+    source: `https://www.wnacg.com/photos-index-aid-${id}.html`,
     id,
     title,
     cover,
