@@ -9,12 +9,13 @@ import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import Link from 'next/link';
 
 export function GithubButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <span>關於本站</span>
+        <span>about this web</span>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -31,7 +32,9 @@ export function GithubButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>關閉</AlertDialogCancel>
-          <AlertDialogAction>Github</AlertDialogAction>
+          <Link href="https://github.com/archie0732/r7manga">
+            <AlertDialogAction>Github</AlertDialogAction>
+          </Link>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

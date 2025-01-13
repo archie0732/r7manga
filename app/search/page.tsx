@@ -63,6 +63,9 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div className="flex flex-col justify-center">
+      <div className="flex justify-center">
+        <span className="text-center text-xl font-bold">{`搜尋結果: ${q === '*' ? '最近' : q ?? artist ?? tag ?? parody ?? character ?? ''}`}</span>
+      </div>
       <div className="mr-5 flex justify-between">
         <div>
           <Button className="ml-5" variant="ghost" asChild>

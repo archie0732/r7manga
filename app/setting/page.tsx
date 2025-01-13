@@ -13,29 +13,30 @@ import { ThemesSwitch } from '@/components/setting/theme-switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 export default function Page() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="mb-6 text-3xl font-bold">Settings</h1>
 
-      <Tabs defaultValue="profile" className="space-y-5">
+      <Tabs defaultValue="general" className="space-y-5">
         <TabsList>
-          <TabsTrigger value="profile" className="flex items-center gap-2">
+          <TabsTrigger value="general" className="flex items-center gap-2">
             <Wrench size={16} />
             General
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
+          <TabsTrigger value="prefer" className="flex items-center gap-2">
             <UserCog size={16} />
             Prefer
           </TabsTrigger>
           <TabsTrigger value="privacy" className="flex items-center gap-2">
             <Lock size={16} />
-            開發者模式
+            Develop Mode
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile">
+        <TabsContent value="general">
           <Card>
             <CardHeader className="text-lg">
               <CardTitle>General</CardTitle>
@@ -64,8 +65,12 @@ export default function Page() {
                 </div>
                 <ProtectImageSelect />
               </div>
-              <div className="mt-10 flex justify-between">
-                <div className="flex flex-col">
+              <div className={`
+                mt-10 flex flex-wrap justify-center
+                md:justify-between
+              `}
+              >
+                <div className="flex flex-col justify-start text-left">
                   <span>Reading Mode</span>
                   <ReadModeChackBox />
                 </div>
@@ -124,33 +129,33 @@ export default function Page() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="notifications">
+        <TabsContent value="prefer">
           <Card>
             <CardHeader>
-              <CardTitle>通知設定</CardTitle>
-              <CardDescription>管理您的通知偏好</CardDescription>
+              <CardTitle>Not ready</CardTitle>
+              <CardDescription>not ready</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>電子郵件通知</Label>
-                  <div className="text-sm text-gray-500">接收重要更新的電子郵件</div>
+                  <Label>ban tag</Label>
+                  <div className="text-sm text-gray-500">cannot use</div>
                 </div>
-                <Switch />
+                <Switch disabled />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>推送通知</Label>
-                  <div className="text-sm text-gray-500">接收即時推送通知</div>
+                  <Label>follow favorite artist</Label>
+                  <div className="text-sm text-gray-500">cannot use</div>
                 </div>
-                <Switch />
+                <Switch disabled />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>每週摘要</Label>
-                  <div className="text-sm text-gray-500">接收每週活動摘要</div>
+                  <Label>prefer comic</Label>
+                  <div className="text-sm text-gray-500">cannot use</div>
                 </div>
-                <Switch />
+                <Switch disabled />
               </div>
             </CardContent>
           </Card>
@@ -159,29 +164,74 @@ export default function Page() {
         <TabsContent value="privacy">
           <Card>
             <CardHeader>
-              <CardTitle>隱私設定</CardTitle>
-              <CardDescription>管理您的隱私偏好</CardDescription>
+              <CardTitle>Developer Mode</CardTitle>
+              <CardDescription>advanced options or during develop</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+
+              <span className="text-lg font-bold">Developer</span>
+
+              <div className={`
+                flex items-center justify-between rounded-md border p-2
+              `}
+              >
+
+                <div className="flex items-center gap-2">
+                  <Avatar>
+                    <AvatarImage src="/img/8.jpg" />
+                  </Avatar>
+                  <span className="text-md text-gray-500">archie0732</span>
+                </div>
+
+                <Link
+                  href="https://github.com/archie0732"
+                  className="flex items-end"
+                >
+                  <Button variant="outline">view github</Button>
+                </Link>
+
+              </div>
+
+              <div className="flex items-end justify-between">
+                <div className="flex flex-col">
+                  <span>WebSite</span>
+                  <span className="text-gray-500">source code</span>
+                </div>
+                <Link
+                  href="https://github.com/archie0732/r7manga"
+                  className={`
+                    flex
+                    hover:text-blue-600
+                  `}
+                >
+                  https://github.com/archie0732/r7manga
+                </Link>
+              </div>
+
+              <div className="flex justify-between">
+                <div className="flex flex-col">
+                  <span>API Console</span>
+                  <span className="text-gray-500">show the api log</span>
+                </div>
+                <div className="flex items-center">
+                  <Switch disabled />
+                </div>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>公開個人資料</Label>
-                  <div className="text-sm text-gray-500">允許其他使用者查看您的個人資料</div>
+                  <Label>Version</Label>
                 </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>顯示上線狀態</Label>
-                  <div className="text-sm text-gray-500">讓其他使用者看到您的上線狀態</div>
+                <div className="flex justify-end">
+                  <Input defaultValue="1.20.8" disabled />
                 </div>
-                <Switch />
               </div>
+
               <div className="space-y-2">
-                <Label>封鎖的使用者</Label>
-                <Input placeholder="搜尋使用者..." />
-                <div className="mt-2 text-sm text-gray-500">
-                  目前沒有封鎖任何使用者
+                <Label>feed back</Label>
+                <Input />
+                <div className="flex justify-end">
+                  <Button>Submit</Button>
                 </div>
               </div>
             </CardContent>

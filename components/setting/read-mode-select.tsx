@@ -20,7 +20,7 @@ export function ReadingModeSelector() {
     {
       id: 'pagination',
       label: 'Paged Reading',
-      description: 'single-page flip reading mode, better in cellphone',
+      description: 'single-page flip reading mode, better in cellphone if feel lag',
       image: '/img/setting/pagination.png',
     },
   ];

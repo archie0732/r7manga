@@ -27,7 +27,7 @@ export default function AppFooter() {
         </Row>
       </Row>
       <Row className="gap-4">
-        <Link href="https://github/com/archie0723/r7manga">
+        <Link href="https://github.com/archie0732/r7manga">
           <SiGithub />
         </Link>
         <DropdownMenu>
