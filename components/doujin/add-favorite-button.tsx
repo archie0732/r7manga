@@ -25,6 +25,7 @@ export function AddFavoriteButton({ id, title, cover, lang }: HaveDoujin) {
     const res = await fetch('/api/keyCheck', { method: 'POST', headers: {
       'Content-Type': 'application/json',
     }, body: JSON.stringify({ message: kindkey }) });
+
     if (!res.ok) {
       toast({
         title: '目前此功能尚未實作完畢',

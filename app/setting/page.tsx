@@ -234,6 +234,11 @@ export default function Page() {
                   <Button>Submit</Button>
                 </div>
               </div>
+
+              <div className="flex justify-between">
+                <span>test mode</span>
+                <Link href="/test">a</Link>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

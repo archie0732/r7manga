@@ -13,5 +13,7 @@ export async function POST(req: NextRequest) {
     return Response.json('ok', { status: 200 });
   }
 
+  console.log(`you ${key.message} and ans ${process.env.SAVE_KEY}`);
+
   return Response.json('you are gay', { status: 403 });
 }

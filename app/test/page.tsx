@@ -26,6 +26,7 @@ export default function Page() {
       <div className="flex gap-2">
         <Button onClick={() => void test()}>test</Button>
         <Button onClick={() => setKindKey('yanami_anna')}>set key</Button>
+        <Button onClick={() => setKindKey('')}>clear key</Button>
       </div>
     </div>
   );
