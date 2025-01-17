@@ -5,13 +5,16 @@ import { useAppStore } from '@/stores/app';
 import { useEffect, useState } from 'react';
 import { DoujinCarousel } from '../doujin-carousel';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 interface FavoriteProps {
   doujin: DoujinSearchResult[];
 }
 
-export function DoujinFavorite({ doujin }: FavoriteProps) {
+export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
   const { kindkey } = useAppStore();
+  const router = useRouter();
   const [check, setCheck] = useState<boolean>(false);
   const [curPage, setCurPage] = useState<number>(1);
   const [comic, setComic] = useState<DoujinSearchResult[]>([]);
@@ -32,6 +35,10 @@ export function DoujinFavorite({ doujin }: FavoriteProps) {
     setComic(doujin.slice(startIndex, endIndex));
   }, [curPage, doujin, PerPage]);
 
+  if (doujin.length === 0) {
+    return <div></div>;
+  }
+
   if (check === false) {
     return <div>目前本功能暫時不開放</div>;
   }
@@ -40,10 +47,16 @@ export function DoujinFavorite({ doujin }: FavoriteProps) {
     setCurPage(page);
   };
 
+  const random = () => {
+    const id = doujin[Math.floor(Math.random() * doujin.length)].id;
+    router.push(`/n/${id}`);
+  };
+
   return (
     <div>
       <div className="flex justify-between">
-        <h2 className="text-xl font-bold">nhentai favorites</h2>
+        <h2 className="text-2xl font-bold">nhentai favorites</h2>
+        <Button onClick={random} variant="outline">random</Button>
       </div>
       <DoujinCarousel comic={comic} website="n" />
       <div className="flex items-center justify-center gap-2">

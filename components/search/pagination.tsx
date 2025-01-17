@@ -1,7 +1,6 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -12,17 +11,19 @@ import { Button } from '../ui/button';
 interface PaginPro {
   url: string;
   nowPage: number;
+  doujinCount: number;
 }
 
-export function PaginationDemo({ url, nowPage }: PaginPro) {
+export function PaginationDemo({ url, nowPage, doujinCount }: PaginPro) {
   return (
+
     <Pagination className="mt-10">
       <PaginationContent>
         <PaginationItem>
-          {nowPage == 1 ? <Button disabled variant="ghost" /> : <PaginationPrevious href={`${url}&page=${(nowPage - 1).toString()}`} />}
+          {nowPage == 1 ? <Button className="hidden" /> : <PaginationPrevious href={`${url}&page=${(nowPage - 1).toString()}`} />}
         </PaginationItem>
         <PaginationItem>
-          {nowPage == 1 ? <Button disabled variant="ghost">0</Button> : <PaginationLink href={`${url}&page=${(nowPage - 1).toString()}`}>{(nowPage - 1).toString()}</PaginationLink>}
+          {nowPage == 1 ? <Button className="hidden" /> : <PaginationLink href={`${url}&page=${(nowPage - 1).toString()}`}>{(nowPage - 1).toString()}</PaginationLink>}
         </PaginationItem>
         <PaginationItem>
           <PaginationLink href={`${url}&page=${(nowPage).toString()}`} isActive>
@@ -30,13 +31,11 @@ export function PaginationDemo({ url, nowPage }: PaginPro) {
           </PaginationLink>
         </PaginationItem>
         <PaginationItem>
-          <PaginationLink href={`${url}&page=${(nowPage + 1).toString()}`}>{(nowPage + 1).toString()}</PaginationLink>
+          {doujinCount < 25 ? <div className="hidden" /> : <PaginationLink href={`${url}&page=${(nowPage + 1).toString()}`}>{(nowPage + 1).toString()}</PaginationLink>}
         </PaginationItem>
+
         <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href={`${url}&page=${(nowPage + 1).toString()}`} />
+          {doujinCount < 25 ? <div className="hidden" /> : <PaginationNext href={`${url}&page=${(nowPage + 1).toString()}`} />}
         </PaginationItem>
       </PaginationContent>
     </Pagination>

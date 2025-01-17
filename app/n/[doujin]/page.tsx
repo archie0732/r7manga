@@ -54,7 +54,11 @@ export default function Page({ params }: Props) {
     <main>
       <div className="ml-1.5 mt-10 flex flex-col items-center justify-center">
         <div className="container flex flex-col gap-4">
-          <div className="flex flex-wrap gap-4">
+
+          {/* TO DO fix */}
+
+          <div className="flex space-x-3">
+
             <Image
               src={protect ? protectImage : doujin.cover}
               width={300}
@@ -62,10 +66,9 @@ export default function Page({ params }: Props) {
               alt="cover"
               className="rounded bg-gray-800"
             />
-            <div>
-              <DoujinDetail doujin={doujin} readMode={readMode} />
-            </div>
+            <DoujinDetail doujin={doujin} readMode={readMode} />
           </div>
+
           <div>
             <h1 className="mt-10 text-xl">漫畫預覽:</h1>
             <div className={`

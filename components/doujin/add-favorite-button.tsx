@@ -87,7 +87,10 @@ export function AddFavoriteButton({ id, title, thumbnail, lang }: HaveDoujin) {
         ? (
             <Button
               size="icon"
-              className="bg-amber-500 text-white"
+              className={`
+                bg-amber-500 text-white
+                hover:bg-amber-700
+              `}
               variant="secondary"
             >
               <Star />

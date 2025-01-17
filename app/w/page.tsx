@@ -47,7 +47,7 @@ export default async function Page({ searchParams }: Props) {
         <span className="text-5xl">Wnacg</span>
       </div>
       <DoujinCarousel comic={doujin} website="w" />
-      <PaginationDemo url="/w?" nowPage={Number(page) ? Number(page) : 1} />
+      <PaginationDemo url="/w?" nowPage={Number(page) ? Number(page) : 1} doujinCount={doujin.length} />
     </div>
   );
 }

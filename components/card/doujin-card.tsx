@@ -30,7 +30,9 @@ export default function DoujinCard({ doujin, website }: Props) {
           <Image
             loading="lazy"
             src={protect ? protectImage : doujin.thumbnail}
-            className="aspect-[5/7] flex-1 justify-center object-cover"
+            className={`
+              aspect-[5/7] flex-1 justify-center rounded-md object-cover
+            `}
             alt="cover"
             width={200}
             height={300}

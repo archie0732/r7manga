@@ -14,6 +14,8 @@ import { LinkCarouselDemo } from '../nhentai/link-carousel';
 import { AddFavoriteButton } from './add-favorite-button';
 import { langFilter } from '@/lib/utils';
 import { useEffect, useState } from 'react';
+import { SubArtistTagedDemo } from '../sub-artist-badge';
+import { SubCharacterTagedDemo } from '../sub-character-badge';
 
 interface DoujinDemo {
   doujin: Doujin;
@@ -53,8 +55,8 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         <span>{doujin.id}</span>
       </button>
       <TagedDemo tag={doujin.parody} icon={<BookText />} label="系列" />
-      <TagedDemo tag={doujin.artists} icon={<Pen />} label="作者" />
-      <TagedDemo tag={doujin.characters} icon={<User />} label="角色" />
+      <SubArtistTagedDemo tag={doujin.artists} icon={<Pen />} label="作者" />
+      <SubCharacterTagedDemo tag={doujin.characters} icon={<User />} label="角色" />
       <TagedDemo tag={doujin.language} icon={<Languages />} label="語言" />
       <TagedDemo tag={doujin.tags} icon={<Tag />} label="標籤" />
       <div className="mt-2 flex gap-2">
