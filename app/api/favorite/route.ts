@@ -33,7 +33,7 @@ interface GitHubFileResponse {
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = 'archie0732';
-const REPO = 'r7manga-api';
+const REPO = 'r7-api-storage';
 const FILE_PATH = 'data/favorite.json';
 const BRANCH = 'main';
 
