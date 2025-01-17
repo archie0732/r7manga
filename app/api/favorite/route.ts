@@ -1,35 +1,7 @@
 import { NextRequest } from 'next/server';
 import axios from 'axios';
 import 'dotenv/config';
-
-export interface MyDoujinAPI {
-  id: string;
-  title: string;
-  lang: string;
-  cover: string;
-}
-
-export interface FavoriteData {
-  name: string;
-  id: string;
-  favorite_nhentai: {
-    doujin: MyDoujinAPI[];
-    artist: string[];
-    character: string[];
-  };
-}
-
-export interface Favorite {
-  type: 'character' | 'artist' | 'doujin';
-  doujin?: MyDoujinAPI;
-  artist?: string;
-  character?: string;
-}
-
-interface GitHubFileResponse {
-  sha: string;
-  content: string; // Base64-encoded content
-}
+import { FavoriteAdd, FavoriteData, GitHubFileResponse } from './_model/apitype';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = 'archie0732';
@@ -88,7 +60,7 @@ async function updateGitHubFile(content: string, sha: string | null): Promise<vo
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const body = await req.json() as Favorite;
+  const body = await req.json() as FavoriteAdd;
 
   const { content: remoteData, sha } = await fetchRemoteFile();
 

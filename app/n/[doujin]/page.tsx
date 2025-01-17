@@ -112,7 +112,7 @@ export default function Page({ params }: Props) {
               readMore == false
                 ? (
                     <div className="flex justify-end">
-                      <Button onClick={() => void setReadMore(true)} variant="outline">view More</Button>
+                      <Button onClick={() => void setReadMore(true)} variant="link">view More</Button>
                     </div>
                   )
                 : <div />

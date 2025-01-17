@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import type { FavoriteData } from '../favorite/route';
+import type { FavoriteData } from '../favorite/_model/apitype';
 
 interface GitHubFileResponse {
   sha: string;

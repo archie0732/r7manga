@@ -12,6 +12,8 @@ import { ViewNowButtonA } from './viewnow-button';
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import { LinkCarouselDemo } from '../nhentai/link-carousel';
 import { AddFavoriteButton } from './add-favorite-button';
+import { langFilter } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 interface DoujinDemo {
   doujin: Doujin;
@@ -24,6 +26,10 @@ const copyText = async (text: string) => {
 
 export function DoujinDetail({ doujin }: DoujinDemo) {
   const { toast } = useToast();
+  const [lang, setLang] = useState<'zh' | 'ja' | 'en'>('ja');
+  useEffect(() => {
+    setLang(langFilter(doujin.language));
+  }, [doujin]);
   return (
     <Column className="items-start gap-2">
       <Heading3 className="select-text">{doujin.title.japanese ? doujin.title.japanese : doujin.title.english}</Heading3>
@@ -63,7 +69,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         <Button size="icon" variant="secondary">
           <Download />
         </Button>
-        <AddFavoriteButton id={doujin.id} title={doujin.title.pretty} cover={doujin.thumbnail} lang="ja" />
+        <AddFavoriteButton id={doujin.id} title={doujin.title.japanese ?? doujin.title.pretty} thumbnail={doujin.thumbnail} lang={lang} />
         <LinkCarouselDemo id={doujin.id} title={doujin.title.pretty} />
       </div>
     </Column>

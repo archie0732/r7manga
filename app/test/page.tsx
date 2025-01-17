@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import type { Favorite } from '../api/favorite/route';
+
 import { useAppStore } from '@/stores/app';
 
 export default function Page() {
@@ -11,7 +11,7 @@ export default function Page() {
     const res = await fetch('/api/favorite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
       type: 'artist',
       artist: 'yanami anna',
-    } as Favorite) });
+    }) });
 
     if (!res.ok) {
       alert('!ok');
