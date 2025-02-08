@@ -39,6 +39,7 @@ export const GET = async (req: Request, { params }: Params) => {
       id: doujin.id.toString(),
       thumbnail: toThumbnailUrl(doujin),
       lang: langTag ? languageMap[langTag.id] ?? 'ja' : 'ja',
+      page: doujin.num_pages,
       banTag,
     });
   }
