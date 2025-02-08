@@ -13,7 +13,7 @@ interface FavoriteProps {
 }
 
 export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
-  const { kindkey } = useAppStore();
+  const { kindkey, offline } = useAppStore();
   const router = useRouter();
   const [check, setCheck] = useState<boolean>(false);
   const [curPage, setCurPage] = useState<number>(1);
@@ -58,7 +58,7 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
         <h2 className="text-2xl font-bold">nhentai favorites</h2>
         <Button onClick={random} variant="outline">random</Button>
       </div>
-      <DoujinCarousel comic={comic} website="n" />
+      <DoujinCarousel comic={comic} website="n" mode={offline ? 'offline' : undefined} />
       <div className="flex items-center justify-center gap-2">
         <button
           onClick={() => setPage(curPage - 1)}

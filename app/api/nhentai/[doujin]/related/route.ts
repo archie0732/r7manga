@@ -10,7 +10,14 @@ interface Params {
 
 export const GET = async (req: Request, { params }: Params) => {
   const id = (await params).doujin;
-  const response = await fetch(`https://nhentai.net/api/gallery/${id}/related`);
+  const response = await fetch(`https://nhentai.net/api/gallery/${id}/related`, { headers: {
+    'cookie':
+        'cf_clearance=oSXhICF7I0Q7Nr4D8MHx0b3nYgnA47Cn1GiEcSnJdT4-1738478995-1.2.1.1-YfZpT6cGnE21mi0.sLcZ7WNrIPK2w_shdZl.LOXAnDTnwKoABZfaOTCe4pBlMe.uADLTDiky7IPPBzasv5D2MQKht9Vi_zZE5Z.aXuo5l67tXPWnyePE13.dnTWZYv3VQhFUBsXvegB7QFHO80_51ZTZ6aScdYEJlfxZ_Bjv7G0TBXiEpZAtSwxgFVgjOf0dPtGEqnKjgmYPUxSek0wsT40cSIemvlWd6blFU2IgRed2DAqMpPi7IMdh9AgiSx3uJBXQVuogbqoLDkRi0PDGq3CkL_6qsliXAs_0BMc0lQQmKSWmChLrI0xaFHgjxnRLiD5ywHXMs2OFtSiVJlomDQ',
+    'referer':
+        'https://nhentai.net/',
+    'user-agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+  } });
   if (!response.ok) {
     return new Response('failure', { status: 400 });
   }

@@ -87,12 +87,23 @@ export default function Page() {
               `}
               />
 
-              <div className="flex items-end justify-between">
-                <div className="flex flex-col">
-                  <span>Nhentai Image Source</span>
-                  <span className="text-sm text-gray-500">if the imageloading is stuck, you can try changing it.</span>
+              {/** nhentai stting */}
+              <div>
+                <div className="flex items-end justify-between">
+                  <div className="flex flex-col">
+                    <span>Nhentai Image Source</span>
+                    <span className="text-sm text-gray-500">if the imageloading is stuck, you can try changing it.</span>
+                  </div>
+                  <NURLCombobox />
                 </div>
-                <NURLCombobox />
+
+                <div className="mt-5 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span>CloudFare Token</span>
+                    <span className="text-sm text-gray-500">if cf block the page which want to visit, we can provide server token. but sometime will not work</span>
+                  </div>
+                  <Button variant="outline">get server token</Button>
+                </div>
               </div>
 
               <div className={`

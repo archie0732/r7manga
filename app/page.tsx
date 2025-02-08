@@ -10,12 +10,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 import type { DoujinSearchResult } from './api/nhentai/search/route';
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   const [doujin, setDoujin] = useState<DoujinSearchResult[]>([]);
   const [wnacg, setWnacg] = useState<DoujinSearchResult[]>([]);
 
   const [loading, setloading] = useState(false);
+  const [error, setError] = useState(false);
 
   const url = `/api/nhentai/search?q=*&sort=recent`;
   const wurl = `/api/wnacg/`;
@@ -26,7 +28,7 @@ export default function Home() {
     const wresponse = await fetch(wurl);
 
     if (!response.ok) {
-      console.error(`Error: ${response.statusText}`);
+      setError(true);
       return;
     }
     if (!wresponse.ok) {
@@ -45,8 +47,25 @@ export default function Home() {
     void updateData();
   }, []);
 
-  if (!loading) {
+  if (!loading && !error) {
     return <HomeLoading />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center">
+        <Card>
+          <CardHeader>
+            <CardTitle>nhentai fetch error</CardTitle>
+            <CardDescription>you can use favorite offline mode or wnacg</CardDescription>
+          </CardHeader>
+          <CardFooter className="flex items-end justify-between">
+            <Link href="/w"><Button>Wnacg</Button></Link>
+            <Link href="/favorite"><Button>Favorite</Button></Link>
+          </CardFooter>
+        </Card>
+      </div>
+    );
   }
 
   return (

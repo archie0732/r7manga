@@ -1,11 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { openNhentaiAndGetCfClearance } from '@/lib/utils';
 
 import { useAppStore } from '@/stores/app';
 
 export default function Page() {
-  const { setKindKey } = useAppStore();
+  const { setKindKey, setOffline } = useAppStore();
 
   const test = async () => {
     const res = await fetch('/api/favorite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
@@ -27,6 +28,8 @@ export default function Page() {
         <Button onClick={() => void test()}>test</Button>
         <Button onClick={() => setKindKey('yanami_anna')}>set key</Button>
         <Button onClick={() => setKindKey('')}>clear key</Button>
+        <Button onClick={() => openNhentaiAndGetCfClearance()} />
+        <Button onClick={() => setOffline()}>offline</Button>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { APIDoujinData } from '../apitypes';
+import 'dotenv/config';
 
 export function toImageUrl(
   doujin: APIDoujinData,
@@ -32,4 +33,15 @@ export const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
   6346: 'ja',
   29963: 'zh',
   12227: 'en',
+};
+
+export const fetchCFToken = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cf?n=true`);
+
+  if (!res.ok) {
+    console.error(res.statusText);
+    throw Error('fetch cf token error');
+  }
+
+  return (await res.json() as { cf_clearance: string;user_agent: string });
 };

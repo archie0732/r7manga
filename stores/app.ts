@@ -15,7 +15,7 @@ interface AppStoreState {
   readMode: ReadMode;
   readModeCheck: boolean;
   kindkey: string;
-  ok: boolean;
+  offline: boolean;
   toggleProtect(this: void, state?: boolean): void;
   setTheme(this: void, theme: ThemeMode): void;
   setCommandPanelVisible(this: void, visible: boolean): void;
@@ -24,7 +24,7 @@ interface AppStoreState {
   setReadMode(this: void, state: ReadMode): void;
   showreadModeCheck(this: void, state?: boolean): void;
   setKindKey(this: void, state: string): void;
-  setOK(this: void): void;
+  setOffline(this: void): void;
 }
 
 export const useAppStore = create(
@@ -38,7 +38,7 @@ export const useAppStore = create(
       readMode: 'scroll',
       readModeCheck: true,
       kindkey: '',
-      ok: false,
+      offline: false,
 
       toggleProtect(state) {
         set({
@@ -78,9 +78,9 @@ export const useAppStore = create(
       setKindKey(state) {
         set({ kindkey: state });
       },
-      setOK() {
+      setOffline() {
         set({
-          ok: !get().ok,
+          offline: !get().offline,
         });
       },
 

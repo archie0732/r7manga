@@ -12,6 +12,7 @@ export interface DoujinSearchResult {
   thumbnail: string;
   banTag: string[];
   lang: 'ja' | 'zh' | 'en';
+  page: number;
 }
 
 const cache = new LRUCache<string, { timestamp: number; data: DoujinSearchResult[] }>({
@@ -116,6 +117,7 @@ export const GET = async (req: NextRequest) => {
         thumbnail: toThumbnailUrl(doujin),
         banTag,
         lang: langTag ? languageMap[langTag.id] ?? 'ja' : 'ja',
+        page: doujin.images.pages.length,
       });
     }
 

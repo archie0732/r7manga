@@ -25,3 +25,31 @@ export const langFilter = (lang: APIDoujinTagData[]) => {
     return 'en';
   }
 };
+
+export function openNhentaiAndGetCfClearance() {
+  const win = window.open('https://nhentai.net', '_blank');
+
+  if (!win) {
+    alert('請允許彈出視窗！');
+    return;
+  }
+
+  const interval = setInterval(() => {
+    try {
+      const cookies = win.document.cookie;
+      const match = /cf_clearance=([^;]+)/.exec(cookies);
+      if (match) {
+        const cfClearance = match[1];
+
+        localStorage.setItem('cf_clearance', cfClearance);
+        console.log('獲取 cf_clearance:', cfClearance);
+
+        clearInterval(interval);
+        win.close();
+      }
+    }
+    catch (error) {
+      void error;
+    }
+  }, 2000);
+}

@@ -7,9 +7,10 @@ import DoujinCard from './card/doujin-card';
 interface CarouselSizeProps {
   comic: DoujinSearchResult[] ;
   website: string;
+  mode?: 'offline';
 }
 
-export function DoujinCarousel({ comic, website }: CarouselSizeProps) {
+export function DoujinCarousel({ comic, website, mode }: CarouselSizeProps) {
   return (
     <div className={`
       grid grid-cols-2 gap-2 p-4
@@ -17,7 +18,7 @@ export function DoujinCarousel({ comic, website }: CarouselSizeProps) {
     `}
     >
       {comic.map((item) => (
-        <DoujinCard key={item.id} doujin={item} website={website} />
+        <DoujinCard key={item.id} doujin={item} website={website} mode={mode} />
       ))}
     </div>
   );

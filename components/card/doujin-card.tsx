@@ -9,9 +9,10 @@ import { useAppStore } from '@/stores/app';
 type Props = Readonly<{
   doujin: DoujinSearchResult;
   website: string;
+  mode?: 'offline';
 }>;
 
-export default function DoujinCard({ doujin, website }: Props) {
+export default function DoujinCard({ doujin, website, mode }: Props) {
   const { protect, protectImage } = useAppStore();
   return (
     <div
@@ -22,7 +23,7 @@ export default function DoujinCard({ doujin, website }: Props) {
     >
       <Link
         key={doujin.id}
-        href={`/${website}/${doujin.id}`}
+        href={mode ? `/favorite/${doujin.id}/` : `/${website}/${doujin.id}`}
         className="relative"
       >
         <Card className="flex flex-col gap-2 p-4">
