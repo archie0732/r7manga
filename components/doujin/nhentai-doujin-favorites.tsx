@@ -7,6 +7,7 @@ import { DoujinCarousel } from '../doujin-carousel';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
+import { AddFavoriteButton } from '../setting/add-favorite-doujin';
 
 interface FavoriteProps {
   doujin: DoujinSearchResult[];
@@ -56,7 +57,10 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
     <div>
       <div className="flex justify-between">
         <h2 className="text-2xl font-bold">nhentai favorites</h2>
-        <Button onClick={random} variant="outline">random</Button>
+        <div className="flex gap-1">
+          <AddFavoriteButton />
+          <Button onClick={random} variant="outline">random</Button>
+        </div>
       </div>
       <DoujinCarousel comic={comic} website="n" mode={offline ? 'offline' : undefined} />
       <div className="flex items-center justify-center gap-2">

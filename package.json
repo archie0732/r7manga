@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next dev -H 172.20.10.9",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cf": "bun cf_bypass.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",

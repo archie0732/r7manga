@@ -1,5 +1,7 @@
+import { resolve } from 'path';
 import { APIDoujinData } from '../apitypes';
 import 'dotenv/config';
+import { readFileSync } from 'fs';
 
 export function toImageUrl(
   doujin: APIDoujinData,
@@ -35,13 +37,9 @@ export const languageMap: Partial<Record<string, 'ja' | 'zh' | 'en'>> = {
   12227: 'en',
 };
 
-export const fetchCFToken = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cf?n=true`);
+export const fetchCFToken = () => {
+  const path = resolve('cf.json');
+  const json = JSON.parse(readFileSync(path, 'utf-8')) as { user_agent: string;cf_clearance: string };
 
-  if (!res.ok) {
-    console.error(res.statusText);
-    throw Error('fetch cf token error');
-  }
-
-  return (await res.json() as { cf_clearance: string;user_agent: string });
+  return json;
 };

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { toThumbnailUrl } from '../_model/_lib/util';
+import { fetchCFToken, toThumbnailUrl } from '../_model/_lib/util';
 import { languageMap } from '../_model/_lib/util';
 import { LRUCache } from 'lru-cache';
 
@@ -91,7 +91,14 @@ export const GET = async (req: NextRequest) => {
 
     const url = `https://nhentai.net/api/galleries/search?${params.toString()}`;
 
-    const response = await fetch(url);
+    const { cf_clearance, user_agent } = fetchCFToken();
+
+    const response = await fetch(url, {
+      headers: {
+        'user-agent': user_agent,
+        'cookie': cf_clearance,
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);

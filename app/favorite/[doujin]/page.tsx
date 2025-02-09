@@ -63,7 +63,7 @@ export default async function Page({ params }: Props) {
         <div className="mt-72">
           {
             Array.from({ length: data.page }).map((_, i) => (
-              <Image src={`https://i2.nhentai.net/galleries/${mediaId}/${(i + 1)}.${extension}`} alt={`img-${i}`} height={800} width={800} />
+              <Image src={`https://i2.nhentai.net/galleries/${mediaId}/${(i + 1)}.${extension}`} alt={`img-${i}`} height={800} width={800} key={`img-${i}`} />
             ))
           }
         </div>

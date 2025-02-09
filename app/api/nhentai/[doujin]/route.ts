@@ -1,4 +1,4 @@
-import { toCoverUrl, toImageUrl, toThumbnailUrl } from '../_model/_lib/util';
+import { fetchCFToken, toCoverUrl, toImageUrl, toThumbnailUrl } from '../_model/_lib/util';
 import { APIDoujinData, APIDoujinTagData } from '../_model/apitypes';
 
 export interface TagData {
@@ -36,7 +36,14 @@ export async function GET(req: Request, { params }: Params) {
     return Response.json((cache));
   }
 
-  const response = await fetch(`https://nhentai.net/api/gallery/${id}`);
+  const { cf_clearance, user_agent } = fetchCFToken();
+
+  const response = await fetch(`https://nhentai.net/api/gallery/${id}`, {
+    headers: {
+      'user-agent': user_agent,
+      'cookie': cf_clearance,
+    },
+  });
   cacheId = id;
 
   if (!response.ok) {

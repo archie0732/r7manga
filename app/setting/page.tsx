@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { OfflineMode } from '@/components/button/offline-mode';
 
 export default function Page() {
   return (
@@ -97,12 +98,20 @@ export default function Page() {
                   <NURLCombobox />
                 </div>
 
+                <div className="mt-2 flex items-end justify-between">
+                  <div className="flex flex-col">
+                    <span>收藏查看模式</span>
+                    <span className="text-sm text-gray-500">當網站被cloudflare攔下無法觀看時，可以開啟離線模式</span>
+                  </div>
+                  <OfflineMode />
+                </div>
+
                 <div className="mt-5 flex items-center justify-between">
                   <div className="flex flex-col">
                     <span>CloudFare Token</span>
-                    <span className="text-sm text-gray-500">if cf block the page which want to visit, we can provide server token. but sometime will not work</span>
+                    <span className="text-sm text-gray-500">需要在本機啟動下才可以設定</span>
                   </div>
-                  <Button variant="outline">get server token</Button>
+                  <Button variant="outline" disabled>set token</Button>
                 </div>
               </div>
 
@@ -212,7 +221,7 @@ export default function Page() {
                   href="https://github.com/archie0732/r7manga"
                   className={`
                     flex
-                    hover:text-blue-600
+                    hover:underline
                   `}
                 >
                   https://github.com/archie0732/r7manga
