@@ -71,7 +71,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
         <Button size="icon" variant="secondary">
           <Download />
         </Button>
-        <AddFavoriteButton id={doujin.id} title={doujin.title.japanese ?? doujin.title.pretty} thumbnail={doujin.thumbnail} lang={lang} />
+        <AddFavoriteButton id={doujin.id} title={doujin.title.japanese ?? doujin.title.pretty} thumbnail={doujin.thumbnail} lang={lang} page={doujin.images.length} />
         <LinkCarouselDemo id={doujin.id} title={doujin.title.pretty} />
       </div>
     </Column>

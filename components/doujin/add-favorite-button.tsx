@@ -12,11 +12,12 @@ interface HaveDoujin {
   title: string;
   thumbnail: string;
   lang: string;
+  page: number;
 }
 
 { /* TO DO: fix langauge  */ }
 
-export function AddFavoriteButton({ id, title, thumbnail, lang }: HaveDoujin) {
+export function AddFavoriteButton({ id, title, thumbnail, lang, page }: HaveDoujin) {
   const { kindkey } = useAppStore();
   const { toast } = useToast();
   const [mydata, setMyData] = useState<number>(0); // 0 沒有收藏 1 有
@@ -37,7 +38,7 @@ export function AddFavoriteButton({ id, title, thumbnail, lang }: HaveDoujin) {
       return;
     }
 
-    const resp = await fetch('/api/favorite', { method: 'POST', body: JSON.stringify({ type: 'doujin', doujin: { id, thumbnail, lang, title } } as FavoriteAdd) });
+    const resp = await fetch('/api/favorite', { method: 'POST', body: JSON.stringify({ type: 'doujin', doujin: { id, thumbnail, lang, title, page } } as FavoriteAdd) });
 
     if (!resp.ok) {
       toast({
