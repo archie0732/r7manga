@@ -1,6 +1,6 @@
 import { FavoriteData } from '@/app/api/favorite/_model/apitype';
+import { FavoriteImage } from '@/components/favorite/favorite-img';
 import { LinkIcon } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 type Props = Readonly<{
@@ -33,19 +33,16 @@ export default async function Page({ params }: Props) {
       <div className="ml-1.5 mt-10 flex flex-col items-center justify-center">
         <div className="container flex flex-col gap-4">
 
-          <div className="flex space-x-3">
-
-            <Image
-              src={data.thumbnail}
-              width={300}
-              height={300}
-              alt="cover"
-              className="rounded bg-gray-800"
-            />
+          <div className={`
+            flex flex-col space-x-3
+            md:flex-row
+          `}
+          >
+            <FavoriteImage url={data.thumbnail} alt="cover" />
             <div className="flex flex-col">
               <span className="text-2xl font-bold">{data.title}</span>
 
-              <Link href={`https://nhentai.net/g/${data.id}/`} className="mt-5">
+              <Link href={`https://nhentai.net/g/${data.id}/`} className="mt-5" target="_blank">
                 <span className={`
                   flex items-center gap-1 text-gray-500
                   hover:underline hover:underline-offset-1
@@ -55,16 +52,28 @@ export default async function Page({ params }: Props) {
                   {data.id}
                 </span>
               </Link>
+
+              <div className="mt-5 border-4 p-2">
+                <span>由於您使用了 cf_bypass 模式，所以無法查看本漫畫的詳細資訊。</span>
+                <Link
+                  href="/setting#cf-tk"
+                  className={`
+                    text-blue-500
+                    hover:underline
+                  `}
+                >
+                  前往設定
+                </Link>
+              </div>
             </div>
 
           </div>
 
         </div>
         <div className="mt-72">
-          {/** TO DO: let it use client */}
           {
             Array.from({ length: data.page }).map((_, i) => (
-              <Image src={`https://i2.nhentai.net/galleries/${mediaId}/${(i + 1)}.${extension}`} alt={`img-${i}`} height={800} width={800} key={`img-${i}`} />
+              <FavoriteImage url={`/${mediaId}/${(i + 1)}.${extension}`} alt={`img-alt-${i + 1}`} key={i} />
             ))
           }
         </div>

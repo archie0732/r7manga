@@ -13,7 +13,7 @@ interface ArtistProps {
 
 type ArtistData = Record<string, DoujinSearchResult[]>;
 
-export function SubScriptions({ artist }: ArtistProps) {
+export function SubArtist({ artist }: ArtistProps) {
   const [artistDoujin, setArtistDoujin] = useState<ArtistData>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -28,7 +28,6 @@ export function SubScriptions({ artist }: ArtistProps) {
       try {
         setLoading(true);
 
-        // ✅ 確保請求不會錯誤
         const response = await Promise.allSettled(
           artist.map(async (name) => {
             const res = await fetch(`/api/nhentai/search?artist=${name}`, { signal });
@@ -38,12 +37,10 @@ export function SubScriptions({ artist }: ArtistProps) {
           }),
         );
 
-        // ✅ 過濾成功的請求
         const successfulResults = response
           .filter((result) => result.status === 'fulfilled')
           .map((result) => (result as PromiseFulfilledResult<{ name: string; data: DoujinSearchResult[] }>).value);
 
-        // ✅ 更新狀態
         const allSubscription: ArtistData = {};
         successfulResults.forEach(({ name, data }) => {
           allSubscription[name] = data;
@@ -64,8 +61,21 @@ export function SubScriptions({ artist }: ArtistProps) {
     return () => controller.abort();
   }, [artist]);
 
+  if (error) return (
+    <div className="flex justify-center">
+      <span className="text-gray-500">由於n網的cf防護，使用vercel用戶暫時無法使用，而使用本地的用戶請去取得token。</span>
+      <Link
+        href="/setting"
+        className={`
+          text-blue-500
+          hover:underline
+        `}
+      >
+        前往設定
+      </Link>
+    </div>
+  );
   if (loading) return <div className="text-gray-500">Loading...</div>;
-  if (error) return <div>發生錯誤</div>;
 
   return (
     <div>
@@ -74,7 +84,7 @@ export function SubScriptions({ artist }: ArtistProps) {
           <div className="flex justify-between">
             <Badge className="rounded-md bg-gray-500">{name}</Badge>
             <Link href={`/search?artist=${name}&w=n`}>
-              <Button variant="link">Read more</Button>
+              <Button variant="link">Read More</Button>
             </Link>
           </div>
           <HomePageCarousel doujin={doujin} website="n" />

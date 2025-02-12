@@ -98,10 +98,11 @@ export default function Page() {
                   <NURLCombobox />
                 </div>
 
-                <div className="mt-2 flex items-end justify-between">
+                <div className="mt-2 flex items-end justify-between" id="cf-tk">
                   <div className="flex flex-col">
                     <span>收藏查看模式</span>
-                    <span className="text-sm text-gray-500">當網站被cloudflare攔下無法觀看時，可以開啟離線模式</span>
+                    <span className="text-sm text-gray-500">當網站被cloudflare攔下無法觀看時，可以開啟cf bypass模式</span>
+                    <span className="text-sm text-gray-500">須注意，在此模式下只可以觀看已收藏之作品</span>
                   </div>
                   <OfflineMode />
                 </div>
