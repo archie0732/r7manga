@@ -37,7 +37,7 @@ export function NhnentaiHomePage() {
           <span>由於 n 網開啟了 couldflare 防護，如果是用 vercel 服務的用戶，我們無法提供您關於該網站的服務，這裡向您致上歉意</span>
           <span>r7manga &copy; 2025 </span>
           <Link
-            href="/https://nhentai.net"
+            href="https://nhentai.net"
             target="_blank"
             className={`
               text-blue-500
