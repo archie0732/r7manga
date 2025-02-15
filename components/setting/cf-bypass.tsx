@@ -62,7 +62,7 @@ export function SettingCFbypassButton() {
               抓取時發生錯誤，請稍後在嘗試
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <Image src="/img/setting/miku-miku.png" alt="error-miku" height={100} width={100} />
+          <Image src="/img/setting/error-miku.png" alt="error-miku" height={100} width={100} />
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => void handleAlert(false)}>關閉</AlertDialogCancel>
           </AlertDialogFooter>

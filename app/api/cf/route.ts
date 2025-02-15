@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
 
     const execResult = await new Promise((res, reject) => {
-      exec(`node ${resolve('cf_bypass.js')}`, (error, stdout, stderr) => {
+      exec(`node ${resolve(process.cwd(), 'cf_bypass.js')}`, (error, stdout, stderr) => {
         if (error) {
           reject(error);
         }
