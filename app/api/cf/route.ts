@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { NextRequest } from 'next/server';
+import { resolve } from 'path';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,8 +10,8 @@ export async function POST(req: NextRequest) {
       return Response.json('post keyword wrong', { status: 403 });
     }
 
-    const execResult = await new Promise((resolve, reject) => {
-      exec('node ./cf_bypass.js', (error, stdout, stderr) => {
+    const execResult = await new Promise((res, reject) => {
+      exec(`node ${resolve('cf_bypass.js')}`, (error, stdout, stderr) => {
         if (error) {
           reject(error);
         }
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
           reject(new Error(stderr));
         }
         else {
-          resolve(stdout);
+          res(stdout);
         }
       });
     });
