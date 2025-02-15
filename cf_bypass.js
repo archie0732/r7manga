@@ -13,7 +13,7 @@ async function test() {
     ignoreAllFlags: false,
   });
 
-  await page.goto('https://nhentai.net/api/search?query=*', { waitUntil: 'networkidle2' });
+  await page.goto('https://nhentai.net/api/galleries/search?query=*', { waitUntil: 'networkidle2' });
 
   await new Promise((resolve) => setTimeout(resolve, 15_000));
 
@@ -23,13 +23,22 @@ async function test() {
   const userAgent = await page.browser().userAgent();
 
   if (cfClearance) {
+    console.log('success get token:', cfClearance.value);
+
     const jsonData = {
       cf_clearance: `cf_clearance=${cfClearance.value}`,
       user_agent: userAgent,
     };
 
-    writeFileSync(resolve('cf.json'), JSON.stringify(jsonData, null, 2), 'utf-8');
+    try {
+      writeFileSync(resolve('data', 'cf.json'), JSON.stringify(jsonData, null, 2), 'utf-8');
+      console.log('cf.json updated successfully');
+    }
+    catch (err) {
+      console.error('Error writing to file:', err);
+    }
 
+    // Perform fetch request to test cf_clearance and user-agent
     try {
       const res = await fetch('https://nhentai.net', {
         method: 'GET',

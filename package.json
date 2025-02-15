@@ -9,6 +9,7 @@
     "lint": "next lint",
     "cf": "bun cf_bypass.ts"
   },
+  "type": "module",
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.4",
     "@icons-pack/react-simple-icons": "^10.2.0",

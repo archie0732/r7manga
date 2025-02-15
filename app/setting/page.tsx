@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { OfflineMode } from '@/components/button/offline-mode';
+import { SettingCFbypassButton } from '@/components/setting/cf-bypass';
 
 export default function Page() {
   return (
@@ -31,7 +32,7 @@ export default function Page() {
             <UserCog size={16} />
             Prefer
           </TabsTrigger>
-          <TabsTrigger value="privacy" className="flex items-center gap-2">
+          <TabsTrigger value="developer" className="flex items-center gap-2">
             <Lock size={16} />
             Develop Mode
           </TabsTrigger>
@@ -112,7 +113,7 @@ export default function Page() {
                     <span>CloudFare Token</span>
                     <span className="text-sm text-gray-500">需要在本機啟動下才可以設定</span>
                   </div>
-                  <Button variant="outline" disabled>set token</Button>
+                  <SettingCFbypassButton />
                 </div>
               </div>
 
@@ -182,7 +183,7 @@ export default function Page() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="privacy">
+        <TabsContent value="developer">
           <Card>
             <CardHeader>
               <CardTitle>Developer Mode</CardTitle>
@@ -249,7 +250,7 @@ export default function Page() {
               </div>
 
               <div className="space-y-2">
-                <Label>feed back</Label>
+                <Label>Command</Label>
                 <Input />
                 <div className="flex justify-end">
                   <Button>Submit</Button>

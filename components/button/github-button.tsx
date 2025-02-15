@@ -32,8 +32,8 @@ export function GithubButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>關閉</AlertDialogCancel>
-          <Link href="https://github.com/archie0732/r7manga">
-            <AlertDialogAction>Github</AlertDialogAction>
+          <Link href="/about">
+            <AlertDialogAction>about web</AlertDialogAction>
           </Link>
         </AlertDialogFooter>
       </AlertDialogContent>
