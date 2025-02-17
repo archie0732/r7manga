@@ -18,7 +18,7 @@ export default function Page({ params }: Props) {
   const [id, setId] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { nhentaiImageURL } = useAppStore();
+  const { nhentaiImageURL, protect, protectImage } = useAppStore();
 
   const fetchAPIData = async () => {
     try {
@@ -71,7 +71,7 @@ export default function Page({ params }: Props) {
     <div className="mt-10 flex flex-col items-center">
       {doujin.map((url, index) => (
         <Image
-          src={`${nhentaiImageURL}${url}`}
+          src={protect ? `${protectImage}` : `${nhentaiImageURL}${url}`}
           title={`${nhentaiImageURL}${url}`}
           alt={`alt-${index + 1}`}
           key={`img-${index + 1}`}

@@ -1,4 +1,4 @@
-import { Home, BookHeart, Search, Settings, PenTool, Heart, UserCheck } from 'lucide-react';
+import { Home, BookHeart, Search, Settings, PenTool, Heart, UserCheck, BadgeInfo } from 'lucide-react';
 
 import {
   Sidebar,
@@ -47,6 +47,11 @@ const items = [
     title: 'Settings',
     url: '/setting',
     icon: Settings,
+  },
+  {
+    title: 'About',
+    url: '/about',
+    icon: BadgeInfo,
   },
 ];
 

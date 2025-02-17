@@ -60,7 +60,7 @@ export default async function Page({ searchParams }: Props) {
           </Button>
         </div>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center gap-2">
         <Book size={40} />
         <span className="text-5xl">nhentai</span>
       </div>
