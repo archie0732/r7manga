@@ -4,7 +4,13 @@ import { FavoriteData } from '../api/favorite/_model/apitype';
 import { NhentaiDoujinFavorite } from '@/components/doujin/nhentai-doujin-favorites';
 import Link from 'next/link';
 
-export default async function Page() {
+type Props = Readonly<{
+  searchParams: Promise<{ p?: string }>;
+}>;
+
+export default async function Page({ searchParams }: Props) {
+  const { p } = await searchParams;
+  void p;
   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/yanami`;
   const res = await fetch(url, {
     method: 'GET',
@@ -52,7 +58,7 @@ export default async function Page() {
         </TabsList>
 
         <TabsContent value="nhentai-favorites">
-          <NhentaiDoujinFavorite doujin={doujin.favorite_nhentai.doujin.slice().reverse()} />
+          <NhentaiDoujinFavorite doujin={doujin.favorite_nhentai.doujin.slice().reverse()} curPage={Number(p ?? '1')} />
         </TabsContent>
 
         <TabsContent value="wnacg">

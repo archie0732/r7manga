@@ -6,18 +6,18 @@ import { useEffect, useState } from 'react';
 import { DoujinCarousel } from '../doujin-carousel';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { AddFavoriteButton } from '../setting/add-favorite-doujin';
 import Link from 'next/link';
 
 interface FavoriteProps {
   doujin: DoujinSearchResult[];
+  curPage: number;
 }
 
-export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
+export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
   const { kindkey, offline } = useAppStore();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [check, setCheck] = useState<boolean>(false);
   const [comic, setComic] = useState<DoujinSearchResult[]>([]);
@@ -26,7 +26,7 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
   const PerPage = 20;
   const totalPages = Math.ceil(doujin.length / PerPage);
 
-  const page = parseInt(searchParams?.get('page') ?? '1', 10);
+  const page = curPage;
   const currentPage = Math.min(Math.max(page, 1), totalPages);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
 
   const handlePageChange = (newPage: number) => {
     const clampedPage = Math.min(Math.max(newPage, 1), totalPages);
-    router.push(`?page=${clampedPage}`);
+    router.push(`?p=${clampedPage}`);
   };
 
   const random = () => {
