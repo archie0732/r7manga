@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { DoujinCarousel } from '../doujin-carousel';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AddFavoriteButton } from '../setting/add-favorite-doujin';
 import Link from 'next/link';
 
@@ -17,17 +17,21 @@ interface FavoriteProps {
 export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
   const { kindkey, offline } = useAppStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [check, setCheck] = useState<boolean>(false);
-  const [curPage, setCurPage] = useState<number>(1);
   const [comic, setComic] = useState<DoujinSearchResult[]>([]);
   const [loading, setLoading] = useState(true);
 
   const PerPage = 20;
   const totalPages = Math.ceil(doujin.length / PerPage);
 
+  const page = parseInt(searchParams?.get('page') ?? '1', 10);
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
+
   useEffect(() => {
-    setLoading(true);
     const checkAccess = async () => {
+      setLoading(true);
       setCheck(await checkKey(kindkey));
       setLoading(false);
     };
@@ -36,30 +40,15 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
 
   useEffect(() => {
     setLoading(true);
-    const startIndex = (curPage - 1) * PerPage;
+    const startIndex = (currentPage - 1) * PerPage;
     const endIndex = startIndex + PerPage;
     setComic(doujin.slice(startIndex, endIndex));
     setLoading(false);
-  }, [curPage, doujin, PerPage]);
+  }, [currentPage, doujin]);
 
-  if (doujin.length === 0) {
-    return <div></div>;
-  }
-
-  if (loading) {
-    return (
-      <div className="flex justify-center text-gray-500">
-        Loading ...
-      </div>
-    );
-  }
-
-  if (check === false) {
-    return <div>目前本功能暫時不開放</div>;
-  }
-
-  const setPage = (page: number) => {
-    setCurPage(page);
+  const handlePageChange = (newPage: number) => {
+    const clampedPage = Math.min(Math.max(newPage, 1), totalPages);
+    router.push(`?page=${clampedPage}`);
   };
 
   const random = () => {
@@ -72,6 +61,10 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
     }
   };
 
+  if (doujin.length === 0) return <div></div>;
+  if (loading) return <div className="flex justify-center text-gray-500">Loading ...</div>;
+  if (!check) return <div>目前本功能暫時不開放</div>;
+
   return (
     <div>
       <div className="flex justify-between">
@@ -81,47 +74,48 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
           <Button onClick={random} variant="outline">random</Button>
         </div>
       </div>
+
       <div>
-        {
-          offline
-            ? (
-                <div>
-                  <span className="text-gray-500">你啟用了cf_bypass 模式，此模式下只能查看以收藏漫畫如需更改請</span>
-                  <Link
-                    href="/setting#cf-tk"
-                    className={`
-                      text-blue-500
-                      hover:underline
-                    `}
-                  >
-                    前往設定
-                  </Link>
-                </div>
-              )
-            : (
-                <div>
-                  <span className="text-gray-500">目前由於couldflare驗證無法使用n網閱讀器，如果是透過r7manga.vercel.app 使用的用戶請</span>
-                  <Link
-                    href="/setting#cf-tk"
-                    className={`
-                      text-blue-500
-                      hover:underline
-                    `}
-                  >
-                    開啟cf_bypass模式
-                  </Link>
-                </div>
-              )
-        }
+        {offline
+          ? (
+              <div>
+                <span className="text-gray-500">你啟用了cf_bypass 模式，此模式下只能查看以收藏漫畫如需更改請</span>
+                <Link
+                  href="/setting#cf-tk"
+                  className={`
+                    text-blue-500
+                    hover:underline
+                  `}
+                >
+                  前往設定
+                </Link>
+              </div>
+            )
+          : (
+              <div>
+                <span className="text-gray-500">目前由於cloudflare驗證無法使用n網閱讀器，如果是透過r7manga.vercel.app 使用的用戶請</span>
+                <Link
+                  href="/setting#cf-tk"
+                  className={`
+                    text-blue-500
+                    hover:underline
+                  `}
+                >
+                  開啟cf_bypass模式
+                </Link>
+              </div>
+            )}
       </div>
+
       <DoujinCarousel comic={comic} website="n" mode={offline ? 'offline' : undefined} />
-      <div className="flex items-center justify-center gap-2">
+
+      <div className="mt-4 flex items-center justify-center gap-2">
         <button
-          onClick={() => setPage(curPage - 1)}
-          disabled={curPage === 1}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
           className={`
             rounded p-2
-            disabled:opacity-50 disabled:hover:bg-transparent
+            disabled:opacity-50
             hover:bg-gray-800
           `}
         >
@@ -129,23 +123,31 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
         </button>
 
         <div className="flex gap-2">
-          {curPage != 1 ? <Button variant="outline" onClick={() => setPage(curPage - 1)}>{curPage - 1}</Button> : <div />}
+          {currentPage > 1 && (
+            <Button variant="outline" onClick={() => handlePageChange(currentPage - 1)}>
+              {currentPage - 1}
+            </Button>
+          )}
           <Button className={`
-            bg-gray-400
+            cursor-default bg-gray-400
             hover:bg-gray-400
           `}
           >
-            {curPage}
+            {currentPage}
           </Button>
-          {curPage != totalPages ? <Button variant="outline" onClick={() => setPage(curPage + 1)}>{curPage + 1}</Button> : <div />}
+          {currentPage < totalPages && (
+            <Button variant="outline" onClick={() => handlePageChange(currentPage + 1)}>
+              {currentPage + 1}
+            </Button>
+          )}
         </div>
 
         <button
-          onClick={() => setPage(curPage + 1)}
-          disabled={curPage === totalPages}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
           className={`
             rounded p-2
-            disabled:opacity-50 disabled:hover:bg-transparent
+            disabled:opacity-50
             hover:bg-gray-800
           `}
         >
@@ -156,7 +158,7 @@ export function NhentaiDoujinFavorite({ doujin }: FavoriteProps) {
       <div className="mt-4 text-center text-sm text-gray-600">
         第
         {' '}
-        {curPage}
+        {currentPage}
         {' '}
         頁，共
         {' '}
