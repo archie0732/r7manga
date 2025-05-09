@@ -57,16 +57,23 @@ export default function Page({ params }: Props) {
 
           {/* TO DO fix */}
 
-          <div className="flex space-x-3">
+          <div className="flex justify-center">
 
-            <Image
-              src={protect ? protectImage : doujin.cover}
-              width={300}
-              height={300}
-              alt="cover"
-              className="rounded bg-gray-800"
-            />
-            <DoujinDetail doujin={doujin} readMode={readMode} />
+            <div className={`
+              flex flex-col gap-3
+              md:flex-row md:gap-0
+            `}
+            >
+
+              <Image
+                src={protect ? protectImage : doujin.cover}
+                width={300}
+                height={300}
+                alt="cover"
+                className="m-2 rounded bg-gray-800"
+              />
+              <DoujinDetail doujin={doujin} readMode={readMode} />
+            </div>
           </div>
 
           <div>
