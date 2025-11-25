@@ -32,7 +32,7 @@ export default function DoujinCard({ doujin, website, mode }: Props) {
             loading="lazy"
             src={protect ? protectImage : doujin.thumbnail}
             className={`
-              aspect-[5/7] flex-1 justify-center rounded-md object-cover
+              aspect-5/7 flex-1 justify-center rounded-md object-cover
             `}
             alt="cover"
             width={200}

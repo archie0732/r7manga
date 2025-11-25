@@ -1,21 +1,23 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Lock, UserCog, Wrench } from 'lucide-react';
-import { NURLCombobox } from '@/components/setting/n-image-url-combobox';
-import { ProtectModeSwitch } from '@/components/setting/protectmode-switch';
-import { ProtectImageSelect } from '@/components/setting/protect-image-select';
-import { ReadingModeSelector } from '@/components/setting/read-mode-select';
-import { ReadModeChackBox } from '@/components/setting/readmode-checkbox';
-import { ThemesSwitch } from '@/components/setting/theme-switch';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
+
 import Link from 'next/link';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { NURLCombobox } from '@/components/setting/n-image-url-combobox';
 import { OfflineMode } from '@/components/button/offline-mode';
+import { ProtectImageSelect } from '@/components/setting/protect-image-select';
+import { ProtectModeSwitch } from '@/components/setting/protectmode-switch';
+import { ReadModeChackBox } from '@/components/setting/readmode-checkbox';
+import { ReadingModeSelector } from '@/components/setting/read-mode-select';
 import { SettingCFbypassButton } from '@/components/setting/cf-bypass';
+import { Switch } from '@/components/ui/switch';
+import { ThemesSwitch } from '@/components/setting/theme-switch';
 
 export default function Page() {
   return (
@@ -84,7 +86,7 @@ export default function Page() {
               </div>
 
               <div className={`
-                h-[1px] bg-slate-300
+                h-px bg-slate-300
                 dark:bg-gray-800
               `}
               />
@@ -118,16 +120,16 @@ export default function Page() {
               </div>
 
               <div className={`
-                h-[1px] bg-slate-300
+                h-px bg-slate-300
                 dark:bg-gray-800
               `}
               />
 
               <div className="flex justify-between">
                 <div className="flex flex-col">
-                  <span className="font-bold text-md">Terms of Service</span>
+                  <span className="text-md font-bold">Terms of Service</span>
                   <span
-                    className="font-bold text-md"
+                    className="text-md font-bold"
                   >
                     Privacy Policy
                   </span>

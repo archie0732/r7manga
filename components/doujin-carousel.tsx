@@ -14,7 +14,7 @@ export function DoujinCarousel({ comic, website, mode }: CarouselSizeProps) {
   return (
     <div className={`
       grid grid-cols-2 gap-2 p-4
-      md:grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] md:gap-4
+      md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] md:gap-4
     `}
     >
       {comic.map((item) => (

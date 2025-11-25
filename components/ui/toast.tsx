@@ -17,7 +17,7 @@ const ToastViewport = React.forwardRef<
     ref={ref}
     className={cn(
       `
-        fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4
+        fixed top-0 z-100 flex max-h-screen w-full flex-col-reverse p-4
         md:max-w-[420px]
         sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col
       `,
@@ -36,11 +36,11 @@ const toastVariants = cva(
     data-[state=closed]:animate-out data-[state=closed]:fade-out-80
     data-[state=closed]:slide-out-to-right-full
     data-[state=open]:animate-in data-[state=open]:slide-in-from-top-full
-    data-[state=open]:sm:slide-in-from-bottom-full
+    sm:data-[state=open]:slide-in-from-bottom-full
     data-[swipe=cancel]:translate-x-0
-    data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)]
+    data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x)
     data-[swipe=end]:animate-out
-    data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)]
+    data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x)
     data-[swipe=move]:transition-none
   `,
   {
@@ -86,12 +86,12 @@ const ToastAction = React.forwardRef<
         inline-flex h-8 shrink-0 items-center justify-center rounded-md border
         bg-transparent px-3 text-sm font-medium transition-colors
         disabled:pointer-events-none disabled:opacity-50
-        focus:outline-none focus:ring-1 focus:ring-ring
+        focus:outline-hidden focus:ring-1 focus:ring-ring
         group-[.destructive]:border-muted/40
-        group-[.destructive]:hover:border-destructive/30
-        group-[.destructive]:hover:bg-destructive
-        group-[.destructive]:hover:text-destructive-foreground
-        group-[.destructive]:focus:ring-destructive
+        hover:group-[.destructive]:border-destructive/30
+        hover:group-[.destructive]:bg-destructive
+        hover:group-[.destructive]:text-destructive-foreground
+        focus:group-[.destructive]:ring-destructive
         hover:bg-secondary
       `,
       className,
@@ -111,10 +111,10 @@ const ToastClose = React.forwardRef<
       `
         absolute right-1 top-1 rounded-md p-1 text-foreground/50 opacity-0
         transition-opacity
-        focus:opacity-100 focus:outline-none focus:ring-1
-        group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50
-        group-[.destructive]:focus:ring-red-400
-        group-[.destructive]:focus:ring-offset-red-600
+        focus:opacity-100 focus:outline-hidden focus:ring-1
+        group-[.destructive]:text-red-300 hover:group-[.destructive]:text-red-50
+        focus:group-[.destructive]:ring-red-400
+        focus:group-[.destructive]:ring-offset-red-600
         group-hover:opacity-100
         hover:text-foreground
       `,

@@ -10,7 +10,7 @@ const buttonVariants = cva(
     text-sm font-medium transition-colors
     [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0
     disabled:pointer-events-none disabled:opacity-50
-    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring
+    focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring
   `,
   {
     variants: {
@@ -22,17 +22,17 @@ const buttonVariants = cva(
           `,
         destructive:
           `
-            bg-destructive text-destructive-foreground shadow-sm
+            bg-destructive text-destructive-foreground shadow-xs
             hover:bg-destructive/90
           `,
         outline:
           `
-            border border-input bg-background shadow-sm
+            border border-input bg-background shadow-xs
             hover:bg-accent hover:text-accent-foreground
           `,
         secondary:
           `
-            bg-secondary text-secondary-foreground shadow-sm
+            bg-secondary text-secondary-foreground shadow-xs
             hover:bg-secondary/80
           `,
         ghost: 'hover:bg-accent hover:text-accent-foreground',

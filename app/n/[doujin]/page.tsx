@@ -80,7 +80,7 @@ export default function Page({ params }: Props) {
             <h1 className="mt-10 text-xl">漫畫預覽:</h1>
             <div className={`
               mt-4 grid grid-cols-2 gap-4
-              md:grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] md:gap-4
+              md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] md:gap-4
             `}
             >
 
@@ -98,7 +98,7 @@ export default function Page({ params }: Props) {
             </div>
             <div className={`
               mt-4 grid grid-cols-2 gap-4
-              md:grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] md:gap-4
+              md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] md:gap-4
             `}
             >
               {

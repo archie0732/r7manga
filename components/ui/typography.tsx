@@ -51,7 +51,7 @@ export function Paragraph({ className, ...props }: React.HTMLAttributes<HTMLPara
       {...props}
       className={twMerge(`
         leading-7
-        [&:not(:first-child)]:mt-4
+        not-first:mt-4
       `, className)}
     />
   );

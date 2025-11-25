@@ -95,7 +95,7 @@ const SheetContent = React.forwardRef<
         transition-opacity
         data-[state=open]:bg-secondary
         disabled:pointer-events-none
-        focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+        focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2
         hover:opacity-100
       `}
       >
