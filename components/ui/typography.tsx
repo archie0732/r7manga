@@ -1,12 +1,13 @@
-import NLink from 'next/link';
 import { twMerge } from 'tailwind-merge';
+
+import NLink from 'next/link';
 
 export function Heading1({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
       {...props}
       className={twMerge(`
-        mb-6 mt-16 scroll-m-20 text-4xl font-extrabold tracking-tight
+        mt-16 mb-6 scroll-m-20 text-4xl font-extrabold tracking-tight
         lg:text-5xl
       `, className)}
     />
@@ -61,7 +62,7 @@ export function BlockQuote({ className, ...props }: React.HTMLAttributes<HTMLQuo
   return (
     <blockquote
       {...props}
-      className={twMerge('mt-6 border-l-2 pl-6 italic text-muted-foreground', className)}
+      className={twMerge('mt-6 border-l-2 pl-6 text-muted-foreground italic', className)}
     />
   );
 }
@@ -71,8 +72,8 @@ export function Code({ className, ...props }: React.HTMLAttributes<HTMLElement>)
     <code
       {...props}
       className={twMerge(`
-        relative select-text rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono
-        text-sm font-semibold
+        relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm
+        font-semibold select-text
       `, className)}
     />
   );
@@ -95,10 +96,10 @@ export function OrderedList({ className, ...props }: React.HTMLAttributes<HTMLUL
     <ol
       {...props}
       className={twMerge(`
+        group-[>]/md:my-6
         ml-6
         [&:not(.contains-task-list)]:list-decimal
         [&>li]:mt-2
-        group-[>]/md:my-6
       `, className)}
     />
   );

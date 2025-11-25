@@ -58,7 +58,7 @@ export default function Page() {
               <Avatar>
                 <AvatarImage src="/img/8.jpg" />
               </Avatar>
-              <span className="text-md text-gray-500">archie0732</span>
+              <span className=" text-gray-500">archie0732</span>
             </div>
 
             <Link
