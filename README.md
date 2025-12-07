@@ -1,40 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# R7manga
 
-## Getting Started
+一個開源、免費的漫畫網站
 
-First, run the development server:
+## 目錄
+
+1. [版本更新](#版本更新)
+2. [功能說明](#功能說明)
+3. [如何在本地運行](#如何在本地運行)
+4. [環境變數](#環境變數)
+5. [條款 & 聲明](#條款-&-聲明)
+
+## 版本更新
+
+|版本號|日期|更新內容|
+|------|----|------|
+|v1.0.0|2024|init|
+|v1.1.0|2024|增加收藏功能|
+|v1.2.0|2024|增加追蹤作者|
+
+## 功能說明
+
+R7manga 包含 多個網站的漫畫與小說，全站內容皆為免費
+
+
+1. 支援多種網站，無需來回切換網站來觀看各種書籍
+2. 限制集內容擁有保護開關，避免在公共場和誤觸設死
+3. 關聯網站搜索，支援不同網站同關鍵詞搜索，讓尋找作品無負擔
+4. 跨網站查詢相關漫畫
+
+- 網站
+
+|支援網站|支援功能|備註|
+|---|---|-|
+|看漫畫 / 漫畫櫃 (manhuagui)|查詢、觀賞、收藏、追蹤作者||
+|嗶哩嗶哩輕小說 (linovelib)|查詢、觀賞、收藏、追蹤作者|開發中|
+|nhentai|查詢、觀賞、收藏、追蹤作者||
+|紳士漫畫 wnacg|查詢、觀賞、收藏、追蹤作者|可以使用，部分功能還在熬夜製作|
+|hentaipaw|查詢、觀賞、收藏、追蹤作者|開發中|
+
+您可以前往網站觀賞
+
+[https://r7manga.vercel.app](https://r7manga.vercel.app)
+
+## 如何在本地運行
+
+>[!note]
+>截至 2025/12/07 前本望站的架構為
+>- react: 前端
+>- next.js: 後端
+>
+> 尚未容器化
+
+不過以後端的部分將改用 rust 重構，也考慮容器化
+
+1. 首先，請飽你的電腦上擁有 `bun` 或者 `npm` 
+
+>下面將使用 bun 來做演示
+
+[bun 官網](https://bun.sh/)
+
+2. 安裝依賴
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
 ```
 
-if you are using linux(if dont need to use cf pass function not be must install)
+3. 設定環境變數，請見 環境變數 章節
 
-```bash
-sudo apt-get install xvfb
+4. 啟動
+
+```
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 環境變數
 
-or just view the website:
+|變數名稱|說明|
+|--|---|
+|尚未完成||
 
-[r7manga.vercel.app](https://r7manga.vercel.app)
-
-- r7manga-plug: in working
-
-## About Web
-
-- nhentai.net: include search, doujin(id, artist, character, tags), and favorite(just in loacalhost can use)
-- wnacg.com: include homepage, doujin(id, tag)
-
-ohter website crawler during working
-
-if you have some website or something, please provide your idea in github issue, thank u
-
-## localhost env & api
+### 條款 & 聲明
