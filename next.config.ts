@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: process.cwd(),
+  },
   images: {
     domains: ['t2.nhentai.net', 'i3.nhentai.net', 't3.nhentai.net', 't3.nhentai.net', 'i1.nhentai.net'],
     remotePatterns: [

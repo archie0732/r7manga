@@ -53,7 +53,7 @@ export function AlbumDetail({ album }: AlbumProp) {
 
       <div className="mt-7 flex gap-2 selection-none">
         <Link href={'/w/read/' + album.id}>
-          <Button variant="aaa" className="font-bold">
+          <Button variant="secondary" className="font-bold">
             <Eye />
             <span>Read Now!</span>
           </Button>

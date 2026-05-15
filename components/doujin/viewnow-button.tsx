@@ -25,7 +25,7 @@ export function ViewNowButtonA({ id }: ButtonProps) {
           ? (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="aaa">
+                  <Button variant="secondary">
                     <Eye />
                     Read now
                   </Button>
@@ -44,7 +44,7 @@ export function ViewNowButtonA({ id }: ButtonProps) {
                   </div>
                   <DialogFooter>
                     <Link href={`/n/${id}/${readMode}`}>
-                      <Button variant="aaa" onClick={() => showreadModeCheck(showAngin)}>
+                      <Button variant="secondary" onClick={() => showreadModeCheck(showAngin)}>
                         <Eye />
                         read now!
                       </Button>
@@ -55,7 +55,7 @@ export function ViewNowButtonA({ id }: ButtonProps) {
             )
           : (
               <Link href={`/n/${id}/${readMode}`}>
-                <Button variant="aaa">
+                <Button variant="secondary">
                   <Eye />
                   Read now
                 </Button>

@@ -3,7 +3,12 @@ import { useAppStore } from '@/stores/app';
 import { blankNice, errorPic } from '@/lib/const';
 import Image from 'next/image';
 
-type Props = Readonly<React.ImgHTMLAttributes<HTMLImageElement>>;
+type Props = Readonly<{
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}>;
 
 export function SafeImage({ src = errorPic, alt = 'empty-image', width, height }: Props) {
   const { protect } = useAppStore();
