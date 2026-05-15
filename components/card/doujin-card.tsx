@@ -1,10 +1,11 @@
 'use client';
-
-import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
 import Image from 'next/image';
+import Link from 'next/link';
+
+import { Card } from '@/components/ui/card';
 import { useAppStore } from '@/stores/app';
+
+import type { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 
 type Props = Readonly<{
   doujin: DoujinSearchResult;

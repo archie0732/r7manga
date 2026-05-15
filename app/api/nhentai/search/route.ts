@@ -1,10 +1,11 @@
-import { NextRequest } from 'next/server';
-import { fetchCFToken, toThumbnailUrl } from '../_model/_lib/util';
-import { languageMap } from '../_model/_lib/util';
 import { LRUCache } from 'lru-cache';
-
-import type { APISearchResultData } from '../_model/apitypes';
 import { z } from 'zod';
+
+import { fetchNhentai, langFromTagIds, listItemThumbnailUrl } from '../_model/_lib/util';
+
+import type { NextRequest } from 'next/server';
+
+import type { APIPaginatedSearchResultData } from '../_model/apitypes';
 
 export interface DoujinSearchResult {
   title: string;
@@ -28,9 +29,9 @@ const ParameterSchema = z.object({
   character: z.string().nullable(),
   sort: z.string().nullable().refine((val) => {
     if (!val) return true;
-    return ['recent', 'popular', 'popular-today', 'popular-week'].includes(val);
+    return ['recent', 'popular', 'popular-today', 'popular-week', 'popular-month'].includes(val);
   }, {
-    message: '"sort" must be one of "recent", "popular", "popular-today", or "popular-week"',
+    message: '"sort" must be one of "recent", "popular", "popular-today", "popular-week", or "popular-month"',
   }),
   page: z.string().nullable().refine((val) => {
     if (!val) return true;
@@ -41,6 +42,8 @@ const ParameterSchema = z.object({
 });
 
 const buildQuery = (type: string, v: string) => v.startsWith('-') ? `-${type}:"${v.slice(1)}"` : `${type}:"${v}"`;
+
+const splitTerms = (value: string | null) => value?.split(',').map((v) => v.trim()).filter((v) => v.length > 0) ?? [];
 
 export const GET = async (req: NextRequest) => {
   const queries = ParameterSchema.safeParse({
@@ -70,10 +73,10 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
-    const tag = data.tag?.split(',') ?? [];
-    const artist = data.artist?.split(',') ?? [];
-    const parody = data.parody?.split(',') ?? [];
-    const character = data.character?.split(',') ?? [];
+    const tag = splitTerms(data.tag);
+    const artist = splitTerms(data.artist);
+    const parody = splitTerms(data.parody);
+    const character = splitTerms(data.character);
 
     const query = [
       data.q ?? '*',
@@ -83,48 +86,34 @@ export const GET = async (req: NextRequest) => {
       ...character.map((v) => buildQuery('character', v)),
     ].join(' ');
 
+    const mappedSort = (queries.data.sort ?? 'popular-today').replace('recent', 'date');
+
     const params = new URLSearchParams({
-      query: query,
-      sort: queries.data.sort ?? 'popular-today',
+      query,
+      sort: mappedSort,
       page: queries.data.page ?? '1',
     });
 
-    const url = `https://nhentai.net/api/galleries/search?${params.toString()}`;
-
-    const { cf_clearance, user_agent } = fetchCFToken();
-
-    const response = await fetch(url, {
-      headers: {
-        'user-agent': user_agent,
-        'cookie': cf_clearance,
-      },
-    });
+    const response = await fetchNhentai(`/search?${params.toString()}`);
 
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);
     }
 
-    const json = await response.json() as APISearchResultData;
+    const json = await response.json() as APIPaginatedSearchResultData;
 
     const doujinlist: DoujinSearchResult[] = [];
 
     for (const doujin of json.result) {
-      const langTag = doujin.tags.find((t) => t.type == 'language' && t.name !== 'translated');
-
-      const banTag = doujin.tags.reduce((acc, val) => {
-        if (val.type === 'tag' && val.name === 'male only') {
-          acc.push(val.name);
-        }
-        return acc;
-      }, [] as string[]);
+      const banTag: string[] = [];
 
       doujinlist.push({
-        title: doujin.title.japanese ?? doujin.title.english,
+        title: doujin.japanese_title ?? doujin.english_title,
         id: doujin.id.toString(),
-        thumbnail: toThumbnailUrl(doujin),
+        thumbnail: await listItemThumbnailUrl(doujin),
         banTag,
-        lang: langTag ? languageMap[langTag.id] ?? 'ja' : 'ja',
-        page: doujin.images.pages.length,
+        lang: langFromTagIds(doujin.tag_ids),
+        page: doujin.num_pages ?? 0,
       });
     }
 

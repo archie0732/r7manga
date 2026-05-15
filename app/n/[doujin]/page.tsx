@@ -1,15 +1,17 @@
 'use client';
 
-import { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import { useEffect, useState } from 'react';
-import { DoujinDetail } from '@/components/doujin/doujin_detail';
-import { viewDoujinURL } from '@/lib/const';
-import { Skeleton } from '@/components/ui/skeleton';
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { useAppStore } from '@/stores/app';
 import Image from 'next/image';
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
+import { DoujinDetail } from '@/components/doujin/doujin_detail';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAppStore } from '@/stores/app';
+import { viewDoujinURL } from '@/lib/const';
+
+import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 
 type Props = Readonly<{
   params: Promise<{
@@ -50,41 +52,39 @@ export default function Page({ params }: Props) {
     );
   }
 
+  const previewLimit = readMore ? 25 : 12;
+  const previewImages = doujin.images.slice(0, previewLimit);
+  const hasMorePreview = doujin.images.length > 12;
+
   return (
     <main>
-      <div className="ml-1.5 mt-10 flex flex-col items-center justify-center">
-        <div className="container flex flex-col gap-4">
-
-          {/* TO DO fix */}
-
-          <div className="flex justify-center">
-
-            <div className={`
-              flex flex-col gap-3
-              md:flex-row md:gap-0
-            `}
+      <div className="mt-10 flex flex-col items-center">
+        <div className="container mx-auto flex flex-col gap-4">
+          <div className="w-fit">
+            <div
+              className={`
+                flex flex-col gap-3
+                md:flex-row md:gap-4
+              `}
             >
-
               <Image
                 src={protect ? protectImage : doujin.cover}
                 width={300}
                 height={300}
                 alt="cover"
-                className="m-2 rounded bg-gray-800"
+                className="rounded bg-gray-800"
               />
               <DoujinDetail doujin={doujin} readMode={readMode} />
             </div>
-          </div>
 
-          <div>
             <h1 className="mt-10 text-xl">漫畫預覽:</h1>
-            <div className={`
-              mt-4 grid grid-cols-2 gap-4
-              md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] md:gap-4
-            `}
+            <div
+              className={`
+                mt-4 grid grid-cols-2 gap-4
+                md:grid-cols-6 md:justify-start
+              `}
             >
-
-              {doujin.images.slice(0, 12).map((url, i) => (
+              {previewImages.map((url, i) => (
                 <Link href={`/n/read/${doujin.id}`} key={i}>
                   <Image
                     key={i}
@@ -96,38 +96,14 @@ export default function Page({ params }: Props) {
                 </Link>
               ))}
             </div>
-            <div className={`
-              mt-4 grid grid-cols-2 gap-4
-              md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] md:gap-4
-            `}
-            >
-              {
-                readMore
-                  ? doujin.images.slice(13, 25).map((url, i) => (
-                      <Link href={`/n/${doujin.id}/${readMode}`} key={i}>
-                        <Image
-                          key={`img-${i}`}
-                          src={protect ? protectImage : (viewDoujinURL + url.split('.')[0] + 't.' + url.split('.')[1])}
-                          width={180}
-                          height={200}
-                          alt={`alt-${i.toString()}`}
-                        />
-                      </Link>
 
-                    ))
-                  : <div />
-              }
-            </div>
-            {
-              readMore == false
-                ? (
-                    <div className="flex justify-end">
-                      <Button onClick={() => void setReadMore(true)} variant="link">view More</Button>
-                    </div>
-                  )
-                : <div />
-            }
-
+            {!readMore && hasMorePreview
+              ? (
+                  <div className="flex justify-end">
+                    <Button onClick={() => void setReadMore(true)} variant="link">view More</Button>
+                  </div>
+                )
+              : null}
           </div>
         </div>
       </div>

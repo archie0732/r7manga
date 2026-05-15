@@ -1,11 +1,11 @@
 'use client';
 
-import { useAppStore } from '@/stores/app';
-import { useToast } from '../ui/hooks/use-toast';
-import { FavoriteAdd, FavoriteData } from '@/app/api/favorite/_model/apitype';
 import { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
 import { Star } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+
+import { Button } from '../ui/button';
+import { useToast } from '../ui/hooks/use-toast';
 
 interface HaveDoujin {
   id: string;
@@ -15,76 +15,102 @@ interface HaveDoujin {
   page: number;
 }
 
-{ /* TO DO: fix langauge  */ }
+const ALLOWED_EMAIL = 'killer.archie.0732@gmail.com';
 
 export function AddFavoriteButton({ id, title, thumbnail, lang, page }: HaveDoujin) {
-  const { kindkey } = useAppStore();
+  void [thumbnail, lang, page];
+  const session = useSession();
   const { toast } = useToast();
-  const [mydata, setMyData] = useState<number>(0); // 0 沒有收藏 1 有
-  const [check, setCheck] = useState<boolean>(false);
+
+  const [mydata, setMyData] = useState<0 | 1>(0);
+
+  const currentEmail = session.data?.user?.email ?? '';
+  const isAllowed = currentEmail === ALLOWED_EMAIL;
 
   const addNew = async () => {
-    toast({
-      title: '正在嘗試加入收藏',
-      description: '請勿連續點擊按鈕',
-    });
-
-    if (!check) {
-      toast({
-        title: '此功能尚未實作完畢',
-        description: '此功能僅提供開發人員',
-        variant: 'destructive',
-      });
+    if (!isAllowed) {
       return;
     }
 
-    const resp = await fetch('/api/favorite', { method: 'POST', body: JSON.stringify({ type: 'doujin', doujin: { id, thumbnail, lang, title, page } } as FavoriteAdd) });
+    toast({
+      title: 'Adding to favorites...',
+      description: 'Please wait a moment.',
+    });
+
+    const resp = await fetch(`/api/nhentai/${id}/favorite`, {
+      method: 'POST',
+    });
 
     if (!resp.ok) {
       toast({
-        title: '發生錯誤',
-        description: '嘗試更新 api時發生錯誤',
+        title: 'Add failed',
+        description: 'nHentai favorite API request failed.',
         variant: 'destructive',
       });
       return;
     }
 
     toast({
-      title: '成功加入我的最愛',
-      description: `已在您的收藏庫添加: ${title}`,
+      title: 'Added to favorites',
+      description: `Saved: ${title}`,
     });
     setMyData(1);
   };
 
-  const fetchAPI = async () => {
-    const res = await fetch('/api/yanami');
-    if (!res.ok) {
-      setMyData(0);
-      return;
-    }
-    const doujin = await res.json() as FavoriteData;
-
-    if (doujin.favorite_nhentai.doujin.some((a) => id == a.id)) {
-      setMyData(1);
-    }
-  };
-
   useEffect(() => {
-    const checkKey = async () => {
-      const res = await fetch('/api/keyCheck', { method: 'POST', headers: {
-        'Content-Type': 'application/json',
-      }, body: JSON.stringify({ message: kindkey }) });
+    const fetchAPI = async () => {
+      if (!isAllowed) {
+        setMyData(0);
+        return;
+      }
 
-      setCheck(res.ok);
+      const res = await fetch(`/api/nhentai/${id}/favorite`);
+      if (!res.ok) {
+        setMyData(0);
+        return;
+      }
+
+      const data = await res.json() as { favorited?: boolean };
+
+      if (data.favorited) {
+        setMyData(1);
+      }
+      else {
+        setMyData(0);
+      }
     };
+
     void fetchAPI();
-    void checkKey();
-  }, []);
+  }, [id, isAllowed]);
+
+  if (session.status === 'loading') {
+    return (
+      <Button
+        size="icon"
+        variant="secondary"
+        disabled
+      >
+        <Star />
+      </Button>
+    );
+  }
+
+  if (!isAllowed) {
+    return (
+      <Button
+        size="icon"
+        variant="secondary"
+        disabled
+        title="只有管理員可以操作收藏"
+      >
+        <Star />
+      </Button>
+    );
+  }
 
   return (
     <div>
-
-      {mydata === 1 && check
+      {mydata === 1
         ? (
             <Button
               size="icon"

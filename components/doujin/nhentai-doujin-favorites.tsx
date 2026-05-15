@@ -1,14 +1,18 @@
 'use client';
-import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
-import { checkKey } from '@/lib/utils';
-import { useAppStore } from '@/stores/app';
-import { useEffect, useState } from 'react';
-import { DoujinCarousel } from '../doujin-carousel';
+
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '../ui/button';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { AddFavoriteButton } from '../setting/add-favorite-doujin';
+
 import Link from 'next/link';
+
+import { useAppStore } from '@/stores/app';
+
+import { AddFavoriteButton } from '../setting/add-favorite-doujin';
+import { Button } from '../ui/button';
+import { DoujinCarousel } from '../doujin-carousel';
+
+import type { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 
 interface FavoriteProps {
   doujin: DoujinSearchResult[];
@@ -16,35 +20,22 @@ interface FavoriteProps {
 }
 
 export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
-  const { kindkey, offline } = useAppStore();
+  const { offline } = useAppStore();
   const router = useRouter();
+  const session = useSession();
 
-  const [check, setCheck] = useState<boolean>(false);
-  const [comic, setComic] = useState<DoujinSearchResult[]>([]);
-  const [loading, setLoading] = useState(true);
+  const allowedEmail = 'killer.archie.0732@gmail.com';
+  const currentEmail = session.data?.user?.email ?? '';
+  const isAllowed = currentEmail === allowedEmail;
 
-  const PerPage = 20;
-  const totalPages = Math.ceil(doujin.length / PerPage);
+  const perPage = 20;
+  const totalPages = Math.ceil(doujin.length / perPage);
 
   const page = curPage;
   const currentPage = Math.min(Math.max(page, 1), totalPages);
-
-  useEffect(() => {
-    const checkAccess = async () => {
-      setLoading(true);
-      setCheck(await checkKey(kindkey));
-      setLoading(false);
-    };
-    void checkAccess();
-  }, [kindkey]);
-
-  useEffect(() => {
-    setLoading(true);
-    const startIndex = (currentPage - 1) * PerPage;
-    const endIndex = startIndex + PerPage;
-    setComic(doujin.slice(startIndex, endIndex));
-    setLoading(false);
-  }, [currentPage, doujin]);
+  const startIndex = (currentPage - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const comic = doujin.slice(startIndex, endIndex);
 
   const handlePageChange = (newPage: number) => {
     const clampedPage = Math.min(Math.max(newPage, 1), totalPages);
@@ -62,8 +53,30 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
   };
 
   if (doujin.length === 0) return <div></div>;
-  if (loading) return <div className="flex justify-center text-gray-500">Loading ...</div>;
-  if (!check) return <div>目前本功能暫時不開放</div>;
+  if (session.status === 'loading') return (
+    <div className="flex justify-center text-gray-500">
+      Loading ...
+    </div>
+  );
+
+  if (!isAllowed) {
+    return (
+      <div className="flex flex-col gap-2">
+        <span className="text-gray-500">只有管理員可以顯示</span>
+        {currentEmail.length > 0 && (
+          <span className="text-sm text-gray-500">
+            Current account:
+            {currentEmail}
+          </span>
+        )}
+        <div>
+          <Button variant="outline" onClick={() => void signIn('google')}>
+            Login with Google
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -115,8 +128,8 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
           disabled={currentPage === 1}
           className={`
             rounded p-2
-            disabled:opacity-50
             hover:bg-gray-800
+            disabled:opacity-50
           `}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -147,8 +160,8 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
           disabled={currentPage === totalPages}
           className={`
             rounded p-2
-            disabled:opacity-50
             hover:bg-gray-800
+            disabled:opacity-50
           `}
         >
           <ChevronRight className="h-5 w-5" />

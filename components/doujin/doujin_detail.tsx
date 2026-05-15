@@ -12,7 +12,7 @@ import { ViewNowButtonA } from './viewnow-button';
 import type { Doujin } from '@/app/api/nhentai/[doujin]/route';
 import { LinkCarouselDemo } from '../nhentai/link-carousel';
 import { AddFavoriteButton } from './add-favorite-button';
-import { langFilter } from '@/lib/utils';
+import { langFilter as cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { SubArtistTagedDemo } from '../sub-artist-badge';
 import { SubCharacterTagedDemo } from '../sub-character-badge';
@@ -30,7 +30,7 @@ export function DoujinDetail({ doujin }: DoujinDemo) {
   const { toast } = useToast();
   const [lang, setLang] = useState<'zh' | 'ja' | 'en'>('ja');
   useEffect(() => {
-    setLang(langFilter(doujin.language));
+    setLang(cn(doujin.language));
   }, [doujin]);
   return (
     <Column className="items-start gap-2">

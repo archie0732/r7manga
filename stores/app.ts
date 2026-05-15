@@ -34,7 +34,7 @@ export const useAppStore = create(
       protect: true,
       commandPanelVisible: false,
       nhentaiImageURL: 'https://i1.nhentai.net/galleries',
-      protectImage: '/img/1210.png',
+      protectImage: '/img/20250108.jpg',
       readMode: 'scroll',
       readModeCheck: true,
       kindkey: '',
