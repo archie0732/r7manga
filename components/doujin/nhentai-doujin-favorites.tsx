@@ -17,9 +17,10 @@ import type { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 interface FavoriteProps {
   doujin: DoujinSearchResult[];
   curPage: number;
+  totalPages: number;
 }
 
-export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
+export function NhentaiDoujinFavorite({ doujin, curPage, totalPages }: FavoriteProps) {
   const { offline } = useAppStore();
   const router = useRouter();
   const session = useSession();
@@ -28,14 +29,9 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
   const currentEmail = session.data?.user?.email ?? '';
   const isAllowed = currentEmail === allowedEmail;
 
-  const perPage = 20;
-  const totalPages = Math.ceil(doujin.length / perPage);
-
   const page = curPage;
   const currentPage = Math.min(Math.max(page, 1), totalPages);
-  const startIndex = (currentPage - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const comic = doujin.slice(startIndex, endIndex);
+  const comic = doujin;
 
   const handlePageChange = (newPage: number) => {
     const clampedPage = Math.min(Math.max(newPage, 1), totalPages);
@@ -43,6 +39,10 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
   };
 
   const random = () => {
+    if (doujin.length === 0) {
+      return;
+    }
+
     const id = doujin[Math.floor(Math.random() * doujin.length)].id;
     if (offline) {
       router.push(`/favorite/${id}`);
@@ -52,7 +52,6 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
     }
   };
 
-  if (doujin.length === 0) return <div></div>;
   if (session.status === 'loading') return (
     <div className="flex justify-center text-gray-500">
       Loading ...
@@ -84,7 +83,7 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
         <h2 className="text-2xl font-bold">nhentai favorites</h2>
         <div className="flex gap-1">
           <AddFavoriteButton />
-          <Button onClick={random} variant="outline">random</Button>
+          <Button onClick={random} variant="outline" disabled={doujin.length === 0}>random</Button>
         </div>
       </div>
 
@@ -120,7 +119,13 @@ export function NhentaiDoujinFavorite({ doujin, curPage }: FavoriteProps) {
             )}
       </div>
 
-      <DoujinCarousel comic={comic} website="n" mode={offline ? 'offline' : undefined} />
+      {comic.length > 0
+        ? <DoujinCarousel comic={comic} website="n" mode={offline ? 'offline' : undefined} />
+        : (
+            <div className="py-8 text-center text-gray-500">
+              No favorites found on this page.
+            </div>
+          )}
 
       <div className="mt-4 flex items-center justify-center gap-2">
         <button

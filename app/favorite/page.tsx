@@ -3,12 +3,9 @@ import { NhentaiDoujinFavorite } from '@/components/doujin/nhentai-doujin-favori
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookHeart, UserPenIcon } from 'lucide-react';
 import Link from 'next/link';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 
 import { fetchNhentai, langFromTagIds, listItemThumbnailUrl } from '../api/nhentai/_model/_lib/util';
 
-import type { FavoriteData } from '../api/favorite/_model/apitype';
 import type { APIGalleryListItem, APIPaginatedSearchResultData } from '../api/nhentai/_model/apitypes';
 import type { DoujinSearchResult } from '../api/nhentai/search/route';
 
@@ -17,8 +14,7 @@ type Props = Readonly<{
 }>;
 
 const ADMIN_EMAIL = 'killer.archie.0732@gmail.com';
-const PER_PAGE = 100;
-const MAX_PAGES = 30;
+const PER_PAGE = 20;
 
 const toSearchResult = async (doujin: APIGalleryListItem): Promise<DoujinSearchResult> => {
   const banTag: string[] = [];
@@ -33,33 +29,18 @@ const toSearchResult = async (doujin: APIGalleryListItem): Promise<DoujinSearchR
   };
 };
 
-const fetchFavorites = async () => {
-  const items: APIGalleryListItem[] = [];
+const fetchFavoritesPage = async (page: number) => {
+  const response = await fetchNhentai(`/favorites?page=${page}&per_page=${PER_PAGE}`);
 
-  for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const response = await fetchNhentai(`/favorites?page=${page}&per_page=${PER_PAGE}`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to load favorites: ${response.status.toString()} ${await response.text()}`);
-    }
-
-    const data = await response.json() as APIPaginatedSearchResultData;
-    items.push(...data.result);
-
-    const numPages = Math.max(data.num_pages ?? 1, 1);
-    if (page >= numPages) {
-      break;
-    }
+  if (!response.ok) {
+    throw new Error(`Failed to load favorites: ${response.status.toString()} ${await response.text()}`);
   }
 
-  return Promise.all(items.map(toSearchResult));
-};
-
-const fetchLocalFavorites = async () => {
-  const filePath = resolve(process.cwd(), 'favorite.json');
-  const raw = await readFile(filePath, 'utf8');
-  const json = JSON.parse(raw) as FavoriteData;
-  return json.favorite_nhentai?.doujin ?? [];
+  const data = await response.json() as APIPaginatedSearchResultData;
+  return {
+    data: await Promise.all(data.result.map(toSearchResult)),
+    totalPages: Math.max(data.num_pages ?? 1, 1),
+  };
 };
 
 export default async function Page({ searchParams }: Props) {
@@ -86,40 +67,39 @@ export default async function Page({ searchParams }: Props) {
   }
 
   const { p } = await searchParams;
+  const parsedPage = Number.parseInt(p ?? '1', 10);
+  const requestedPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
   let doujin: DoujinSearchResult[] = [];
-  let source: 'nhentai' | 'local' = 'nhentai';
+  let totalPages = 1;
   let loadError: string | null = null;
+  let currentPage = requestedPage;
+
   try {
-    doujin = await fetchFavorites();
+    const favorites = await fetchFavoritesPage(requestedPage);
+    doujin = favorites.data;
+    totalPages = favorites.totalPages;
+
+    if (requestedPage > totalPages) {
+      currentPage = totalPages;
+      const clampedFavorites = await fetchFavoritesPage(currentPage);
+      doujin = clampedFavorites.data;
+      totalPages = clampedFavorites.totalPages;
+    }
   }
   catch (error) {
     loadError = error instanceof Error ? error.message : 'Unknown error';
-
-    try {
-      doujin = await fetchLocalFavorites();
-      source = 'local';
-    }
-    catch {
-      return (
-        <div className="flex justify-center">
-          <span className="text-gray-500">Failed to load nhentai favorites. Please try again later.</span>
-        </div>
-      );
-    }
   }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-2 text-3xl font-bold">Favorites</h1>
-      {source === 'local' && (
+      {loadError && (
         <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-          nHentai favorites API unavailable. Showing local fallback list.
-          {loadError && (
-            <div className="mt-1 text-xs text-amber-700">
-              {loadError}
-            </div>
-          )}
+          Failed to load nHentai favorites from API.
+          <div className="mt-1 text-xs text-amber-700">
+            {loadError}
+          </div>
         </div>
       )}
       <Tabs defaultValue="nhentai-favorites" className="space-y-4">
@@ -138,7 +118,7 @@ export default async function Page({ searchParams }: Props) {
         </TabsList>
 
         <TabsContent value="nhentai-favorites">
-          <NhentaiDoujinFavorite doujin={doujin} curPage={Number(p ?? '1')} />
+          <NhentaiDoujinFavorite doujin={doujin} curPage={currentPage} totalPages={totalPages} />
         </TabsContent>
 
         <TabsContent value="wnacg">
