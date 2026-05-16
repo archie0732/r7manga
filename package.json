@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next dev -H 172.20.10.9",
     "lint": "next lint",
-    "cf": "bun cf_bypass.ts"
+    "cf": "bun cf_bypass.ts",
+    "favorite:sync": "node scripts/sync-nhentai-favorites.mjs"
   },
   "type": "module",
   "dependencies": {

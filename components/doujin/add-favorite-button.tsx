@@ -57,6 +57,36 @@ export function AddFavoriteButton({ id, title, thumbnail, lang, page }: HaveDouj
     setMyData(1);
   };
 
+  const removeFavorite = async () => {
+    if (!isAllowed) {
+      return;
+    }
+
+    toast({
+      title: 'Removing from favorites...',
+      description: 'Please wait a moment.',
+    });
+
+    const resp = await fetch(`/api/nhentai/${id}/favorite`, {
+      method: 'DELETE',
+    });
+
+    if (!resp.ok) {
+      toast({
+        title: 'Remove failed',
+        description: 'nHentai favorite API request failed.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    toast({
+      title: 'Removed from favorites',
+      description: `Removed: ${title}`,
+    });
+    setMyData(0);
+  };
+
   useEffect(() => {
     const fetchAPI = async () => {
       if (!isAllowed) {
@@ -119,6 +149,7 @@ export function AddFavoriteButton({ id, title, thumbnail, lang, page }: HaveDouj
                 hover:bg-amber-700
               `}
               variant="secondary"
+              onClick={() => void removeFavorite()}
             >
               <Star />
             </Button>
