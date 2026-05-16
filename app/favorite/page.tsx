@@ -3,9 +3,12 @@ import { NhentaiDoujinFavorite } from '@/components/doujin/nhentai-doujin-favori
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookHeart, UserPenIcon } from 'lucide-react';
 import Link from 'next/link';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 import { fetchNhentai, langFromTagIds, listItemThumbnailUrl } from '../api/nhentai/_model/_lib/util';
 
+import type { FavoriteData } from '../api/favorite/_model/apitype';
 import type { APIGalleryListItem, APIPaginatedSearchResultData } from '../api/nhentai/_model/apitypes';
 import type { DoujinSearchResult } from '../api/nhentai/search/route';
 
@@ -52,6 +55,13 @@ const fetchFavorites = async () => {
   return Promise.all(items.map(toSearchResult));
 };
 
+const fetchLocalFavorites = async () => {
+  const filePath = resolve(process.cwd(), 'favorite.json');
+  const raw = await readFile(filePath, 'utf8');
+  const json = JSON.parse(raw) as FavoriteData;
+  return json.favorite_nhentai?.doujin ?? [];
+};
+
 export default async function Page({ searchParams }: Props) {
   const session = await auth();
 
@@ -78,20 +88,40 @@ export default async function Page({ searchParams }: Props) {
   const { p } = await searchParams;
 
   let doujin: DoujinSearchResult[] = [];
+  let source: 'nhentai' | 'local' = 'nhentai';
+  let loadError: string | null = null;
   try {
     doujin = await fetchFavorites();
   }
-  catch {
-    return (
-      <div className="flex justify-center">
-        <span className="text-gray-500">Failed to load nhentai favorites. Please try again later.</span>
-      </div>
-    );
+  catch (error) {
+    loadError = error instanceof Error ? error.message : 'Unknown error';
+
+    try {
+      doujin = await fetchLocalFavorites();
+      source = 'local';
+    }
+    catch {
+      return (
+        <div className="flex justify-center">
+          <span className="text-gray-500">Failed to load nhentai favorites. Please try again later.</span>
+        </div>
+      );
+    }
   }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-2 text-3xl font-bold">Favorites</h1>
+      {source === 'local' && (
+        <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+          nHentai favorites API unavailable. Showing local fallback list.
+          {loadError && (
+            <div className="mt-1 text-xs text-amber-700">
+              {loadError}
+            </div>
+          )}
+        </div>
+      )}
       <Tabs defaultValue="nhentai-favorites" className="space-y-4">
         <TabsList>
           <TabsTrigger

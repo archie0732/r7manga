@@ -4,7 +4,8 @@ import type { APICdnConfig, APIDoujinData, APIGalleryListItem, APIPathMediaInfo 
 
 const NHENTAI_ROOT = process.env.NHENTAI ?? 'https://nhentai.net';
 const NHENTAI_API_ROOT = `${NHENTAI_ROOT}/api/v2`;
-const NHENTAI_API_KEY = process.env.R7MANGA_ANNO;
+const NHENTAI_AUTH = process.env.R7MANGA_ANNO?.trim();
+const NHENTAI_USER_TOKEN = process.env.NHENTAI_USER_TOKEN;
 
 const CDN_CONFIG_TTL = 10 * 60 * 1000;
 
@@ -40,8 +41,16 @@ const createHeaders = () => {
     Accept: 'application/json',
   });
 
-  if (NHENTAI_API_KEY) {
-    headers.set('Authorization', `Key ${NHENTAI_API_KEY}`);
+  if (NHENTAI_AUTH) {
+    if (NHENTAI_AUTH.startsWith('Key ') || NHENTAI_AUTH.startsWith('User ')) {
+      headers.set('Authorization', NHENTAI_AUTH);
+    }
+    else {
+      headers.set('Authorization', `Key ${NHENTAI_AUTH}`);
+    }
+  }
+  else if (NHENTAI_USER_TOKEN) {
+    headers.set('Authorization', `User ${NHENTAI_USER_TOKEN}`);
   }
 
   return headers;
