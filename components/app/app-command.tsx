@@ -2,16 +2,33 @@
 
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { useAppStore } from '@/stores/app';
-import { Book, BookHeart, Home, Paintbrush2, Search } from 'lucide-react';
+import { Book, BookHeart, Check, Home, Paintbrush2, Search } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+export type SearchWebsite = 'nhentai' | 'ehentai';
+
+export const buildCommandSearchTarget = (keyword: string, website: SearchWebsite) => {
+  if (/^\d+$/.test(keyword)) {
+    return `/n/${keyword}`;
+  }
+
+  const query = new URLSearchParams({ q: keyword });
+
+  if (website === 'ehentai') {
+    query.set('w', 'e');
+  }
+
+  return `/search?${query.toString()}`;
+};
 
 export default function AppCommand() {
   const router = useRouter();
   const commandPanelVisible = useAppStore((state) => state.commandPanelVisible);
   const setCommandPanelVisible = useAppStore((state) => state.setCommandPanelVisible);
   const [keyword, setKeyword] = useState('');
+  const [searchWebsite, setSearchWebsite] = useState<SearchWebsite>('nhentai');
   const { setTheme, theme } = useTheme();
 
   const changeTheme = () => {
@@ -23,26 +40,31 @@ export default function AppCommand() {
     }
   };
 
+  const handleSearch = () => {
+    router.push(buildCommandSearchTarget(keyword, searchWebsite));
+    setCommandPanelVisible(false);
+  };
+
   return (
     <CommandDialog
       open={commandPanelVisible}
       onOpenChange={setCommandPanelVisible}
     >
       <CommandInput
-        placeholder="搜尋或輸入指令..."
+        placeholder="Search manga..."
         value={keyword}
         onValueChange={setKeyword}
       />
       <CommandList>
-        <CommandEmpty>沒有結果</CommandEmpty>
-        <CommandGroup heading="建議">
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Navigation">
           <CommandItem onSelect={() => {
             router.push('/');
             setCommandPanelVisible(false);
           }}
           >
             <Home />
-            <span>首頁</span>
+            <span>Home</span>
           </CommandItem>
           <CommandItem onSelect={() => {
             router.push('/n/');
@@ -54,43 +76,33 @@ export default function AppCommand() {
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="設定">
-          <CommandItem>
-            <Paintbrush2 />
-            <span onClick={changeTheme}>變更主題色</span>
+        <CommandGroup heading="Search Website">
+          <CommandItem onSelect={() => { setSearchWebsite('nhentai'); }}>
+            <BookHeart />
+            <span>nhentai</span>
+            {searchWebsite === 'nhentai' ? <Check className="ml-auto" /> : null}
+          </CommandItem>
+          <CommandItem onSelect={() => { setSearchWebsite('ehentai'); }}>
+            <Book />
+            <span>ehentai</span>
+            {searchWebsite === 'ehentai' ? <Check className="ml-auto" /> : null}
           </CommandItem>
         </CommandGroup>
-        {keyword.length > 0 && !/^\d+$/.test(keyword) && (
-          <CommandItem onSelect={() => {
-            { /* TO Do fix to handle other side */ }
-            router.push(`/search?q=${keyword}`);
-            setCommandPanelVisible(false);
-          }}
-          >
-            <Search />
-            <span>
-              搜尋
-              <strong>
-                「
-                {keyword}
-                」
-              </strong>
-            </span>
+        <CommandSeparator />
+        <CommandGroup heading="Settings">
+          <CommandItem onSelect={changeTheme}>
+            <Paintbrush2 />
+            <span>Toggle theme</span>
           </CommandItem>
-        )}
-        {keyword.length > 0 && /^\d+$/.test(keyword) && (
-          <CommandItem onSelect={() => {
-            router.push(`/n/${keyword}`);
-            setCommandPanelVisible(false);
-          }}
-          >
-            <Book />
+        </CommandGroup>
+        {keyword.length > 0 && (
+          <CommandItem onSelect={handleSearch}>
+            {/^\d+$/.test(keyword) ? <Book /> : <Search />}
             <span>
-              前往
+              {/^\d+$/.test(keyword) ? 'Open' : `Search ${searchWebsite}`}
               <strong>
-                「
-                {keyword}
-                」
+                {' '}
+                "{keyword}"
               </strong>
             </span>
           </CommandItem>
