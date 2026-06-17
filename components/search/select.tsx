@@ -16,9 +16,9 @@ export function SelectDemo() {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Website</SelectLabel>
-          <SelectItem value="apple">nhentai</SelectItem>
+          <SelectItem value="nhentai">nhentai</SelectItem>
+          <SelectItem value="ehentai">ehentai</SelectItem>
           <SelectItem value="dlsite">dlsite</SelectItem>
-          <SelectItem value="hanime">hanime1</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

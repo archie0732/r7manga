@@ -1,7 +1,6 @@
+import { DoujinCarousel } from '@/components/doujin-carousel';
 import { PaginationDemo } from '@/components/search/pagination';
 import { SelectDemo } from '@/components/search/select';
-import { DoujinSearchResult } from '../api/nhentai/search/route';
-import { DoujinCarousel } from '@/components/doujin-carousel';
 import { Button } from '@/components/ui/button';
 
 import Image from 'next/image';
@@ -16,8 +15,18 @@ type Props = Readonly<{
     character?: string;
     sort?: string;
     page?: string;
+    w?: string;
   }>;
 }>;
+
+type SearchResult = {
+  title: string;
+  id: string;
+  thumbnail: string;
+  banTag: string[];
+  lang: 'ja' | 'zh' | 'en';
+  page: number;
+};
 
 export default async function Page({ searchParams }: Props) {
   const search = await searchParams;
@@ -27,7 +36,7 @@ export default async function Page({ searchParams }: Props) {
   const parody = search.parody;
   const artist = search.artist;
   const character = search.character;
-
+  const website = search.w === 'e' ? 'e' : 'n';
   const sort = search.sort ?? 'recent';
   const page = search.page ?? '1';
 
@@ -37,53 +46,65 @@ export default async function Page({ searchParams }: Props) {
     ...(parody && { parody }),
     ...(artist && { artist }),
     ...(character && { character }),
+    ...(website !== 'n' && { w: website }),
   } as Record<string, string>);
 
-  const url = `${process.env.NEXT_PUBLIC_API_URL}/api/nhentai/search?${query}&sort=${sort}&page=${page}`;
-  const response = await fetch(url);
+  const apiPath = website === 'e'
+    ? `/api/ehentai/search?${query}&page=${page}`
+    : `/api/nhentai/search?${query}&sort=${sort}&page=${page}`;
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${apiPath}`);
 
   if (!response.ok) {
     console.error(`Error: ${response.statusText}`);
-    return (<div className="flex items-center justify-center"><span>發生錯誤</span></div>);
+    return (<div className="flex items-center justify-center"><span>Search failed.</span></div>);
   }
 
-  const doujin = (await response.json()) as DoujinSearchResult[];
+  const doujin = (await response.json()) as SearchResult[];
 
-  if (doujin.length == 0) {
+  if (doujin.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-4">
-        <span className="mb-6 text-xl">沒有結果</span>
+        <span className="mb-6 text-xl">No results found.</span>
         <Image src="/img/1210.png" alt="good" width={100} height={100} />
         <Link href="https://youtu.be/dQw4w9WgXcQ?si=khh7Cnz3zHogopVQ">
-          <Button variant="secondary">查看更多</Button>
+          <Button variant="secondary">Try again</Button>
         </Link>
       </div>
     );
   }
 
+  const label = q === '*'
+    ? 'All'
+    : q ?? artist ?? tag ?? parody ?? character ?? '';
+
   return (
     <div className="flex flex-col justify-center">
       <div className="flex justify-center">
-        <span className="text-center text-xl font-bold">{`搜尋結果: ${q === '*' ? '最近' : q ?? artist ?? tag ?? parody ?? character ?? ''}`}</span>
+        <span className="text-center text-xl font-bold">{`Search Result: ${label}`}</span>
       </div>
       <div className="mr-5 flex justify-between">
-        <div>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/search?${query}&page=${page}`}>最近</Link>
-          </Button>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/search?${query}&page=${page}&sort=popular-today`}>本日</Link>
-          </Button>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/search?${query}&page=${page}&sort=popular-week`}>這周</Link>
-          </Button>
-          <Button className="ml-5" variant="ghost" asChild>
-            <Link href={`/search?${query}&page=${page}&sort=popular`}>所有時間</Link>
-          </Button>
-        </div>
+        {website === 'n'
+          ? (
+              <div>
+                <Button className="ml-5" variant="ghost" asChild>
+                  <Link href={`/search?${query}&page=${page}`}>Recent</Link>
+                </Button>
+                <Button className="ml-5" variant="ghost" asChild>
+                  <Link href={`/search?${query}&page=${page}&sort=popular-today`}>Today</Link>
+                </Button>
+                <Button className="ml-5" variant="ghost" asChild>
+                  <Link href={`/search?${query}&page=${page}&sort=popular-week`}>Week</Link>
+                </Button>
+                <Button className="ml-5" variant="ghost" asChild>
+                  <Link href={`/search?${query}&page=${page}&sort=popular`}>All Time</Link>
+                </Button>
+              </div>
+            )
+          : <div />}
         <SelectDemo />
       </div>
-      <DoujinCarousel comic={doujin} website="n" />
+      <DoujinCarousel comic={doujin} website={website} />
       <PaginationDemo url={`/search?${query}&sort=${sort}`} nowPage={Number(page) ? Number(page) : 1} doujinCount={doujin.length} />
     </div>
   );
