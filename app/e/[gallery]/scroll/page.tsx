@@ -14,6 +14,8 @@ type Props = Readonly<{
 
 export default function Page({ params }: Props) {
   const [gallery, setGallery] = useState<EhentaiGalleryDetail | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,6 +36,33 @@ export default function Page({ params }: Props) {
       }
     })();
   }, [params]);
+
+  useEffect(() => {
+    if (!gallery || loadingMore || images.length >= gallery.pageLinks.length) {
+      return;
+    }
+
+    void (async () => {
+      try {
+        setLoadingMore(true);
+        const response = await fetch(`/api/ehentai/${gallery.id}/images?start=${images.length.toString()}&count=10`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch image batch: ${response.status.toString()} ${response.statusText}`);
+        }
+
+        const batch = await response.json() as { images: string[] };
+        setImages((current) => [...current, ...batch.images]);
+      }
+      catch (err) {
+        console.error(err);
+        setError('Failed to load gallery images.');
+      }
+      finally {
+        setLoadingMore(false);
+      }
+    })();
+  }, [gallery, images.length, loadingMore]);
 
   if (error) {
     return (
@@ -58,10 +87,10 @@ export default function Page({ params }: Props) {
     <div className="mt-10 flex flex-col items-center">
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold">{gallery.title}</h1>
-        <p className="text-muted-foreground">{`${gallery.images.length.toString()} pages`}</p>
+        <p className="text-muted-foreground">{`${gallery.filecount.toString()} pages`}</p>
       </div>
 
-      {gallery.images.map((url, index) => (
+      {images.map((url, index) => (
         <Image
           key={url}
           src={url}
@@ -73,6 +102,8 @@ export default function Page({ params }: Props) {
           className="h-auto w-full max-w-5xl"
         />
       ))}
+
+      {loadingMore ? <p className="py-6 text-sm text-muted-foreground">Loading more pages...</p> : null}
     </div>
   );
 }

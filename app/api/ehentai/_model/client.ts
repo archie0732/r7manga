@@ -252,6 +252,14 @@ export class EhentaiClient {
       pageLinks.push(...pageDetail.pageLinks);
     }
 
+    return {
+      ...detail,
+      pageLinks: [...new Set(pageLinks)],
+      images: [],
+    };
+  }
+
+  async resolveImageUrls(pageLinks: string[]): Promise<string[]> {
     const images: string[] = [];
 
     for (const pageLink of [...new Set(pageLinks)]) {
@@ -268,10 +276,6 @@ export class EhentaiClient {
       }
     }
 
-    return {
-      ...detail,
-      pageLinks: [...new Set(pageLinks)],
-      images,
-    };
+    return images;
   }
 }
