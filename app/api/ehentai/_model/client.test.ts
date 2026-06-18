@@ -62,6 +62,14 @@ const galleryPageTwoHtml = `
   </div>
 `;
 
+const imagePageHtml = `
+  <div id="i3">
+    <a onclick="return load_image(1, 'abcdef')">
+      <img id="img" src="https://ehgt.org/abc/full-image-1.webp" style="max-width: 100%; max-height: 100%" />
+    </a>
+  </div>
+`;
+
 describe('EhentaiClient', () => {
   test('search parses gallery cards into website results', async () => {
     const client = new EhentaiClient(async () => new Response(searchHtml));
@@ -97,6 +105,11 @@ describe('EhentaiClient', () => {
         return new Response(galleryPageTwoHtml);
       }
 
+      if (url.startsWith('https://e-hentai.org/s/')) {
+        const pageNumber = url.match(/-(\d+)$/)?.[1] ?? '0';
+        return new Response(imagePageHtml.replace('full-image-1', `full-image-${pageNumber}`));
+      }
+
       return new Response('not found', { status: 404 });
     });
 
@@ -105,6 +118,10 @@ describe('EhentaiClient', () => {
     expect(calls).toEqual([
       'https://e-hentai.org/g/3637067/d79cdf4a79/',
       'https://e-hentai.org/g/3637067/d79cdf4a79/?p=1',
+      'https://e-hentai.org/s/42413779d2/3637067-1',
+      'https://e-hentai.org/s/7c83d485e6/3637067-2',
+      'https://e-hentai.org/s/8b5756672d/3637067-21',
+      'https://e-hentai.org/s/9299f099f2/3637067-22',
     ]);
 
     expect(result).toMatchObject({
@@ -122,6 +139,16 @@ describe('EhentaiClient', () => {
         'https://e-hentai.org/s/8b5756672d/3637067-21',
         'https://e-hentai.org/s/9299f099f2/3637067-22',
       ],
+      images: [
+        'https://ehgt.org/abc/full-image-1.webp',
+        'https://ehgt.org/abc/full-image-2.webp',
+        'https://ehgt.org/abc/full-image-21.webp',
+        'https://ehgt.org/abc/full-image-22.webp',
+      ],
     });
+  });
+
+  test('extractImageUrlFromPage returns the main image url', () => {
+    expect(EhentaiClient.extractImageUrlFromPage(imagePageHtml)).toBe('https://ehgt.org/abc/full-image-1.webp');
   });
 });

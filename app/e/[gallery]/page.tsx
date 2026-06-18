@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import type { EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
@@ -63,8 +64,8 @@ export default function Page({ params }: Props) {
             <p>{`Category: ${gallery.category}`}</p>
             <p>{`Language: ${gallery.language}`}</p>
             <p>{`Pages: ${gallery.filecount.toString()}`}</p>
-            <Link href={gallery.url} target="_blank" className="text-blue-500 underline">
-              Open gallery on E-Hentai
+            <Link href={`/e/${gallery.id}/scroll`}>
+              <Button variant="secondary">Read now</Button>
             </Link>
             <div className="flex flex-wrap gap-2 pt-2">
               {gallery.tags.map((tag) => (

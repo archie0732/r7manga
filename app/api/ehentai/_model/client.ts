@@ -27,6 +27,7 @@ export interface EhentaiGalleryDetail {
   filecount: number;
   tags: string[];
   pageLinks: string[];
+  images: string[];
 }
 
 type FetchImpl = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
@@ -140,7 +141,7 @@ export const parseGalleryDetailPage = (
   html: string,
   gid: string,
   token: string,
-): Omit<EhentaiGalleryDetail, 'pageLinks'> & { pageLinks: string[] } => {
+): Omit<EhentaiGalleryDetail, 'images'> => {
   const $ = load(html);
   const title = $('#gn').first().text().trim();
   const titleJpn = $('#gj').first().text().trim();
@@ -196,7 +197,16 @@ export const parseGalleryDetailPage = (
   };
 };
 
+export const extractImageUrlFromPage = (html: string) => {
+  const $ = load(html);
+  return $('#img').attr('src')?.trim() ?? '';
+};
+
 export class EhentaiClient {
+  static extractImageUrlFromPage(html: string) {
+    return extractImageUrlFromPage(html);
+  }
+
   constructor(private readonly fetchImpl: FetchImpl = fetch) {}
 
   async search(params: SearchParams): Promise<EhentaiSearchResult[]> {
@@ -242,9 +252,26 @@ export class EhentaiClient {
       pageLinks.push(...pageDetail.pageLinks);
     }
 
+    const images: string[] = [];
+
+    for (const pageLink of [...new Set(pageLinks)]) {
+      const imageResponse = await this.fetchImpl(pageLink);
+
+      if (!imageResponse.ok) {
+        throw new Error(`E-Hentai image page failed: ${imageResponse.status.toString()} ${await imageResponse.text()}`);
+      }
+
+      const imageUrl = extractImageUrlFromPage(await imageResponse.text());
+
+      if (imageUrl) {
+        images.push(imageUrl);
+      }
+    }
+
     return {
       ...detail,
       pageLinks: [...new Set(pageLinks)],
+      images,
     };
   }
 }
