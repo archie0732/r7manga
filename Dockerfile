@@ -1,3 +1,5 @@
+FROM oven/bun:1-alpine AS bun
+
 FROM node:20-alpine AS deps
 WORKDIR /app
 
@@ -20,11 +22,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN apk add --no-cache curl \
-  && curl -fsSL https://bun.sh/install | sh
-
-ENV BUN_INSTALL=/root/.bun
-ENV PATH=/root/.bun/bin:$PATH
+COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
