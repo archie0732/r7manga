@@ -105,3 +105,28 @@ bun run dev
     <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on ko-fi!" />
   </a>
 </p>
+
+## Docker
+
+Run locally with Docker:
+
+```bash
+docker compose up --build -d
+```
+
+Open locally:
+
+```text
+http://localhost:3002
+```
+
+Open from another device on the same network:
+
+```text
+http://<your-lan-ip>:3002
+```
+
+Notes:
+- Host port `3002` maps to container port `3000`, so it will not conflict with services already using host `3000` or `3001`.
+- The container runs Next.js in production mode with `next start`.
+- If you want people outside your local network to connect by IP and port only, you still need router port forwarding and firewall allowance for `3002`.
