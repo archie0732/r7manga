@@ -11,6 +11,10 @@ describe('buildCommandSearchTarget', () => {
     expect(buildCommandSearchTarget('soso', 'ehentai')).toBe('/search?q=soso&w=e');
   });
 
+  test('routes keyword search to hentaipaw page when website is hentaipaw', () => {
+    expect(buildCommandSearchTarget('soso', 'hentaipaw')).toBe('/p?q=soso');
+  });
+
   test('routes numeric keyword directly to nhentai detail page', () => {
     expect(buildCommandSearchTarget('12345', 'ehentai')).toBe('/n/12345');
   });

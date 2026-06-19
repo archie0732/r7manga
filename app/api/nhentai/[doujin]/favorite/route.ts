@@ -1,4 +1,5 @@
 import { auth } from '@/auth';
+import { asAdminUser, isAdminUser } from '@/lib/auth/admin';
 
 import { fetchNhentai } from '../../_model/_lib/util';
 
@@ -6,11 +7,9 @@ type Params = Readonly<{
   params: Promise<{ doujin: string }>;
 }>;
 
-const ADMIN_EMAIL = 'killer.archie.0732@gmail.com';
-
 const isAdmin = async () => {
   const session = await auth();
-  return session?.user?.email === ADMIN_EMAIL;
+  return isAdminUser(asAdminUser(session?.user));
 };
 
 export const GET = async (_req: Request, { params }: Params) => {

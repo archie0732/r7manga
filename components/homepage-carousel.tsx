@@ -1,4 +1,4 @@
-import { DoujinSearchResult } from '@/app/api/nhentai/search/route';
+import type { CarouselDoujinItem } from './doujin-carousel';
 import {
   Carousel,
   CarouselContent,
@@ -10,7 +10,7 @@ import {
 import DoujinCard from './card/doujin-card';
 
 interface Props {
-  doujin: DoujinSearchResult[];
+  doujin: CarouselDoujinItem[];
   website: string;
 }
 

@@ -1,15 +1,17 @@
 'use client';
 
-import { BookOpenText, Copy, Download, Eye, Star, Tag } from 'lucide-react';
+import { BookOpenText, Copy, Download, Eye, Tag } from 'lucide-react';
+import { SiteFavoriteButton } from '@/components/favorite/site-favorite-button';
 import { Button } from '@/components/ui/button';
-import { AlbumTaged } from './album-tag';
-
-import Link from 'next/link';
-import Column from '../layout/column';
-import { Heading3 } from '../ui/typography';
 import { useToast } from '@/components/ui/hooks/use-toast';
 
-import { Album } from '@/app/api/wnacg/[album]/route';
+import type { Album } from '@/app/api/wnacg/[album]/route';
+
+import Link from 'next/link';
+import { AlbumTaged } from './album-tag';
+import Column from '../layout/column';
+import { Heading3 } from '../ui/typography';
+
 
 interface AlbumProp {
   album: Album;
@@ -51,7 +53,7 @@ export function AlbumDetail({ album }: AlbumProp) {
 
       </div>
 
-      <div className="mt-7 flex gap-2 selection-none">
+      <div className="select-none mt-7 flex gap-2">
         <Link href={'/w/read/' + album.id}>
           <Button variant="secondary" className="font-bold">
             <Eye />
@@ -61,9 +63,17 @@ export function AlbumDetail({ album }: AlbumProp) {
         <Button size="icon" variant="secondary">
           <Download />
         </Button>
-        <Button className="hover:bg-amber-400 hover:text-black" size="icon" variant="secondary">
-          <Star />
-        </Button>
+        <SiteFavoriteButton
+          website="wnacg"
+          doujin={{
+            id: album.id,
+            title: album.title,
+            thumbnail: album.cover,
+            lang: 'zh',
+            page: Number(album.page) || album.view.length,
+            source: album.source,
+          }}
+        />
 
       </div>
     </Column>

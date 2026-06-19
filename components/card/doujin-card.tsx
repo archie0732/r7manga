@@ -4,11 +4,10 @@ import Link from 'next/link';
 
 import { Card } from '@/components/ui/card';
 import { useAppStore } from '@/stores/app';
-
-import type { DoujinSearchResult } from '@/app/api/nhentai/search/route';
+import type { CarouselDoujinItem } from '../doujin-carousel';
 
 type Props = Readonly<{
-  doujin: DoujinSearchResult;
+  doujin: CarouselDoujinItem;
   website: string;
   mode?: 'offline';
 }>;

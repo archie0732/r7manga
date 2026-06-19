@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
+import { SiteFavoriteButton } from '@/components/favorite/site-favorite-button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import type { EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
@@ -64,9 +65,26 @@ export default function Page({ params }: Props) {
             <p>{`Category: ${gallery.category}`}</p>
             <p>{`Language: ${gallery.language}`}</p>
             <p>{`Pages: ${gallery.filecount.toString()}`}</p>
-            <Link href={`/e/${gallery.id}/scroll`}>
-              <Button variant="secondary">Read now</Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link href={`/e/${gallery.id}/scroll`}>
+                <Button variant="secondary">Read now</Button>
+              </Link>
+              <SiteFavoriteButton
+                website="ehentai"
+                doujin={{
+                  id: gallery.id,
+                  title: gallery.titleJpn || gallery.title,
+                  thumbnail: gallery.thumbnail || '/img/1210.png',
+                  lang: gallery.language.toLowerCase().includes('japanese')
+                    ? 'ja'
+                    : gallery.language.toLowerCase().includes('chinese')
+                      ? 'zh'
+                      : 'en',
+                  page: gallery.filecount,
+                  source: gallery.url,
+                }}
+              />
+            </div>
             <div className="flex flex-wrap gap-2 pt-2">
               {gallery.tags.map((tag) => (
                 <span key={tag} className="rounded-full bg-secondary px-3 py-1 text-sm">

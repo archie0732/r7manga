@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   images: {
-    domains: ['t2.nhentai.net', 'i3.nhentai.net', 't3.nhentai.net', 't3.nhentai.net', 'i1.nhentai.net'],
+    domains: ['t2.nhentai.net', 'i3.nhentai.net', 't3.nhentai.net', 't3.nhentai.net', 'i1.nhentai.net', 'zh.hentaipaw.com', 'cdn.imagedeliveries.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -34,6 +34,18 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'i1.nhentai.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'zh.hentaipaw.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.imagedeliveries.com',
         port: '',
         pathname: '/**',
       },

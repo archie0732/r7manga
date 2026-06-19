@@ -28,6 +28,11 @@ const items = [
     icon: PenTool,
   },
   {
+    title: 'Hentaipaw',
+    url: '/p',
+    icon: BookHeart,
+  },
+  {
     title: 'Search',
     url: '/search?q=*',
     icon: Search,

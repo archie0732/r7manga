@@ -7,11 +7,16 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export type SearchWebsite = 'nhentai' | 'ehentai';
+export type SearchWebsite = 'nhentai' | 'hentaipaw' | 'ehentai';
 
 export const buildCommandSearchTarget = (keyword: string, website: SearchWebsite) => {
   if (/^\d+$/.test(keyword)) {
     return `/n/${keyword}`;
+  }
+
+  if (website === 'hentaipaw') {
+    const query = new URLSearchParams({ q: keyword });
+    return `/p?${query.toString()}`;
   }
 
   const query = new URLSearchParams({ q: keyword });
@@ -74,6 +79,14 @@ export default function AppCommand() {
             <BookHeart />
             <span>nhentai</span>
           </CommandItem>
+          <CommandItem onSelect={() => {
+            router.push('/p/');
+            setCommandPanelVisible(false);
+          }}
+          >
+            <Book />
+            <span>hentaipaw</span>
+          </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Search Website">
@@ -81,6 +94,11 @@ export default function AppCommand() {
             <BookHeart />
             <span>nhentai</span>
             {searchWebsite === 'nhentai' ? <Check className="ml-auto" /> : null}
+          </CommandItem>
+          <CommandItem onSelect={() => { setSearchWebsite('hentaipaw'); }}>
+            <Book />
+            <span>hentaipaw</span>
+            {searchWebsite === 'hentaipaw' ? <Check className="ml-auto" /> : null}
           </CommandItem>
           <CommandItem onSelect={() => { setSearchWebsite('ehentai'); }}>
             <Book />

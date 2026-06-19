@@ -1,11 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { DoujinSearchResult } from '../app/api/nhentai/search/route';
 import DoujinCard from './card/doujin-card';
 
+export interface CarouselDoujinItem {
+  title: string;
+  id: string;
+  thumbnail: string;
+  banTag: string[];
+  lang: 'ja' | 'zh' | 'en';
+  page: number;
+}
+
 interface CarouselSizeProps {
-  comic: DoujinSearchResult[] ;
+  comic: CarouselDoujinItem[] ;
   website: string;
   mode?: 'offline';
 }

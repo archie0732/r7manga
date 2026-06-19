@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 
 import Link from 'next/link';
 import { NhnentaiHomePage } from '@/components/home/n-home-page';
+import { HentaipawHomePage } from '@/components/home/p-home-page';
 import { WnacgHomePage } from '@/components/home/w-home-page';
 
 export default function Home() {
@@ -40,6 +41,13 @@ export default function Home() {
                 </Link>
               </div>
               <WnacgHomePage />
+              <div className="flex justify-between">
+                <span className="text-4xl font-bold">hentaipaw</span>
+                <Link href="/p">
+                  <Button variant="link">?亦??游?</Button>
+                </Link>
+              </div>
+              <HentaipawHomePage />
             </div>
           </div>
         </div>

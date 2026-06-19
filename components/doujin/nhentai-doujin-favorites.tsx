@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import Link from 'next/link';
 
+import { isAdminUser } from '@/lib/auth/admin';
 import { useAppStore } from '@/stores/app';
 
 import { AddFavoriteButton } from '../setting/add-favorite-doujin';
@@ -25,9 +26,8 @@ export function NhentaiDoujinFavorite({ doujin, curPage, totalPages }: FavoriteP
   const router = useRouter();
   const session = useSession();
 
-  const allowedEmail = 'killer.archie.0732@gmail.com';
   const currentEmail = session.data?.user?.email ?? '';
-  const isAllowed = currentEmail === allowedEmail;
+  const isAllowed = isAdminUser(session.data?.user);
 
   const page = curPage;
   const currentPage = Math.min(Math.max(page, 1), totalPages);
@@ -69,8 +69,8 @@ export function NhentaiDoujinFavorite({ doujin, curPage, totalPages }: FavoriteP
           </span>
         )}
         <div>
-          <Button variant="outline" onClick={() => void signIn('google')}>
-            Login with Google
+          <Button variant="outline" onClick={() => void signIn()}>
+            Login
           </Button>
         </div>
       </div>

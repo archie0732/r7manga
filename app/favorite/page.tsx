@@ -1,19 +1,20 @@
 import { auth } from '@/auth';
-import { NhentaiDoujinFavorite } from '@/components/doujin/nhentai-doujin-favorites';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookHeart, UserPenIcon } from 'lucide-react';
+import { asAdminUser, isAdminUser } from '@/lib/auth/admin';
+import { ensureFavoriteShape } from '@/app/api/favorite/_model/store';
+import { FavoriteTabs } from '@/components/favorite/favorite-tabs';
 import Link from 'next/link';
 
 import { fetchNhentai, langFromTagIds, listItemThumbnailUrl } from '../api/nhentai/_model/_lib/util';
 
+import type { FavoriteData, FavoriteDoujinItem } from '../api/favorite/_model/apitype';
 import type { APIGalleryListItem, APIPaginatedSearchResultData } from '../api/nhentai/_model/apitypes';
 import type { DoujinSearchResult } from '../api/nhentai/search/route';
+import type { CarouselDoujinItem } from '@/components/doujin-carousel';
 
 type Props = Readonly<{
   searchParams: Promise<{ p?: string }>;
 }>;
 
-const ADMIN_EMAIL = 'killer.archie.0732@gmail.com';
 const PER_PAGE = 20;
 
 const toSearchResult = async (doujin: APIGalleryListItem): Promise<DoujinSearchResult> => {
@@ -43,10 +44,32 @@ const fetchFavoritesPage = async (page: number) => {
   };
 };
 
+const fetchStoredFavorites = async (): Promise<FavoriteData> => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/yanami`, {
+    cache: 'no-store',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load stored favorites: ${response.status.toString()} ${await response.text()}`);
+  }
+
+  return ensureFavoriteShape(await response.json() as FavoriteData);
+};
+
+const toCarouselItems = (items: FavoriteDoujinItem[]): CarouselDoujinItem[] =>
+  items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    thumbnail: item.thumbnail.startsWith('//') ? `https:${item.thumbnail}` : item.thumbnail,
+    banTag: [],
+    lang: item.lang === 'ja' || item.lang === 'zh' || item.lang === 'en' ? item.lang : 'zh',
+    page: item.page,
+  }));
+
 export default async function Page({ searchParams }: Props) {
   const session = await auth();
 
-  if (session?.user?.email !== ADMIN_EMAIL) {
+  if (!isAdminUser(asAdminUser(session?.user))) {
     return (
       <div className="container mx-auto p-4">
         <h1 className="mb-2 text-3xl font-bold">Favorites</h1>
@@ -71,6 +94,7 @@ export default async function Page({ searchParams }: Props) {
   const requestedPage = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
   let doujin: DoujinSearchResult[] = [];
+  let storedFavorites = ensureFavoriteShape(null);
   let totalPages = 1;
   let loadError: string | null = null;
   let currentPage = requestedPage;
@@ -86,10 +110,16 @@ export default async function Page({ searchParams }: Props) {
       doujin = clampedFavorites.data;
       totalPages = clampedFavorites.totalPages;
     }
+
+    storedFavorites = await fetchStoredFavorites();
   }
   catch (error) {
     loadError = error instanceof Error ? error.message : 'Unknown error';
   }
+
+  const wnacgFavorites = toCarouselItems(storedFavorites.favorite_wnacg?.doujin ?? []);
+  const hentaipawFavorites = toCarouselItems(storedFavorites.favorite_hentaipaw?.doujin ?? []);
+  const ehentaiFavorites = toCarouselItems(storedFavorites.favorite_ehentai?.doujin ?? []);
 
   return (
     <div className="container mx-auto p-4">
@@ -102,29 +132,14 @@ export default async function Page({ searchParams }: Props) {
           </div>
         </div>
       )}
-      <Tabs defaultValue="nhentai-favorites" className="space-y-4">
-        <TabsList>
-          <TabsTrigger
-            value="nhentai-favorites"
-            className="flex items-center gap-2"
-          >
-            <BookHeart size={16} />
-            Nhentai
-          </TabsTrigger>
-          <TabsTrigger value="wnacg" className="flex items-center gap-2">
-            <UserPenIcon size={16} />
-            Wnacg
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="nhentai-favorites">
-          <NhentaiDoujinFavorite doujin={doujin} curPage={currentPage} totalPages={totalPages} />
-        </TabsContent>
-
-        <TabsContent value="wnacg">
-          {/** TO ADD wnacg */}
-        </TabsContent>
-      </Tabs>
+      <FavoriteTabs
+        nhentaiFavorites={doujin}
+        nhentaiCurrentPage={currentPage}
+        nhentaiTotalPages={totalPages}
+        wnacgFavorites={wnacgFavorites}
+        hentaipawFavorites={hentaipawFavorites}
+        ehentaiFavorites={ehentaiFavorites}
+      />
     </div>
   );
 }

@@ -1,11 +1,16 @@
-import { TagData } from '@/app/api/nhentai/[doujin]/route';
 import { Badge } from '@/components/ui/badge';
 
 import Row from './layout/row';
 import Link from 'next/link';
 
+export interface LinkTagData {
+  id: number | string | null;
+  name: string;
+  url: string;
+}
+
 type Props = Readonly<{
-  tag: TagData[];
+  tag: LinkTagData[];
   label: string;
   icon: React.ReactNode;
 }>;
@@ -21,8 +26,8 @@ export function TagedDemo({ tag, label, icon }: Props) {
         {
           tag.map((tag) => (
             <Link
-              key={tag.id}
-              href={`/search?${tag.type}=${tag.name}`}
+              key={`${tag.id ?? tag.name}-${tag.name}`}
+              href={tag.url}
             >
               <Badge variant="secondary">
                 {tag.name}
