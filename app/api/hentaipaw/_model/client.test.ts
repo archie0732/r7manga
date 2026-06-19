@@ -4,6 +4,7 @@ import {
   HentaipawClient,
   buildListingQuery,
   mapHentaipawLanguage,
+  shouldUseLocalBunFallback,
 } from './client';
 
 const listingHtml = `
@@ -185,5 +186,11 @@ describe('HentaipawClient', () => {
     expect(mapHentaipawLanguage('Japanese')).toBe('ja');
     expect(mapHentaipawLanguage('English')).toBe('en');
     expect(mapHentaipawLanguage('Unknown')).toBe('en');
+  });
+
+  test('shouldUseLocalBunFallback is disabled on vercel', () => {
+    expect(shouldUseLocalBunFallback({ VERCEL: '1' })).toBe(false);
+    expect(shouldUseLocalBunFallback({ VERCEL: 'true' })).toBe(false);
+    expect(shouldUseLocalBunFallback({})).toBe(true);
   });
 });

@@ -4,6 +4,14 @@ import type { DoujinSearchResult } from '../nhentai/search/route';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
+const WNACG_HEADERS = {
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'zh-TW,zh;q=0.9,en;q=0.8',
+  'cache-control': 'no-cache',
+  'pragma': 'no-cache',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+};
+
 const homeParma = z.object({
   page: z.string().nullable().refine((val) => {
     if (!val) return true;
@@ -27,8 +35,10 @@ export async function GET(req: NextRequest) {
   const page = parama.data?.page ?? '1';
   const url = `https://www.wnacg.com/albums-index-page-${page}.html`;
 
-  console.log(`Server Get: ${url} and page is ${parama.data?.page}`);
-  const response = await fetch(url);
+  console.log(`Server Get: ${url} and resolved page is ${page}`);
+  const response = await fetch(url, {
+    headers: WNACG_HEADERS,
+  });
 
   if (!response.ok) {
     return Response.json('fetch web error', { status: 500 });

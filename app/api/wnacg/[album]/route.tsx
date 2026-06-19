@@ -1,6 +1,14 @@
 import { load } from 'cheerio';
 import { formatId, getPicture } from '../_lib/util';
 
+const WNACG_HEADERS = {
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'zh-TW,zh;q=0.9,en;q=0.8',
+  'cache-control': 'no-cache',
+  'pragma': 'no-cache',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+};
+
 type Params = Readonly<{
   params: Promise<{ album: string }>;
 }>;
@@ -20,7 +28,9 @@ export interface Album {
 export async function GET(req: Request, { params }: Params) {
   const id = (await params).album;
 
-  const response = await fetch(`https://www.wnacg.com/photos-index-aid-${id}.html`);
+  const response = await fetch(`https://www.wnacg.com/photos-index-aid-${id}.html`, {
+    headers: WNACG_HEADERS,
+  });
 
   if (!response.ok) {
     return new Response('fetch wnacg error', {

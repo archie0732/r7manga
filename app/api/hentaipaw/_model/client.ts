@@ -96,6 +96,10 @@ export const mapHentaipawLanguage = (language: string): 'ja' | 'zh' | 'en' => {
   return 'en';
 };
 
+export const shouldUseLocalBunFallback = (env: NodeJS.ProcessEnv = process.env) => {
+  return env.VERCEL !== '1' && env.VERCEL !== 'true';
+};
+
 const parseCard = ($: CheerioAPI, element: Element): HentaipawSearchResult => {
   const card = $(element);
   const href = card.attr('href') ?? '';
@@ -191,15 +195,9 @@ const parseViewerPages = (html: string) => {
 const fallbackFetchHtml = async (url: string) => {
   const script = `
     const url = process.env.R7_HENTAIPAW_URL;
-    if (!url) {
-      console.error('STATUS:MISSING_URL');
-      process.exit(3);
-    }
+    if (!url) process.exit(3);
     const response = await fetch(url);
-    if (!response.ok) {
-      console.error('STATUS:' + response.status);
-      process.exit(2);
-    }
+    if (!response.ok) process.exit(2);
     process.stdout.write(await response.text());
   `;
 
@@ -230,6 +228,10 @@ const fetchHtml = async (fetcher: Fetcher, url: string) => {
     if (!(error instanceof Error) || !/403|fetch failed/i.test(error.message)) {
       throw error;
     }
+  }
+
+  if (!shouldUseLocalBunFallback()) {
+    throw new Error('Hentaipaw fetch blocked upstream and local Bun fallback is unavailable on Vercel.');
   }
 
   return fallbackFetchHtml(url);
