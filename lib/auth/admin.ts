@@ -15,4 +15,7 @@ export const getAdminIdentity = (env: AdminEnv) => ({
 export const isAdminUser = (user: AdminLikeUser | null | undefined) =>
   user?.role === 'admin';
 
+export const canManageNhentaiFavorites = (user: AdminLikeUser | null | undefined) =>
+  isAdminUser(user);
+
 export const asAdminUser = (user: unknown) => user as AdminLikeUser | null | undefined;

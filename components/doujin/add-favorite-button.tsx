@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
+import { canManageNhentaiFavorites } from '@/lib/auth/admin';
+
 import { Button } from '../ui/button';
 import { useToast } from '../ui/hooks/use-toast';
 
@@ -15,8 +17,6 @@ interface HaveDoujin {
   page: number;
 }
 
-const ALLOWED_EMAIL = 'killer.archie.0732@gmail.com';
-
 export function AddFavoriteButton({ id, title, thumbnail, lang, page }: HaveDoujin) {
   void [thumbnail, lang, page];
   const session = useSession();
@@ -24,8 +24,7 @@ export function AddFavoriteButton({ id, title, thumbnail, lang, page }: HaveDouj
 
   const [mydata, setMyData] = useState<0 | 1>(0);
 
-  const currentEmail = session.data?.user?.email ?? '';
-  const isAllowed = currentEmail === ALLOWED_EMAIL;
+  const isAllowed = canManageNhentaiFavorites(session.data?.user);
 
   const addNew = async () => {
     if (!isAllowed) {
