@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   HentaipawClient,
   buildListingQuery,
+  HENTAIPAW_HEADERS,
   mapHentaipawLanguage,
   shouldUseLocalBunFallback,
 } from './client';
@@ -125,6 +126,21 @@ describe('HentaipawClient', () => {
         page: 0,
       },
     ]);
+  });
+
+  test('search sends browser-like headers to upstream fetches', async () => {
+    let receivedHeaders: HeadersInit | undefined;
+    const client = new HentaipawClient(async (_input, init) => {
+      receivedHeaders = init?.headers;
+      return new Response(listingHtml);
+    });
+
+    await client.search({ q: 'keyword', page: '1' });
+
+    const headers = new Headers(receivedHeaders);
+    expect(headers.get('user-agent')).toBe(HENTAIPAW_HEADERS['user-agent']);
+    expect(headers.get('accept-language')).toBe(HENTAIPAW_HEADERS['accept-language']);
+    expect(headers.get('referer')).toBe(HENTAIPAW_HEADERS.referer);
   });
 
   test('parseHomePage selects the latest section instead of the first grid', () => {

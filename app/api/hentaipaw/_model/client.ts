@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { load } from 'cheerio';
 import type { Element } from 'domhandler';
 import { execFile } from 'node:child_process';
@@ -10,6 +11,14 @@ const execFileAsync = promisify(execFile);
 
 const BASE_URL = 'https://zh.hentaipaw.com';
 const LATEST_SECTION_TITLE = '最新的H漫・色情同人本';
+export const HENTAIPAW_HEADERS = {
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'zh-TW,zh;q=0.9,en;q=0.8',
+  'cache-control': 'no-cache',
+  'pragma': 'no-cache',
+  'referer': `${BASE_URL}/`,
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+} as const;
 
 export interface HentaipawSearchResult {
   title: string;
@@ -214,7 +223,9 @@ const fallbackFetchHtml = async (url: string) => {
 
 const fetchHtml = async (fetcher: Fetcher, url: string) => {
   try {
-    const response = await fetcher(url);
+    const response = await fetcher(url, {
+      headers: HENTAIPAW_HEADERS,
+    });
 
     if (response.ok) {
       return await response.text();
@@ -226,6 +237,24 @@ const fetchHtml = async (fetcher: Fetcher, url: string) => {
   }
   catch (error) {
     if (!(error instanceof Error) || !/403|fetch failed/i.test(error.message)) {
+      throw error;
+    }
+  }
+
+  try {
+    const response = await axios.get<string>(url, {
+      headers: HENTAIPAW_HEADERS,
+      responseType: 'text',
+      timeout: 15_000,
+      validateStatus: () => true,
+    });
+
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    }
+  }
+  catch (error) {
+    if (!(error instanceof Error)) {
       throw error;
     }
   }
