@@ -7,6 +7,7 @@ import { getAdminIdentity } from '@/lib/auth/admin';
 const adminIdentity = getAdminIdentity(process.env as Record<string, string | undefined>);
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: 'Local Admin',

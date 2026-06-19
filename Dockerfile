@@ -20,6 +20,12 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
+RUN apk add --no-cache curl \
+  && curl -fsSL https://bun.sh/install | sh
+
+ENV BUN_INSTALL=/root/.bun
+ENV PATH=/root/.bun/bin:$PATH
+
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules

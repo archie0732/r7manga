@@ -1,11 +1,11 @@
-import { Heading1 } from '@/components/ui/typography';
-import { Flame } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-
 import Link from 'next/link';
-import { NhnentaiHomePage } from '@/components/home/n-home-page';
+import { Flame } from 'lucide-react';
+
 import { HentaipawHomePage } from '@/components/home/p-home-page';
+import { NhnentaiHomePage } from '@/components/home/n-home-page';
 import { WnacgHomePage } from '@/components/home/w-home-page';
+import { Button } from '@/components/ui/button';
+import { Heading1 } from '@/components/ui/typography';
 
 export default function Home() {
   return (
@@ -20,7 +20,7 @@ export default function Home() {
           >
             <div className="flex items-center gap-2">
               <Flame size={48} />
-              <span>今日更新</span>
+              <span>首頁推薦</span>
             </div>
             <div className="md:absolute md:right-0"></div>
           </Heading1>
@@ -41,10 +41,11 @@ export default function Home() {
                 </Link>
               </div>
               <WnacgHomePage />
+
               <div className="flex justify-between">
                 <span className="text-4xl font-bold">hentaipaw</span>
                 <Link href="/p">
-                  <Button variant="link">?亦??游?</Button>
+                  <Button variant="link">查看更多</Button>
                 </Link>
               </div>
               <HentaipawHomePage />

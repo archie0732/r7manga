@@ -11,12 +11,13 @@ const execFileAsync = promisify(execFile);
 
 const BASE_URL = 'https://zh.hentaipaw.com';
 const LATEST_SECTION_TITLE = '最新的H漫・色情同人本';
+
 export const HENTAIPAW_HEADERS = {
-  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'accept-language': 'zh-TW,zh;q=0.9,en;q=0.8',
   'cache-control': 'no-cache',
-  'pragma': 'no-cache',
-  'referer': `${BASE_URL}/`,
+  pragma: 'no-cache',
+  referer: `${BASE_URL}/`,
   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
 } as const;
 
@@ -68,12 +69,12 @@ export type HentaipawListQuery = {
 
 const labelMap = {
   artist: ['作者'],
-  group: ['社團', '團體', '团体'],
+  group: ['社團', '組織', '圈子'],
   parody: ['原作'],
   character: ['角色'],
   tag: ['標籤', '标签'],
   language: ['語言', '语言'],
-  category: ['分類', '分类'],
+  category: ['分類', '类别'],
 } satisfies Record<HentaipawTag['type'], string[]>;
 
 const normalizeLabel = (text: string) => text.replace(/[:：\s]/g, '').trim();
