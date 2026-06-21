@@ -38,11 +38,6 @@ const items = [
     icon: Search,
   },
   {
-    title: 'E-Hentai',
-    url: '/search?q=*&w=e',
-    icon: BookHeart,
-  },
-  {
     title: 'Favorites',
     url: '/favorite',
     icon: Heart,
