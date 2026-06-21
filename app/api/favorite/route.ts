@@ -2,8 +2,15 @@ import axios from 'axios';
 import 'dotenv/config';
 import { NextRequest } from 'next/server';
 
-import type { FavoriteAdd, FavoriteData, FavoriteRemove, FavoriteWebsite, GitHubFileResponse } from './_model/apitype';
-import { addFavoriteEntry, ensureFavoriteShape, isDoujinFavorited, removeFavoriteEntry } from './_model/store';
+import type {
+  FavoriteAdd,
+  FavoriteCollectionMutation,
+  FavoriteData,
+  FavoriteRemove,
+  FavoriteWebsite,
+  GitHubFileResponse,
+} from './_model/apitype';
+import { addFavoriteEntry, ensureFavoriteShape, isDoujinFavorited, mutateFavoriteCollections, removeFavoriteEntry } from './_model/store';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = 'archie0732';
@@ -62,13 +69,15 @@ async function updateGitHubFile(content: string, sha: string | null): Promise<vo
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const body = await req.json() as FavoriteAdd;
+  const body = await req.json() as FavoriteAdd | FavoriteCollectionMutation;
 
   const { content: remoteData, sha } = await fetchRemoteFile();
   let nextData: FavoriteData;
 
   try {
-    nextData = addFavoriteEntry(remoteData, body);
+    nextData = typeof body.type === 'string' && body.type.startsWith('ehentai-collection-')
+      ? mutateFavoriteCollections(remoteData, body as FavoriteCollectionMutation)
+      : addFavoriteEntry(remoteData, body as FavoriteAdd);
   }
   catch {
     return new Response('Post data error', { status: 400 });

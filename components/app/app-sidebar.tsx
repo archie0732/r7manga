@@ -1,4 +1,4 @@
-import { Home, BookHeart, Search, Settings, PenTool, Heart, UserCheck, BadgeInfo } from 'lucide-react';
+import { Home, BookHeart, Search, Settings, PenTool, Heart, UserCheck, BadgeInfo, LibraryBig } from 'lucide-react';
 
 import {
   Sidebar,
@@ -47,6 +47,11 @@ const items = [
     url: '/favorite',
     icon: Heart,
 
+  },
+  {
+    title: 'Ehentai Collections',
+    url: '/e/collections',
+    icon: LibraryBig,
   },
   {
     title: 'Subscription',

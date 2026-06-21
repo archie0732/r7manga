@@ -11,6 +11,14 @@ export interface FavoriteDoujinItem {
   source?: string;
 }
 
+export interface EhentaiCollection {
+  id: string;
+  name: string;
+  items: FavoriteDoujinItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface FavoriteData {
   name: string;
   id: string;
@@ -27,6 +35,7 @@ export interface FavoriteData {
   };
   favorite_ehentai?: {
     doujin: FavoriteDoujinItem[];
+    collections?: EhentaiCollection[];
   };
 }
 
@@ -43,6 +52,32 @@ export interface FavoriteRemove {
   website: Exclude<FavoriteWebsite, 'nhentai'>;
   id: string;
 }
+
+export type FavoriteCollectionMutation =
+  | {
+    type: 'ehentai-collection-create';
+    name: string;
+    itemIds: string[];
+  }
+  | {
+    type: 'ehentai-collection-rename';
+    collectionId: string;
+    name: string;
+  }
+  | {
+    type: 'ehentai-collection-reorder';
+    collectionId: string;
+    itemIds: string[];
+  }
+  | {
+    type: 'ehentai-collection-remove-item';
+    collectionId: string;
+    itemId: string;
+  }
+  | {
+    type: 'ehentai-collection-delete';
+    collectionId: string;
+  };
 
 export interface GitHubFileResponse {
   sha: string;

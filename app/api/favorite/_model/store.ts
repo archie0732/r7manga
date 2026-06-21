@@ -1,5 +1,6 @@
 import type {
   FavoriteAdd,
+  FavoriteCollectionMutation,
   FavoriteData,
   FavoriteDoujinItem,
   FavoriteRemove,
@@ -11,8 +12,17 @@ type FavoriteDoujinBucket = {
   doujin: FavoriteDoujinItem[];
 };
 
+type FavoriteEhentaiBucket = FavoriteDoujinBucket & {
+  collections: NonNullable<FavoriteData['favorite_ehentai']>['collections'];
+};
+
 const emptyDoujinBucket = (): FavoriteDoujinBucket => ({
   doujin: [],
+});
+
+const emptyEhentaiBucket = (): FavoriteEhentaiBucket => ({
+  doujin: [],
+  collections: [],
 });
 
 export const ensureFavoriteShape = (input: FavoriteData | null | undefined): FavoriteData => ({
@@ -25,7 +35,10 @@ export const ensureFavoriteShape = (input: FavoriteData | null | undefined): Fav
   },
   favorite_wnacg: input?.favorite_wnacg ?? emptyDoujinBucket(),
   favorite_hentaipaw: input?.favorite_hentaipaw ?? emptyDoujinBucket(),
-  favorite_ehentai: input?.favorite_ehentai ?? emptyDoujinBucket(),
+  favorite_ehentai: {
+    doujin: input?.favorite_ehentai?.doujin ?? [],
+    collections: input?.favorite_ehentai?.collections ?? [],
+  },
 });
 
 const doujinKeyMap = {
@@ -61,6 +74,11 @@ const normalizeDoujin = (doujin: FavoriteAdd['doujin']): FavoriteDoujinItem => {
   };
 };
 
+const touchCollection = <T extends { updatedAt: string }>(collection: T) => ({
+  ...collection,
+  updatedAt: new Date().toISOString(),
+});
+
 export const addFavoriteEntry = (input: FavoriteData | null | undefined, body: FavoriteAdd): FavoriteData => {
   const data = ensureFavoriteShape(input);
 
@@ -94,6 +112,99 @@ export const addFavoriteEntry = (input: FavoriteData | null | undefined, body: F
   }
 
   throw new Error('Post data error');
+};
+
+export const mutateFavoriteCollections = (
+  input: FavoriteData | null | undefined,
+  mutation: FavoriteCollectionMutation,
+): FavoriteData => {
+  const data = ensureFavoriteShape(input);
+  const bucket = data.favorite_ehentai ?? emptyEhentaiBucket();
+  data.favorite_ehentai = {
+    doujin: bucket.doujin ?? [],
+    collections: bucket.collections ?? [],
+  };
+
+  if (mutation.type === 'ehentai-collection-create') {
+    const name = mutation.name.trim();
+
+    if (!name || mutation.itemIds.length === 0) {
+      throw new Error('Invalid collection create');
+    }
+
+    const items = mutation.itemIds.map((id) => {
+      const found = data.favorite_ehentai?.doujin.find((item) => item.id === id);
+
+      if (!found) {
+        throw new Error(`Missing favorite item: ${id}`);
+      }
+
+      return { ...found };
+    });
+
+    const now = new Date().toISOString();
+    data.favorite_ehentai.collections?.push({
+      id: crypto.randomUUID(),
+      name,
+      items,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return data;
+  }
+
+  const collections = data.favorite_ehentai.collections ?? [];
+  const index = collections.findIndex((collection) => collection.id === mutation.collectionId);
+
+  if (index === -1) {
+    throw new Error('Collection not found');
+  }
+
+  const collection = collections[index]!;
+
+  if (mutation.type === 'ehentai-collection-rename') {
+    const name = mutation.name.trim();
+
+    if (!name) {
+      throw new Error('Invalid collection name');
+    }
+
+    collections[index] = touchCollection({
+      ...collection,
+      name,
+    });
+    return data;
+  }
+
+  if (mutation.type === 'ehentai-collection-reorder') {
+    const items = mutation.itemIds.map((id) => {
+      const found = collection.items.find((item) => item.id === id);
+
+      if (!found) {
+        throw new Error(`Collection item not found: ${id}`);
+      }
+
+      return found;
+    });
+
+    collections[index] = touchCollection({
+      ...collection,
+      items,
+    });
+    return data;
+  }
+
+  if (mutation.type === 'ehentai-collection-remove-item') {
+    collections[index] = touchCollection({
+      ...collection,
+      items: collection.items.filter((item) => item.id !== mutation.itemId),
+    });
+    return data;
+  }
+
+  data.favorite_ehentai.collections = collections.filter((item) => item.id !== mutation.collectionId);
+  return data;
 };
 
 export const removeFavoriteEntry = (input: FavoriteData | null | undefined, body: FavoriteRemove): FavoriteData => {
