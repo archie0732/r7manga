@@ -1,6 +1,16 @@
 import { describe, expect, test } from 'bun:test';
 
-import { buildCommandSearchTarget } from './app-command';
+import { buildCommandSearchTarget, commandNavigationItems } from './app-command';
+
+describe('commandNavigationItems', () => {
+  test('keeps only the home navigation shortcut in the command palette', () => {
+    expect(commandNavigationItems).toHaveLength(1);
+    expect(commandNavigationItems[0]).toMatchObject({
+      label: 'Home',
+      href: '/',
+    });
+  });
+});
 
 describe('buildCommandSearchTarget', () => {
   test('routes keyword search to nhentai search by default', () => {

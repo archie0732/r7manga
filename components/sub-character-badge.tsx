@@ -1,6 +1,8 @@
 'use client';
 import { TagData } from '@/app/api/nhentai/[doujin]/route';
 import { Badge } from '@/components/ui/badge';
+import { canManageNhentaiSubscriptions } from '@/lib/auth/admin';
+import { useSession } from 'next-auth/react';
 
 import Row from './layout/row';
 import Link from 'next/link';
@@ -19,6 +21,7 @@ type Props = Readonly<{
 
 export function SubCharacterTagedDemo({ tag, label, icon }: Props) {
   const { kindkey } = useAppStore();
+  const session = useSession();
   const { toast } = useToast();
   const [check, setCheck] = useState<boolean>(false);
   const [doujin, setDoujin] = useState<FavoriteData>();
@@ -33,7 +36,7 @@ export function SubCharacterTagedDemo({ tag, label, icon }: Props) {
       description: '請勿連續點擊按鈕',
     });
 
-    if (!check) {
+    if (!canManageNhentaiSubscriptions(session.data?.user, check)) {
       toast({
         title: '此功能尚未實作完畢',
         description: '此功能僅提供開發人員',
@@ -96,7 +99,7 @@ export function SubCharacterTagedDemo({ tag, label, icon }: Props) {
 
     void fetchAPI();
     void checkKey();
-  }, []);
+  }, [kindkey]);
 
   return (
     <div className="flex gap-2">

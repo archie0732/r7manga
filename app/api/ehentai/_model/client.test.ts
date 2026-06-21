@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 
-import { EhentaiClient, type EhentaiSearchResult } from './client';
+import { buildSearchUrl, EhentaiClient, extractNextToken, type EhentaiSearchResult } from './client';
 
 const searchHtml = `
   <table>
@@ -20,6 +20,32 @@ const searchHtml = `
       <td class="gl4c glhide">
         <div>Japanese</div>
         <div>214 pages</div>
+      </td>
+    </tr>
+  </table>
+  <div class="searchnav">
+    <a href="https://e-hentai.org/tag/artist:soso?next=2811644">Next</a>
+  </div>
+`;
+
+const searchHtmlPageTwo = `
+  <table>
+    <tr>
+      <td class="gl2c">
+        <div class="glthumb">
+          <div>
+            <img src="https://ehgt.org/w/01/thumb-2.webp" />
+          </div>
+        </div>
+      </td>
+      <td class="glname">
+        <a href="https://e-hentai.org/g/3637068/eeeeeeeeee/">
+          <div class="glink">Soso Page 2</div>
+        </a>
+      </td>
+      <td class="gl4c glhide">
+        <div>Japanese</div>
+        <div>20 pages</div>
       </td>
     </tr>
   </table>
@@ -71,6 +97,14 @@ const imagePageHtml = `
 `;
 
 describe('EhentaiClient', () => {
+  test('buildSearchUrl uses next cursor when provided', () => {
+    expect(buildSearchUrl({ artist: 'soso', next: '2811644' })).toBe('https://e-hentai.org/?f_search=artist%3Asoso&next=2811644');
+  });
+
+  test('extractNextToken reads the next cursor from search navigation', () => {
+    expect(extractNextToken(searchHtml)).toBe('2811644');
+  });
+
   test('search parses gallery cards into website results', async () => {
     const client = new EhentaiClient(async () => new Response(searchHtml));
 
@@ -89,6 +123,32 @@ describe('EhentaiClient', () => {
         url: 'https://e-hentai.org/g/3637067/d79cdf4a79/',
       },
     ]);
+  });
+
+  test('search follows next cursor when requesting later pages', async () => {
+    const calls: string[] = [];
+    const client = new EhentaiClient(async (input) => {
+      const url = input.toString();
+      calls.push(url);
+
+      if (url === 'https://e-hentai.org/?f_search=artist%3Asoso') {
+        return new Response(searchHtml);
+      }
+
+      if (url === 'https://e-hentai.org/?f_search=artist%3Asoso&next=2811644') {
+        return new Response(searchHtmlPageTwo);
+      }
+
+      return new Response('not found', { status: 404 });
+    });
+
+    const result = await client.search({ artist: 'soso', page: 2 });
+
+    expect(calls).toEqual([
+      'https://e-hentai.org/?f_search=artist%3Asoso',
+      'https://e-hentai.org/?f_search=artist%3Asoso&next=2811644',
+    ]);
+    expect(result[0]?.id).toBe('3637068-eeeeeeeeee');
   });
 
   test('getGalleryDetail fetches every thumbnail page and returns page links without resolving images', async () => {

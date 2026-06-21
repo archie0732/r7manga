@@ -14,6 +14,13 @@ export interface EhentaiSearchResult {
   url: string;
 }
 
+export interface EhentaiSearchPage {
+  results: EhentaiSearchResult[];
+  next?: string | null;
+}
+
+export const EHENTAI_IMAGE_BATCH_SIZE = 5;
+
 export interface EhentaiGalleryDetail {
   id: string;
   gid: string;
@@ -37,6 +44,7 @@ type SearchParams = {
   artist?: string | null;
   tag?: string | null;
   page?: string | number | null;
+  next?: string | null;
 };
 
 const SEARCH_ROOT = 'https://e-hentai.org/';
@@ -82,6 +90,37 @@ const buildSearchQuery = ({ q, artist, tag }: SearchParams) => {
   ].filter((value): value is string => Boolean(value));
 
   return terms.join(' ').trim() || '*';
+};
+
+export const extractNextToken = (html: string) => {
+  const $ = load(html);
+
+  const candidate = $('a')
+    .map((_, link) => $(link).attr('href') ?? '')
+    .get()
+    .find((href) => href.includes('/tag/') && href.includes('next=') || href.startsWith('?next=') || href.includes('&next='));
+
+  if (!candidate) {
+    return null;
+  }
+
+  return new URL(candidate, SEARCH_ROOT).searchParams.get('next');
+};
+
+export const buildSearchUrl = (params: SearchParams) => {
+  const url = new URL(SEARCH_ROOT);
+  url.searchParams.set('f_search', buildSearchQuery(params));
+
+  if (params.next?.trim()) {
+    url.searchParams.set('next', params.next.trim());
+    return url.toString();
+  }
+
+  if (params.page && params.page.toString() !== '1') {
+    url.searchParams.set('page', params.page.toString());
+  }
+
+  return url.toString();
 };
 
 export const parseSearchResults = (html: string): EhentaiSearchResult[] => {
@@ -210,20 +249,35 @@ export class EhentaiClient {
   constructor(private readonly fetchImpl: FetchImpl = fetch) {}
 
   async search(params: SearchParams): Promise<EhentaiSearchResult[]> {
-    const url = new URL(SEARCH_ROOT);
-    url.searchParams.set('f_search', buildSearchQuery(params));
-
-    if (params.page && params.page.toString() !== '1') {
-      url.searchParams.set('page', params.page.toString());
-    }
-
-    const response = await this.fetchImpl(url.toString());
+    const targetPage = Math.max(1, Number.parseInt(params.page?.toString() ?? '1', 10) || 1);
+    let currentPage = 1;
+    let nextToken = params.next?.trim() || null;
+    let response = await this.fetchImpl(buildSearchUrl({ ...params, page: currentPage, next: nextToken }));
 
     if (!response.ok) {
       throw new Error(`E-Hentai search failed: ${response.status.toString()} ${await response.text()}`);
     }
 
-    return parseSearchResults(await response.text());
+    let html = await response.text();
+
+    while (currentPage < targetPage) {
+      nextToken = extractNextToken(html);
+
+      if (!nextToken) {
+        break;
+      }
+
+      currentPage += 1;
+      response = await this.fetchImpl(buildSearchUrl({ ...params, next: nextToken }));
+
+      if (!response.ok) {
+        throw new Error(`E-Hentai search failed: ${response.status.toString()} ${await response.text()}`);
+      }
+
+      html = await response.text();
+    }
+
+    return parseSearchResults(html);
   }
 
   async getGalleryDetail(gid: string, token: string): Promise<EhentaiGalleryDetail> {

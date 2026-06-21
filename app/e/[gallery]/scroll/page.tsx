@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import type { EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
+import { EHENTAI_IMAGE_BATCH_SIZE, type EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
 
 type Props = Readonly<{
   params: Promise<{ gallery: string }>;
@@ -17,6 +17,28 @@ export default function Page({ params }: Props) {
   const [images, setImages] = useState<string[]>([]);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const loadMoreImages = async (targetGallery: EhentaiGalleryDetail, start: number) => {
+    setLoadingMore(true);
+
+    try {
+      const response = await fetch(`/api/ehentai/${targetGallery.id}/images?start=${start.toString()}&count=${EHENTAI_IMAGE_BATCH_SIZE.toString()}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image batch: ${response.status.toString()} ${response.statusText}`);
+      }
+
+      const batch = await response.json() as { images: string[] };
+      setImages((current) => [...current, ...batch.images]);
+    }
+    catch (err) {
+      console.error(err);
+      setError('Failed to load gallery images.');
+    }
+    finally {
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
     void (async () => {
@@ -38,31 +60,12 @@ export default function Page({ params }: Props) {
   }, [params]);
 
   useEffect(() => {
-    if (!gallery || loadingMore || images.length >= gallery.pageLinks.length) {
+    if (!gallery || images.length > 0) {
       return;
     }
 
-    void (async () => {
-      try {
-        setLoadingMore(true);
-        const response = await fetch(`/api/ehentai/${gallery.id}/images?start=${images.length.toString()}&count=10`);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch image batch: ${response.status.toString()} ${response.statusText}`);
-        }
-
-        const batch = await response.json() as { images: string[] };
-        setImages((current) => [...current, ...batch.images]);
-      }
-      catch (err) {
-        console.error(err);
-        setError('Failed to load gallery images.');
-      }
-      finally {
-        setLoadingMore(false);
-      }
-    })();
-  }, [gallery, images.length, loadingMore]);
+    void loadMoreImages(gallery, 0);
+  }, [gallery, images.length]);
 
   if (error) {
     return (
@@ -104,6 +107,17 @@ export default function Page({ params }: Props) {
       ))}
 
       {loadingMore ? <p className="py-6 text-sm text-muted-foreground">Loading more pages...</p> : null}
+      {!loadingMore && gallery && images.length < gallery.pageLinks.length
+        ? (
+            <Button
+              className="my-6"
+              variant="secondary"
+              onClick={() => void loadMoreImages(gallery, images.length)}
+            >
+              View more
+            </Button>
+          )
+        : null}
     </div>
   );
 }

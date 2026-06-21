@@ -18,4 +18,9 @@ export const isAdminUser = (user: AdminLikeUser | null | undefined) =>
 export const canManageNhentaiFavorites = (user: AdminLikeUser | null | undefined) =>
   isAdminUser(user);
 
+export const canManageNhentaiSubscriptions = (
+  user: AdminLikeUser | null | undefined,
+  hasSaveKey: boolean,
+) => hasSaveKey || isAdminUser(user);
+
 export const asAdminUser = (user: unknown) => user as AdminLikeUser | null | undefined;

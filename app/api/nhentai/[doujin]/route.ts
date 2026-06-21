@@ -24,6 +24,35 @@ export interface Doujin extends Omit<APIDoujinData, 'id' | 'media_id' | 'images'
   banTag: APIDoujinTagData[];
 }
 
+const localSearchParamMap = {
+  tag: 'tag',
+  parody: 'parody',
+  artist: 'artist',
+  character: 'character',
+  language: 'tag',
+  category: 'tag',
+} as const satisfies Partial<Record<APIDoujinTagData['type'], 'tag' | 'parody' | 'artist' | 'character'>>;
+
+export const toLocalTagUrl = (tag: APIDoujinTagData) => {
+  const searchKey = localSearchParamMap[tag.type as keyof typeof localSearchParamMap];
+
+  if (!searchKey) {
+    return tag.url;
+  }
+
+  const params = new URLSearchParams({
+    [searchKey]: tag.name,
+  });
+
+  return `/search?${params.toString()}`;
+};
+
+export const normalizeTagUrls = (tags: APIDoujinTagData[]) =>
+  tags.map((tag) => ({
+    ...tag,
+    url: toLocalTagUrl(tag),
+  }));
+
 type Params = Readonly<{
   params: Promise<{ doujin: string }>;
 }>;
@@ -46,11 +75,11 @@ export async function GET(_req: Request, { params }: Params) {
 
   const json = await response.json() as APIDoujinData;
   const images: string[] = [];
-  const category = json.tags.filter((t) => t.type == 'category');
-  const parody = json.tags.filter((t) => t.type == 'parody');
-  const language = json.tags.filter((t) => t.type == 'language' && t.name != 'translated');
-  const artists = json.tags.filter((t) => t.type == 'artist');
-  const characters = json.tags.filter((t) => t.type == 'character');
+  const category = normalizeTagUrls(json.tags.filter((t) => t.type == 'category'));
+  const parody = normalizeTagUrls(json.tags.filter((t) => t.type == 'parody'));
+  const language = normalizeTagUrls(json.tags.filter((t) => t.type == 'language' && t.name != 'translated'));
+  const artists = normalizeTagUrls(json.tags.filter((t) => t.type == 'artist'));
+  const characters = normalizeTagUrls(json.tags.filter((t) => t.type == 'character'));
 
   for (const i of [...Array(json.num_pages).keys()]) {
     const imagePath = toImagePath(json, i);
@@ -84,7 +113,7 @@ export async function GET(_req: Request, { params }: Params) {
     ...data,
     title: normalizedTitle,
     id: data.id.toString(),
-    tags: data.tags.filter((t) => t.type == 'tag'),
+    tags: normalizeTagUrls(data.tags.filter((t) => t.type == 'tag')),
     images,
     category,
     parody,
@@ -103,7 +132,7 @@ export async function GET(_req: Request, { params }: Params) {
     ...data,
     title: normalizedTitle,
     id: data.id.toString(),
-    tags: data.tags.filter((t) => t.type == 'tag'),
+    tags: normalizeTagUrls(data.tags.filter((t) => t.type == 'tag')),
     images,
     category,
     parody,

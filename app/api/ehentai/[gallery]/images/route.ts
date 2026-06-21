@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { EhentaiClient } from '../../_model/client';
+import { EHENTAI_IMAGE_BATCH_SIZE, EhentaiClient } from '../../_model/client';
 
 const ParamSchema = z.object({
   gallery: z.string().regex(/^\d+-[a-z0-9]+$/i),
@@ -8,7 +8,7 @@ const ParamSchema = z.object({
 
 const QuerySchema = z.object({
   start: z.coerce.number().int().min(0).default(0),
-  count: z.coerce.number().int().min(1).max(20).default(10),
+  count: z.coerce.number().int().min(1).max(20).default(EHENTAI_IMAGE_BATCH_SIZE),
 });
 
 type Props = Readonly<{
@@ -27,7 +27,7 @@ export const GET = async (req: Request, { params }: Props) => {
   const requestUrl = new URL(req.url);
   const parsedQuery = QuerySchema.safeParse({
     start: requestUrl.searchParams.get('start') ?? '0',
-    count: requestUrl.searchParams.get('count') ?? '10',
+    count: requestUrl.searchParams.get('count') ?? EHENTAI_IMAGE_BATCH_SIZE.toString(),
   });
 
   if (!parsedQuery.success) {

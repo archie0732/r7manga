@@ -9,6 +9,14 @@ import { useState } from 'react';
 
 export type SearchWebsite = 'nhentai' | 'hentaipaw' | 'ehentai';
 
+export const commandNavigationItems = [
+  {
+    label: 'Home',
+    href: '/',
+    icon: Home,
+  },
+] as const;
+
 export const buildCommandSearchTarget = (keyword: string, website: SearchWebsite) => {
   if (/^\d+$/.test(keyword)) {
     return `/n/${keyword}`;
@@ -63,30 +71,18 @@ export default function AppCommand() {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Navigation">
-          <CommandItem onSelect={() => {
-            router.push('/');
-            setCommandPanelVisible(false);
-          }}
-          >
-            <Home />
-            <span>Home</span>
-          </CommandItem>
-          <CommandItem onSelect={() => {
-            router.push('/n/');
-            setCommandPanelVisible(false);
-          }}
-          >
-            <BookHeart />
-            <span>nhentai</span>
-          </CommandItem>
-          <CommandItem onSelect={() => {
-            router.push('/p/');
-            setCommandPanelVisible(false);
-          }}
-          >
-            <Book />
-            <span>hentaipaw</span>
-          </CommandItem>
+          {commandNavigationItems.map((item) => (
+            <CommandItem
+              key={item.href}
+              onSelect={() => {
+                router.push(item.href);
+                setCommandPanelVisible(false);
+              }}
+            >
+              <item.icon />
+              <span>{item.label}</span>
+            </CommandItem>
+          ))}
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Search Website">

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { SiteFavoriteButton } from '@/components/favorite/site-favorite-button';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import type { EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
+import { EHENTAI_IMAGE_BATCH_SIZE, type EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
 
 type Props = Readonly<{
   params: Promise<{
@@ -19,6 +19,26 @@ type Props = Readonly<{
 
 export default function Page({ params }: Props) {
   const [gallery, setGallery] = useState<EhentaiGalleryDetail | null>(null);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+
+  const loadPreviewImages = async (targetGallery: EhentaiGalleryDetail, start: number) => {
+    setLoadingPreview(true);
+
+    try {
+      const response = await fetch(`/api/ehentai/${targetGallery.id}/images?start=${start.toString()}&count=${EHENTAI_IMAGE_BATCH_SIZE.toString()}`);
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status.toString()}: ${await response.text()}`);
+      }
+
+      const payload = await response.json() as { images: string[] };
+      setPreviewImages((current) => [...current, ...payload.images]);
+    }
+    finally {
+      setLoadingPreview(false);
+    }
+  };
 
   useEffect(() => {
     void (async () => {
@@ -32,6 +52,14 @@ export default function Page({ params }: Props) {
       setGallery(await response.json() as EhentaiGalleryDetail);
     })();
   }, [params]);
+
+  useEffect(() => {
+    if (!gallery || previewImages.length > 0) {
+      return;
+    }
+
+    void loadPreviewImages(gallery, 0);
+  }, [gallery, previewImages.length]);
 
   if (!gallery) {
     return (
@@ -96,21 +124,36 @@ export default function Page({ params }: Props) {
         </div>
 
         <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Page Links</h2>
-          <div className="grid gap-2 md:grid-cols-2">
-            {gallery.pageLinks.slice(0, 40).map((pageLink, index) => (
-              <Link
-                key={pageLink}
-                href={pageLink}
-                target="_blank"
-                className="truncate rounded border px-3 py-2 text-sm hover:bg-secondary"
-              >
-                {`Page ${(index + 1).toString()}: ${pageLink}`}
-              </Link>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-semibold">Preview Pages</h2>
+            <p className="text-sm text-muted-foreground">
+              {`${previewImages.length.toString()} / ${gallery.pageLinks.length.toString()} loaded`}
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {previewImages.map((image, index) => (
+              <div key={`${image}-${index.toString()}`} className="space-y-2">
+                <p className="text-sm text-muted-foreground">{`Page ${(index + 1).toString()}`}</p>
+                <Image
+                  src={image}
+                  alt={`preview-${index + 1}`}
+                  width={1200}
+                  height={1600}
+                  className="h-auto w-full rounded border"
+                />
+              </div>
             ))}
           </div>
-          {gallery.pageLinks.length > 40
-            ? <p className="text-sm text-muted-foreground">{`Showing first 40 of ${gallery.pageLinks.length.toString()} page links.`}</p>
+          {loadingPreview ? <p className="text-sm text-muted-foreground">Loading preview pages...</p> : null}
+          {!loadingPreview && previewImages.length < gallery.pageLinks.length
+            ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => void loadPreviewImages(gallery, previewImages.length)}
+                >
+                  View more
+                </Button>
+              )
             : null}
         </section>
       </div>
