@@ -7,6 +7,7 @@ import type { NextRequest } from 'next/server';
 const ParameterSchema = z.object({
   q: z.string().nullable(),
   artist: z.string().nullable(),
+  parody: z.string().nullable(),
   tag: z.string().nullable(),
   page: z.string().nullable().refine((val) => {
     if (!val) return true;
@@ -20,6 +21,7 @@ export const GET = async (req: NextRequest) => {
   const queries = ParameterSchema.safeParse({
     q: req.nextUrl.searchParams.get('q'),
     artist: req.nextUrl.searchParams.get('artist'),
+    parody: req.nextUrl.searchParams.get('parody'),
     tag: req.nextUrl.searchParams.get('tag'),
     page: req.nextUrl.searchParams.get('page'),
   });

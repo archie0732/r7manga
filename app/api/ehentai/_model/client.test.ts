@@ -101,6 +101,14 @@ describe('EhentaiClient', () => {
     expect(buildSearchUrl({ artist: 'soso', next: '2811644' })).toBe('https://e-hentai.org/?f_search=artist%3Asoso&next=2811644');
   });
 
+  test('buildSearchUrl keeps full ehentai tag syntax and adds parody filters', () => {
+    expect(buildSearchUrl({
+      artist: 'soso',
+      parody: 'fate grand order',
+      tag: 'female:big breasts',
+    })).toBe('https://e-hentai.org/?f_search=artist%3Asoso+parody%3Afate+grand+order+female%3Abig+breasts');
+  });
+
   test('extractNextToken reads the next cursor from search navigation', () => {
     expect(extractNextToken(searchHtml)).toBe('2811644');
   });
@@ -147,6 +155,32 @@ describe('EhentaiClient', () => {
     expect(calls).toEqual([
       'https://e-hentai.org/?f_search=artist%3Asoso',
       'https://e-hentai.org/?f_search=artist%3Asoso&next=2811644',
+    ]);
+    expect(result[0]?.id).toBe('3637068-eeeeeeeeee');
+  });
+
+  test('search follows next cursor for parody searches', async () => {
+    const calls: string[] = [];
+    const client = new EhentaiClient(async (input) => {
+      const url = input.toString();
+      calls.push(url);
+
+      if (url === 'https://e-hentai.org/?f_search=parody%3Afate+grand+order') {
+        return new Response(searchHtml);
+      }
+
+      if (url === 'https://e-hentai.org/?f_search=parody%3Afate+grand+order&next=2811644') {
+        return new Response(searchHtmlPageTwo);
+      }
+
+      return new Response('not found', { status: 404 });
+    });
+
+    const result = await client.search({ parody: 'fate grand order', page: 2 });
+
+    expect(calls).toEqual([
+      'https://e-hentai.org/?f_search=parody%3Afate+grand+order',
+      'https://e-hentai.org/?f_search=parody%3Afate+grand+order&next=2811644',
     ]);
     expect(result[0]?.id).toBe('3637068-eeeeeeeeee');
   });

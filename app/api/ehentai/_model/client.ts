@@ -42,6 +42,7 @@ type FetchImpl = (input: string | URL | Request, init?: RequestInit) => Promise<
 type SearchParams = {
   q?: string | null;
   artist?: string | null;
+  parody?: string | null;
   tag?: string | null;
   page?: string | number | null;
   next?: string | null;
@@ -82,11 +83,12 @@ const extractPagesCount = (value: string) => Number.parseInt(value.match(/(\d+)\
 
 const joinEhentaiUrl = (url: string) => new URL(url, SEARCH_ROOT).toString();
 
-const buildSearchQuery = ({ q, artist, tag }: SearchParams) => {
+const buildSearchQuery = ({ q, artist, parody, tag }: SearchParams) => {
   const terms = [
     q?.trim(),
     artist?.trim() ? `artist:${artist.trim()}` : null,
-    tag?.trim() ? `tag:${tag.trim()}` : null,
+    parody?.trim() ? `parody:${parody.trim()}` : null,
+    tag?.trim() || null,
   ].filter((value): value is string => Boolean(value));
 
   return terms.join(' ').trim() || '*';
