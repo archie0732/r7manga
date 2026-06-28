@@ -6,11 +6,19 @@ import type {
   FavoriteAdd,
   FavoriteCollectionMutation,
   FavoriteData,
+  FavoriteMetadataHydrate,
   FavoriteRemove,
   FavoriteWebsite,
   GitHubFileResponse,
 } from './_model/apitype';
-import { addFavoriteEntry, ensureFavoriteShape, isDoujinFavorited, mutateFavoriteCollections, removeFavoriteEntry } from './_model/store';
+import {
+  addFavoriteEntry,
+  ensureFavoriteShape,
+  hydrateFavoriteMetadata,
+  isDoujinFavorited,
+  mutateFavoriteCollections,
+  removeFavoriteEntry,
+} from './_model/store';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = 'archie0732';
@@ -69,13 +77,15 @@ async function updateGitHubFile(content: string, sha: string | null): Promise<vo
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const body = await req.json() as FavoriteAdd | FavoriteCollectionMutation;
+  const body = await req.json() as FavoriteAdd | FavoriteCollectionMutation | FavoriteMetadataHydrate;
 
   const { content: remoteData, sha } = await fetchRemoteFile();
   let nextData: FavoriteData;
 
   try {
-    nextData = typeof body.type === 'string' && body.type.startsWith('ehentai-collection-')
+    nextData = body.type === 'ehentai-hydrate-metadata'
+      ? hydrateFavoriteMetadata(remoteData, body)
+      : typeof body.type === 'string' && body.type.startsWith('ehentai-collection-')
       ? mutateFavoriteCollections(remoteData, body as FavoriteCollectionMutation)
       : addFavoriteEntry(remoteData, body as FavoriteAdd);
   }

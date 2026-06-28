@@ -3,6 +3,7 @@ import type {
   FavoriteCollectionMutation,
   FavoriteData,
   FavoriteDoujinItem,
+  FavoriteMetadataHydrate,
   FavoriteRemove,
   FavoriteWebsite,
 } from './apitype';
@@ -71,12 +72,23 @@ const normalizeDoujin = (doujin: FavoriteAdd['doujin']): FavoriteDoujinItem => {
     lang: doujin.lang,
     page: doujin.page,
     source: isNhentaiDoujin(doujin) ? undefined : doujin.source,
+    artists: isNhentaiDoujin(doujin) ? undefined : doujin.artists,
+    parodies: isNhentaiDoujin(doujin) ? undefined : doujin.parodies,
   };
 };
 
 const touchCollection = <T extends { updatedAt: string }>(collection: T) => ({
   ...collection,
   updatedAt: new Date().toISOString(),
+});
+
+const copyWithMetadata = (
+  item: FavoriteDoujinItem,
+  update: Pick<FavoriteDoujinItem, 'artists' | 'parodies'>,
+): FavoriteDoujinItem => ({
+  ...item,
+  artists: update.artists,
+  parodies: update.parodies,
 });
 
 export const addFavoriteEntry = (input: FavoriteData | null | undefined, body: FavoriteAdd): FavoriteData => {
@@ -163,6 +175,30 @@ export const mutateFavoriteCollections = (
 
   const collection = collections[index]!;
 
+  if (mutation.type === 'ehentai-collection-append') {
+    const existingIds = new Set(collection.items.map((item) => item.id));
+    const itemsToAppend = mutation.itemIds.flatMap((id) => {
+      if (existingIds.has(id)) {
+        return [];
+      }
+
+      const found = data.favorite_ehentai?.doujin.find((item) => item.id === id);
+
+      if (!found) {
+        throw new Error(`Missing favorite item: ${id}`);
+      }
+
+      existingIds.add(id);
+      return [{ ...found }];
+    });
+
+    collections[index] = touchCollection({
+      ...collection,
+      items: [...collection.items, ...itemsToAppend],
+    });
+    return data;
+  }
+
   if (mutation.type === 'ehentai-collection-rename') {
     const name = mutation.name.trim();
 
@@ -204,6 +240,48 @@ export const mutateFavoriteCollections = (
   }
 
   data.favorite_ehentai.collections = collections.filter((item) => item.id !== mutation.collectionId);
+  return data;
+};
+
+export const hydrateFavoriteMetadata = (
+  input: FavoriteData | null | undefined,
+  mutation: FavoriteMetadataHydrate,
+): FavoriteData => {
+  const data = ensureFavoriteShape(input);
+  const bucket = data.favorite_ehentai ?? emptyEhentaiBucket();
+  data.favorite_ehentai = bucket;
+  const nextArtists = [...mutation.artists];
+  const nextParodies = [...mutation.parodies];
+
+  bucket.doujin = bucket.doujin.map((item) => {
+    if (item.id !== mutation.id) {
+      return item;
+    }
+
+    const sameArtists = JSON.stringify(item.artists ?? []) === JSON.stringify(nextArtists);
+    const sameParodies = JSON.stringify(item.parodies ?? []) === JSON.stringify(nextParodies);
+
+    return sameArtists && sameParodies
+      ? item
+      : copyWithMetadata(item, { artists: nextArtists, parodies: nextParodies });
+  });
+
+  bucket.collections = (bucket.collections ?? []).map((collection) => {
+    const hasTarget = collection.items.some((item) => item.id === mutation.id);
+
+    if (!hasTarget) {
+      return collection;
+    }
+
+    return touchCollection({
+      ...collection,
+      items: collection.items.map((item) =>
+        item.id === mutation.id
+          ? copyWithMetadata(item, { artists: nextArtists, parodies: nextParodies })
+          : item),
+    });
+  });
+
   return data;
 };
 

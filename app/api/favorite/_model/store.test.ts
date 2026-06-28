@@ -1,6 +1,13 @@
 import { describe, expect, test } from 'bun:test';
 
-import { addFavoriteEntry, ensureFavoriteShape, isDoujinFavorited, mutateFavoriteCollections, removeFavoriteEntry } from './store';
+import {
+  addFavoriteEntry,
+  ensureFavoriteShape,
+  hydrateFavoriteMetadata,
+  isDoujinFavorited,
+  mutateFavoriteCollections,
+  removeFavoriteEntry,
+} from './store';
 
 describe('favorite store helpers', () => {
   test('ensureFavoriteShape adds custom website buckets without touching nhentai data', () => {
@@ -66,6 +73,28 @@ describe('favorite store helpers', () => {
     });
 
     expect(twice.favorite_ehentai?.doujin).toHaveLength(1);
+  });
+
+  test('addFavoriteEntry preserves ehentai artist and parody metadata when provided', () => {
+    const data = addFavoriteEntry(undefined, {
+      type: 'doujin',
+      website: 'ehentai',
+      doujin: {
+        id: '123-token',
+        title: 'Gallery',
+        thumbnail: 'https://img.example/cover.jpg',
+        lang: 'ja',
+        page: 22,
+        source: 'https://e-hentai.org/g/123/token/',
+        artists: ['soso'],
+        parodies: ['fate grand order'],
+      },
+    });
+
+    expect(data.favorite_ehentai?.doujin[0]).toMatchObject({
+      artists: ['soso'],
+      parodies: ['fate grand order'],
+    });
   });
 
   test('removeFavoriteEntry removes only the targeted custom website favorite', () => {
@@ -169,6 +198,38 @@ describe('favorite store helpers', () => {
     expect(reordered.favorite_ehentai?.collections?.[0]?.items.map((item) => item.id)).toEqual(['222-token', '111-token']);
   });
 
+  test('mutateFavoriteCollections appends only missing items to an existing collection in selection order', () => {
+    const seeded = ensureFavoriteShape({
+      name: '',
+      id: '',
+      favorite_nhentai: { doujin: [], artist: [], character: [] },
+      favorite_ehentai: {
+        doujin: [
+          { id: 'a', title: 'A', thumbnail: 'a', lang: 'ja', page: 1, source: 'sa' },
+          { id: 'b', title: 'B', thumbnail: 'b', lang: 'ja', page: 1, source: 'sb' },
+          { id: 'c', title: 'C', thumbnail: 'c', lang: 'ja', page: 1, source: 'sc' },
+        ],
+        collections: [{
+          id: 'col-1',
+          name: 'Set',
+          createdAt: '2026-06-28T00:00:00.000Z',
+          updatedAt: '2026-06-28T00:00:00.000Z',
+          items: [
+            { id: 'a', title: 'A', thumbnail: 'a', lang: 'ja', page: 1, source: 'sa' },
+          ],
+        }],
+      },
+    });
+
+    const next = mutateFavoriteCollections(seeded, {
+      type: 'ehentai-collection-append',
+      collectionId: 'col-1',
+      itemIds: ['c', 'a', 'b'],
+    });
+
+    expect(next.favorite_ehentai?.collections?.[0]?.items.map((item) => item.id)).toEqual(['a', 'c', 'b']);
+  });
+
   test('mutateFavoriteCollections removes one item and deletes a collection', () => {
     const seeded = ensureFavoriteShape({
       name: '',
@@ -201,5 +262,78 @@ describe('favorite store helpers', () => {
 
     expect(removedItem.favorite_ehentai?.collections?.[0]?.items.map((item) => item.id)).toEqual(['b']);
     expect(deleted.favorite_ehentai?.collections).toEqual([]);
+  });
+
+  test('hydrateFavoriteMetadata updates saved favorite and collection snapshot copies', () => {
+    const seeded = ensureFavoriteShape({
+      name: '',
+      id: '',
+      favorite_nhentai: { doujin: [], artist: [], character: [] },
+      favorite_ehentai: {
+        doujin: [
+          { id: 'x', title: 'X', thumbnail: 'x', lang: 'ja', page: 8, source: 'sx' },
+        ],
+        collections: [{
+          id: 'col-1',
+          name: 'Set',
+          createdAt: '2026-06-28T00:00:00.000Z',
+          updatedAt: '2026-06-28T00:00:00.000Z',
+          items: [
+            { id: 'x', title: 'X', thumbnail: 'x', lang: 'ja', page: 8, source: 'sx' },
+          ],
+        }],
+      },
+    });
+
+    const next = hydrateFavoriteMetadata(seeded, {
+      type: 'ehentai-hydrate-metadata',
+      id: 'x',
+      artists: ['soso'],
+      parodies: ['fate grand order'],
+    });
+
+    expect(next.favorite_ehentai?.doujin[0]).toMatchObject({
+      artists: ['soso'],
+      parodies: ['fate grand order'],
+    });
+    expect(next.favorite_ehentai?.collections?.[0]?.items[0]).toMatchObject({
+      artists: ['soso'],
+      parodies: ['fate grand order'],
+    });
+  });
+
+  test('hydrateFavoriteMetadata is a no-op when metadata is already identical', () => {
+    const seeded = ensureFavoriteShape({
+      name: '',
+      id: '',
+      favorite_nhentai: { doujin: [], artist: [], character: [] },
+      favorite_ehentai: {
+        doujin: [
+          {
+            id: 'x',
+            title: 'X',
+            thumbnail: 'x',
+            lang: 'ja',
+            page: 8,
+            source: 'sx',
+            artists: ['soso'],
+            parodies: ['fate grand order'],
+          },
+        ],
+        collections: [],
+      },
+    });
+
+    const next = hydrateFavoriteMetadata(seeded, {
+      type: 'ehentai-hydrate-metadata',
+      id: 'x',
+      artists: ['soso'],
+      parodies: ['fate grand order'],
+    });
+
+    expect(next.favorite_ehentai?.doujin[0]).toMatchObject({
+      artists: ['soso'],
+      parodies: ['fate grand order'],
+    });
   });
 });

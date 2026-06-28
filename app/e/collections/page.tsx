@@ -1,6 +1,5 @@
 import { ensureFavoriteShape } from '@/app/api/favorite/_model/store';
-import { CollectionCreatePanel } from '@/components/ehentai/collection-create-panel';
-import { CollectionList } from '@/components/ehentai/collection-list';
+import { CollectionsPageShell } from '@/components/ehentai/collections-page-shell';
 
 import type { FavoriteData } from '@/app/api/favorite/_model/apitype';
 
@@ -20,16 +19,17 @@ export default async function Page() {
   const data = await fetchStoredFavorites();
 
   return (
-    <main className="container mx-auto space-y-8 p-4">
+    <main className="container mx-auto space-y-6 p-4">
       <div>
         <h1 className="text-3xl font-bold">Ehentai Collections</h1>
-        <p className="text-sm text-muted-foreground">Create named sets from saved e-hentai favorites and read them continuously.</p>
+        <p className="text-sm text-muted-foreground">
+          Filter saved favorites by artist or parody, preview them by cover, and manage collections without one long page.
+        </p>
       </div>
-      <CollectionCreatePanel
+      <CollectionsPageShell
         favorites={data.favorite_ehentai?.doujin ?? []}
         collections={data.favorite_ehentai?.collections ?? []}
       />
-      <CollectionList collections={data.favorite_ehentai?.collections ?? []} />
     </main>
   );
 }

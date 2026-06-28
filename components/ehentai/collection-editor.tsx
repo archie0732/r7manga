@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import type { EhentaiCollection } from '@/app/api/favorite/_model/apitype';
@@ -90,7 +91,7 @@ export function CollectionEditor({ collection }: Props) {
           <CardDescription>Rename the collection, reorder works, or remove entries.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Input value={name} onChange={(event) => setName(event.target.value)} />
             <Button onClick={() => void renameCollection()} disabled={pending || !name.trim()}>
               Save Name
@@ -106,9 +107,16 @@ export function CollectionEditor({ collection }: Props) {
           <div className="space-y-3">
             {items.map((item, index) => (
               <div key={item.id} className="flex items-center justify-between gap-4 rounded-lg border p-3">
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{item.title}</div>
-                  <div className="text-sm text-muted-foreground">{`${item.page.toString()} pages • ${item.lang.toUpperCase()}`}</div>
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="relative h-20 w-16 overflow-hidden rounded-md bg-muted">
+                    <Image src={item.thumbnail} alt={item.title} fill sizes="64px" className="object-cover" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate font-medium">{item.title}</div>
+                    <div className="text-sm text-muted-foreground">{`${item.page.toString()} pages | ${item.lang.toUpperCase()}`}</div>
+                    <div className="line-clamp-1 text-xs text-muted-foreground">{(item.artists ?? []).join(', ') || 'Unknown artist'}</div>
+                    <div className="line-clamp-1 text-xs text-muted-foreground">{(item.parodies ?? []).join(', ') || 'Unknown parody'}</div>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button variant="secondary" onClick={() => void reorderCollection(index, 'up')} disabled={pending || index === 0}>

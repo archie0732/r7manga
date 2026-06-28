@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import {
   buildCollectionReadQueue,
+  buildFilteredReadQueue,
   getCollectionJumpPlan,
   shouldAutoLoadCollectionBatch,
 } from './collection-reader-utils';
@@ -14,6 +15,26 @@ describe('collection reader utils', () => {
     ]);
 
     expect(queue.map((item) => item.id)).toEqual(['b', 'a']);
+  });
+
+  test('buildFilteredReadQueue preserves selected id order and skips unknown items', () => {
+    const queue = buildFilteredReadQueue(
+      [
+        { id: 'first', title: 'First', thumbnail: '', lang: 'ja', page: 10, source: 'a' },
+        { id: 'second', title: 'Second', thumbnail: '', lang: 'ja', page: 20, source: 'b' },
+      ],
+      ['second', 'missing', 'first'],
+    );
+
+    expect(queue.map((item) => item.id)).toEqual(['second', 'first']);
+  });
+
+  test('buildFilteredReadQueue returns an empty queue when all ids are unknown', () => {
+    const queue = buildFilteredReadQueue([
+      { id: 'first', title: 'First', thumbnail: '', lang: 'ja', page: 10, source: 'a' },
+    ], ['missing']);
+
+    expect(queue).toEqual([]);
   });
 
   test('getCollectionJumpPlan advances loading to a later gallery before scrolling', () => {

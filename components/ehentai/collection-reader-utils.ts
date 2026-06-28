@@ -2,6 +2,13 @@ import type { FavoriteDoujinItem } from '@/app/api/favorite/_model/apitype';
 
 export const buildCollectionReadQueue = (items: FavoriteDoujinItem[]) => [...items];
 
+export const buildFilteredReadQueue = (
+  items: FavoriteDoujinItem[],
+  selectedIds: string[],
+) => selectedIds
+  .map((id) => items.find((item) => item.id === id))
+  .filter((item): item is FavoriteDoujinItem => Boolean(item));
+
 type CollectionJumpPlan = {
   targetIndex: number;
   nextActiveIndex: number;

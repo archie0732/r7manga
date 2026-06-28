@@ -9,6 +9,8 @@ export interface FavoriteDoujinItem {
   lang: string;
   page: number;
   source?: string;
+  artists?: string[];
+  parodies?: string[];
 }
 
 export interface EhentaiCollection {
@@ -60,6 +62,11 @@ export type FavoriteCollectionMutation =
     itemIds: string[];
   }
   | {
+    type: 'ehentai-collection-append';
+    collectionId: string;
+    itemIds: string[];
+  }
+  | {
     type: 'ehentai-collection-rename';
     collectionId: string;
     name: string;
@@ -78,6 +85,13 @@ export type FavoriteCollectionMutation =
     type: 'ehentai-collection-delete';
     collectionId: string;
   };
+
+export interface FavoriteMetadataHydrate {
+  type: 'ehentai-hydrate-metadata';
+  id: string;
+  artists: string[];
+  parodies: string[];
+}
 
 export interface GitHubFileResponse {
   sha: string;
