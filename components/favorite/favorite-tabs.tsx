@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { BookHeart, Globe, PawPrint, UserPenIcon } from 'lucide-react';
 
 import { DoujinCarousel } from '@/components/doujin-carousel';
+import { EhentaiFavoritesPanel } from '@/components/favorite/ehentai-favorites-panel';
 import { NhentaiDoujinFavorite } from '@/components/doujin/nhentai-doujin-favorites';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import type { CarouselDoujinItem } from '@/components/doujin-carousel';
+import type { FavoriteDoujinItem } from '@/app/api/favorite/_model/apitype';
 import type { DoujinSearchResult } from '@/app/api/nhentai/search/route';
 
 type FavoriteTabValue = 'nhentai-favorites' | 'wnacg' | 'hentaipaw' | 'ehentai';
@@ -19,6 +21,7 @@ type Props = Readonly<{
   wnacgFavorites: CarouselDoujinItem[];
   hentaipawFavorites: CarouselDoujinItem[];
   ehentaiFavorites: CarouselDoujinItem[];
+  ehentaiFavoriteItems: FavoriteDoujinItem[];
 }>;
 
 const DEFAULT_TAB: FavoriteTabValue = 'nhentai-favorites';
@@ -42,6 +45,7 @@ export function FavoriteTabs({
   wnacgFavorites,
   hentaipawFavorites,
   ehentaiFavorites,
+  ehentaiFavoriteItems,
 }: Props) {
   const [tab, setTab] = useState<FavoriteTabValue>(DEFAULT_TAB);
 
@@ -120,8 +124,8 @@ export function FavoriteTabs({
       </TabsContent>
 
       <TabsContent value="ehentai">
-        {ehentaiFavorites.length > 0
-          ? <DoujinCarousel comic={ehentaiFavorites} website="e" />
+        {ehentaiFavoriteItems.length > 0
+          ? <EhentaiFavoritesPanel favorites={ehentaiFavoriteItems} />
           : (
               <div className="py-8 text-center text-gray-500">
                 No ehentai favorites found.

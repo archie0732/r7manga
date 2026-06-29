@@ -1,5 +1,6 @@
 import type {
   FavoriteAdd,
+  FavoriteBulkRemove,
   FavoriteCollectionMutation,
   FavoriteData,
   FavoriteDoujinItem,
@@ -292,6 +293,31 @@ export const removeFavoriteEntry = (input: FavoriteData | null | undefined, body
 
   bucket.doujin = bucket.doujin.filter((item) => item.id !== body.id);
   data[key] = bucket;
+
+  return data;
+};
+
+export const bulkRemoveFavoriteEntries = (
+  input: FavoriteData | null | undefined,
+  body: FavoriteBulkRemove,
+): FavoriteData => {
+  const data = ensureFavoriteShape(input);
+  const key = doujinKeyMap[body.website];
+  const bucket = data[key] ?? emptyDoujinBucket();
+  const ids = new Set(body.ids);
+
+  bucket.doujin = bucket.doujin.filter((item) => !ids.has(item.id));
+  data[key] = bucket;
+
+  if (body.website === 'ehentai') {
+    const ehentaiBucket = data.favorite_ehentai ?? emptyEhentaiBucket();
+    data.favorite_ehentai = ehentaiBucket;
+    ehentaiBucket.collections = (ehentaiBucket.collections ?? []).map((collection) => ({
+      ...collection,
+      items: collection.items.filter((item) => !ids.has(item.id)),
+      updatedAt: ids.size > 0 ? new Date().toISOString() : collection.updatedAt,
+    }));
+  }
 
   return data;
 };

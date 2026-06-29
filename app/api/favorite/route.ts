@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 
 import type {
   FavoriteAdd,
+  FavoriteBulkRemove,
   FavoriteCollectionMutation,
   FavoriteData,
   FavoriteMetadataHydrate,
@@ -13,6 +14,7 @@ import type {
 } from './_model/apitype';
 import {
   addFavoriteEntry,
+  bulkRemoveFavoriteEntries,
   ensureFavoriteShape,
   hydrateFavoriteMetadata,
   isDoujinFavorited,
@@ -99,7 +101,20 @@ export async function POST(req: NextRequest): Promise<Response> {
 }
 
 export async function DELETE(req: NextRequest): Promise<Response> {
-  const body = await req.json() as FavoriteRemove;
+  const body = await req.json() as FavoriteRemove | FavoriteBulkRemove;
+
+  if (body.type === 'bulk-doujin') {
+    if (!body.website || !Array.isArray(body.ids) || body.ids.length === 0) {
+      return new Response('Delete data error', { status: 400 });
+    }
+
+    const { content: remoteData, sha } = await fetchRemoteFile();
+    const nextData = bulkRemoveFavoriteEntries(remoteData, body);
+
+    await updateGitHubFile(JSON.stringify(nextData, null, 2), sha);
+
+    return new Response('Data synchronized with GitHub successfully.', { status: 200 });
+  }
 
   if (body.type !== 'doujin' || !body.website || !body.id) {
     return new Response('Delete data error', { status: 400 });

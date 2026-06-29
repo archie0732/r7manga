@@ -55,6 +55,12 @@ export interface FavoriteRemove {
   id: string;
 }
 
+export interface FavoriteBulkRemove {
+  type: 'bulk-doujin';
+  website: Exclude<FavoriteWebsite, 'nhentai'>;
+  ids: string[];
+}
+
 export type FavoriteCollectionMutation =
   | {
     type: 'ehentai-collection-create';

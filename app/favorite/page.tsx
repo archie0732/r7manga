@@ -140,6 +140,7 @@ export default async function Page({ searchParams }: Props) {
         wnacgFavorites={wnacgFavorites}
         hentaipawFavorites={hentaipawFavorites}
         ehentaiFavorites={ehentaiFavorites}
+        ehentaiFavoriteItems={buildNewestFirstFavorites(storedFavorites.favorite_ehentai?.doujin ?? [])}
       />
     </div>
   );

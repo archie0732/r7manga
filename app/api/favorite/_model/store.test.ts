@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import {
   addFavoriteEntry,
+  bulkRemoveFavoriteEntries,
   ensureFavoriteShape,
   hydrateFavoriteMetadata,
   isDoujinFavorited,
@@ -118,6 +119,40 @@ describe('favorite store helpers', () => {
 
     expect(next.favorite_hentaipaw?.doujin).toEqual([]);
     expect(isDoujinFavorited(next, 'hentaipaw', '3407674')).toBe(false);
+  });
+
+  test('bulkRemoveFavoriteEntries removes multiple ehentai favorites and collection snapshots', () => {
+    const seeded = ensureFavoriteShape({
+      name: '',
+      id: '',
+      favorite_nhentai: { doujin: [], artist: [], character: [] },
+      favorite_ehentai: {
+        doujin: [
+          { id: 'a', title: 'A', thumbnail: 'a', lang: 'ja', page: 1, source: 'sa' },
+          { id: 'b', title: 'B', thumbnail: 'b', lang: 'ja', page: 1, source: 'sb' },
+          { id: 'c', title: 'C', thumbnail: 'c', lang: 'ja', page: 1, source: 'sc' },
+        ],
+        collections: [{
+          id: 'col-1',
+          name: 'Set',
+          createdAt: '2026-06-29T00:00:00.000Z',
+          updatedAt: '2026-06-29T00:00:00.000Z',
+          items: [
+            { id: 'a', title: 'A', thumbnail: 'a', lang: 'ja', page: 1, source: 'sa' },
+            { id: 'b', title: 'B', thumbnail: 'b', lang: 'ja', page: 1, source: 'sb' },
+          ],
+        }],
+      },
+    });
+
+    const next = bulkRemoveFavoriteEntries(seeded, {
+      type: 'bulk-doujin',
+      website: 'ehentai',
+      ids: ['a', 'c'],
+    });
+
+    expect(next.favorite_ehentai?.doujin.map((item) => item.id)).toEqual(['b']);
+    expect(next.favorite_ehentai?.collections?.[0]?.items.map((item) => item.id)).toEqual(['b']);
   });
 
   test('createEhentaiCollection stores a named collection in favorite data', () => {

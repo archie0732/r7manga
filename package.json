@@ -8,7 +8,8 @@
     "start": "next dev -H 172.20.10.9",
     "lint": "next lint",
     "cf": "bun cf_bypass.ts",
-    "favorite:sync": "node scripts/sync-nhentai-favorites.mjs"
+    "favorite:sync": "node scripts/sync-nhentai-favorites.mjs",
+    "ehentai:hydrate": "bun scripts/hydrate-ehentai-metadata.ts"
   },
   "type": "module",
   "dependencies": {
