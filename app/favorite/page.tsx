@@ -2,6 +2,7 @@ import { auth } from '@/auth';
 import { asAdminUser, isAdminUser } from '@/lib/auth/admin';
 import { ensureFavoriteShape } from '@/app/api/favorite/_model/store';
 import { FavoriteTabs } from '@/components/favorite/favorite-tabs';
+import { buildNewestFirstFavorites } from '@/components/favorite/favorite-utils';
 import Link from 'next/link';
 
 import { fetchNhentai, langFromTagIds, listItemThumbnailUrl } from '../api/nhentai/_model/_lib/util';
@@ -117,9 +118,9 @@ export default async function Page({ searchParams }: Props) {
     loadError = error instanceof Error ? error.message : 'Unknown error';
   }
 
-  const wnacgFavorites = toCarouselItems(storedFavorites.favorite_wnacg?.doujin ?? []);
-  const hentaipawFavorites = toCarouselItems(storedFavorites.favorite_hentaipaw?.doujin ?? []);
-  const ehentaiFavorites = toCarouselItems(storedFavorites.favorite_ehentai?.doujin ?? []);
+  const wnacgFavorites = toCarouselItems(buildNewestFirstFavorites(storedFavorites.favorite_wnacg?.doujin ?? []));
+  const hentaipawFavorites = toCarouselItems(buildNewestFirstFavorites(storedFavorites.favorite_hentaipaw?.doujin ?? []));
+  const ehentaiFavorites = toCarouselItems(buildNewestFirstFavorites(storedFavorites.favorite_ehentai?.doujin ?? []));
 
   return (
     <div className="container mx-auto p-4">

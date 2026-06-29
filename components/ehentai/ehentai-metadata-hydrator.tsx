@@ -17,7 +17,7 @@ export function EhentaiMetadataHydrator({ items, onHydrated }: Props) {
   const [pendingId, setPendingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const next = queue.find((item) => item.id !== pendingId);
+    const next = queue[0];
 
     if (!next || pendingId) {
       return;

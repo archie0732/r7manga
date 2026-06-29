@@ -10,7 +10,7 @@ import { EhentaiFilterPanel } from './ehentai-filter-panel';
 import { EhentaiFilterResults } from './ehentai-filter-results';
 import { EhentaiManagePanel } from './ehentai-manage-panel';
 import { EhentaiMetadataHydrator } from './ehentai-metadata-hydrator';
-import { buildEhentaiFilterOptions, filterEhentaiFavorites } from './collection-utils';
+import { buildEhentaiFilterOptions, filterEhentaiFavorites, findFavoritesMissingEhentaiMetadata } from './collection-utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type Props = Readonly<{
@@ -30,19 +30,11 @@ export function CollectionsPageShell({ favorites, collections }: Props) {
 
   const options = useMemo(() => buildEhentaiFilterOptions(items), [items]);
   const filtered = useMemo(() => filterEhentaiFavorites(items, filters), [items, filters]);
-  const hydrationCandidates = useMemo(() => {
-    const map = new Map<string, FavoriteDoujinItem>();
-
-    for (const item of filtered.slice(0, 12)) {
-      map.set(item.id, item);
-    }
-
-    for (const item of items.filter((favorite) => selectedIds.includes(favorite.id))) {
-      map.set(item.id, item);
-    }
-
-    return [...map.values()];
-  }, [filtered, items, selectedIds]);
+  const hydrationCandidates = useMemo(() => items, [items]);
+  const missingMetadataCount = useMemo(
+    () => findFavoritesMissingEhentaiMetadata(items).length,
+    [items],
+  );
 
   const toggleSelected = (id: string) => {
     setSelectedIds((current) => current.includes(id)
@@ -92,6 +84,7 @@ export function CollectionsPageShell({ favorites, collections }: Props) {
             {filters.artists.map((artist) => <span key={`artist-${artist}`} className="rounded-full border px-3 py-1">{artist}</span>)}
             {filters.parodies.map((parody) => <span key={`parody-${parody}`} className="rounded-full border px-3 py-1">{parody}</span>)}
             {filters.artists.length === 0 && filters.parodies.length === 0 ? <span>No active filters.</span> : null}
+            {missingMetadataCount > 0 ? <span>{`Syncing metadata for ${missingMetadataCount.toString()} older favorites...`}</span> : null}
           </div>
           <div className="grid gap-4 xl:grid-cols-[280px_280px_1fr]">
             <EhentaiFilterPanel
@@ -99,12 +92,14 @@ export function CollectionsPageShell({ favorites, collections }: Props) {
               options={options.artists}
               selected={filters.artists}
               onToggle={(value) => toggleFilter('artists', value)}
+              onClear={() => setFilters((current) => ({ ...current, artists: [] }))}
             />
             <EhentaiFilterPanel
               title="Parodies"
               options={options.parodies}
               selected={filters.parodies}
               onToggle={(value) => toggleFilter('parodies', value)}
+              onClear={() => setFilters((current) => ({ ...current, parodies: [] }))}
             />
             <EhentaiFilterResults
               favorites={filtered}

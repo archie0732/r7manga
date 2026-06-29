@@ -1,0 +1,41 @@
+import { describe, expect, test } from 'bun:test';
+
+import {
+  buildNewestFirstFavorites,
+  getNextFavoriteItem,
+} from './favorite-utils';
+
+describe('favorite utils', () => {
+  test('buildNewestFirstFavorites returns a reversed copy without mutating the input', () => {
+    const original = [
+      { id: 'old', title: 'Old', thumbnail: '1', banTag: [], lang: 'ja' as const, page: 10 },
+      { id: 'new', title: 'New', thumbnail: '2', banTag: [], lang: 'zh' as const, page: 20 },
+    ];
+
+    const reordered = buildNewestFirstFavorites(original);
+
+    expect(reordered.map((item) => item.id)).toEqual(['new', 'old']);
+    expect(original.map((item) => item.id)).toEqual(['old', 'new']);
+  });
+
+  test('getNextFavoriteItem follows newest-first reading order', () => {
+    const queue = [
+      { id: 'latest', title: 'Latest', thumbnail: '1', banTag: [], lang: 'ja' as const, page: 30 },
+      { id: 'middle', title: 'Middle', thumbnail: '2', banTag: [], lang: 'zh' as const, page: 20 },
+      { id: 'oldest', title: 'Oldest', thumbnail: '3', banTag: [], lang: 'en' as const, page: 10 },
+    ];
+
+    expect(getNextFavoriteItem(queue, 'latest')?.id).toBe('middle');
+    expect(getNextFavoriteItem(queue, 'middle')?.id).toBe('oldest');
+  });
+
+  test('getNextFavoriteItem returns null for unknown or last favorites', () => {
+    const queue = [
+      { id: 'latest', title: 'Latest', thumbnail: '1', banTag: [], lang: 'ja' as const, page: 30 },
+      { id: 'oldest', title: 'Oldest', thumbnail: '2', banTag: [], lang: 'zh' as const, page: 10 },
+    ];
+
+    expect(getNextFavoriteItem(queue, 'oldest')).toBeNull();
+    expect(getNextFavoriteItem(queue, 'missing')).toBeNull();
+  });
+});

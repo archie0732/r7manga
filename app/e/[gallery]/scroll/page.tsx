@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { EHENTAI_IMAGE_BATCH_SIZE, type EhentaiGalleryDetail } from '@/app/api/ehentai/_model/client';
+import { shouldAutoLoadEhentaiBatch } from '@/components/ehentai/ehentai-reader-utils';
 
 type Props = Readonly<{
   params: Promise<{ gallery: string }>;
@@ -17,6 +18,8 @@ export default function Page({ params }: Props) {
   const [images, setImages] = useState<string[]>([]);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const loadMoreTriggerRef = useRef<HTMLDivElement | null>(null);
+  const loadMoreImagesRef = useRef<((targetGallery: EhentaiGalleryDetail, start: number) => Promise<void>) | null>(null);
 
   const loadMoreImages = async (targetGallery: EhentaiGalleryDetail, start: number) => {
     setLoadingMore(true);
@@ -39,6 +42,8 @@ export default function Page({ params }: Props) {
       setLoadingMore(false);
     }
   };
+
+  loadMoreImagesRef.current = loadMoreImages;
 
   useEffect(() => {
     void (async () => {
@@ -66,6 +71,37 @@ export default function Page({ params }: Props) {
 
     void loadMoreImages(gallery, 0);
   }, [gallery, images.length]);
+
+  const hasMore = gallery ? images.length < gallery.pageLinks.length : false;
+
+  useEffect(() => {
+    const node = loadMoreTriggerRef.current;
+
+    if (!node || !gallery) {
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+
+      if (!entry) {
+        return;
+      }
+
+      if (shouldAutoLoadEhentaiBatch({
+        hasMore,
+        isIntersecting: entry.isIntersecting,
+        pending: loadingMore,
+      })) {
+        void loadMoreImagesRef.current?.(gallery, images.length);
+      }
+    }, {
+      rootMargin: '600px 0px',
+    });
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [gallery, hasMore, images.length, loadingMore]);
 
   if (error) {
     return (
@@ -107,16 +143,9 @@ export default function Page({ params }: Props) {
       ))}
 
       {loadingMore ? <p className="py-6 text-sm text-muted-foreground">Loading more pages...</p> : null}
-      {!loadingMore && gallery && images.length < gallery.pageLinks.length
-        ? (
-            <Button
-              className="my-6"
-              variant="secondary"
-              onClick={() => void loadMoreImages(gallery, images.length)}
-            >
-              View more
-            </Button>
-          )
+      {hasMore ? <div ref={loadMoreTriggerRef} className="h-8 w-full" aria-hidden="true" /> : null}
+      {!hasMore && images.length > 0
+        ? <p className="py-6 text-sm text-muted-foreground">All pages loaded.</p>
         : null}
     </div>
   );

@@ -27,7 +27,10 @@ export default function DoujinCard({ doujin, website, mode }: Props) {
         className="relative"
       >
         <Card className="flex flex-col gap-2 p-4">
-          <div className="text-center">{doujin.lang.toUpperCase()}</div>
+          <div className="flex items-center justify-between text-sm">
+            <span>{doujin.lang.toUpperCase()}</span>
+            <span className="text-muted-foreground">{`${doujin.page.toString()}p`}</span>
+          </div>
           <Image
             loading="lazy"
             src={protect ? protectImage : doujin.thumbnail}
@@ -38,7 +41,7 @@ export default function DoujinCard({ doujin, website, mode }: Props) {
             width={200}
             height={300}
           />
-          <div className="truncate text-center">{doujin.title}</div>
+          <div className="truncate text-center" title={doujin.title}>{doujin.title}</div>
         </Card>
       </Link>
     </div>

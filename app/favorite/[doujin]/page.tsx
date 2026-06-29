@@ -1,4 +1,6 @@
 import { FavoriteData } from '@/app/api/favorite/_model/apitype';
+import { buildNewestFirstFavorites, getNextFavoriteItem } from '@/components/favorite/favorite-utils';
+import { Button } from '@/components/ui/button';
 import { FavoriteImage } from '@/components/favorite/favorite-img';
 import { LinkIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -27,6 +29,8 @@ export default async function Page({ params }: Props) {
 
   const mediaId = data.thumbnail.split('/')[4];
   const extension = data.thumbnail.split('.').pop();
+  const favoriteQueue = buildNewestFirstFavorites(json.favorite_nhentai.doujin);
+  const nextFavorite = getNextFavoriteItem(favoriteQueue, id);
 
   return (
     <main>
@@ -76,6 +80,15 @@ export default async function Page({ params }: Props) {
               <FavoriteImage url={`/${mediaId}/${(i + 1)}.${extension}`} alt={`img-alt-${i + 1}`} key={i} />
             ))
           }
+          <div className="mt-10 flex justify-center">
+            {nextFavorite
+              ? (
+                  <Link href={`/favorite/${nextFavorite.id}/`}>
+                    <Button variant="secondary">{`下一本收藏: ${nextFavorite.title}`}</Button>
+                  </Link>
+                )
+              : <span className="text-sm text-muted-foreground">已經是最後一本收藏漫畫</span>}
+          </div>
         </div>
       </div>
     </main>
