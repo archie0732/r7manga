@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { NextFavoriteButton } from '@/components/favorite/next-favorite-button';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -145,7 +146,12 @@ export default function Page({ params }: Props) {
       {loadingMore ? <p className="py-6 text-sm text-muted-foreground">Loading more pages...</p> : null}
       {hasMore ? <div ref={loadMoreTriggerRef} className="h-8 w-full" aria-hidden="true" /> : null}
       {!hasMore && images.length > 0
-        ? <p className="py-6 text-sm text-muted-foreground">All pages loaded.</p>
+        ? (
+            <div className="flex flex-col items-center gap-3 py-6">
+              <p className="text-sm text-muted-foreground">All pages loaded.</p>
+              <NextFavoriteButton currentId={gallery.id} website="ehentai" />
+            </div>
+          )
         : null}
     </div>
   );

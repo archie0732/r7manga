@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAppStore } from '@/stores/app';
+import { NextFavoriteButton } from '@/components/favorite/next-favorite-button';
 
 import Image from 'next/image';
 
@@ -75,6 +76,9 @@ export default function Page({ params }: Props) {
           className="bg-gray-800"
         />
       ))}
+      <div className="mt-4 flex justify-center">
+        <NextFavoriteButton currentId={doujin.id} website="hentaipaw" />
+      </div>
       <div className="fixed bottom-4 right-4">
         <Select
           onValueChange={(nextValue) => {

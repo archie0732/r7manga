@@ -2,7 +2,9 @@ import { describe, expect, test } from 'bun:test';
 
 import {
   buildNewestFirstFavorites,
+  buildWebsiteFavoriteQueue,
   getNextFavoriteItem,
+  getWebsiteFavoriteReaderPath,
 } from './favorite-utils';
 
 describe('favorite utils', () => {
@@ -37,5 +39,38 @@ describe('favorite utils', () => {
 
     expect(getNextFavoriteItem(queue, 'oldest')).toBeNull();
     expect(getNextFavoriteItem(queue, 'missing')).toBeNull();
+  });
+
+  test('buildWebsiteFavoriteQueue uses newest-first order for custom website favorites', () => {
+    const queue = buildWebsiteFavoriteQueue({
+      name: '',
+      id: '',
+      favorite_nhentai: {
+        doujin: [],
+        artist: [],
+        character: [],
+      },
+      favorite_wnacg: {
+        doujin: [
+          { id: 'old', title: 'Old', thumbnail: '1', lang: 'zh', page: 10 },
+          { id: 'new', title: 'New', thumbnail: '2', lang: 'zh', page: 20 },
+        ],
+      },
+      favorite_hentaipaw: {
+        doujin: [],
+      },
+      favorite_ehentai: {
+        doujin: [],
+        collections: [],
+      },
+    }, 'wnacg');
+
+    expect(queue.map((item) => item.id)).toEqual(['new', 'old']);
+  });
+
+  test('getWebsiteFavoriteReaderPath builds the correct reader route per website', () => {
+    expect(getWebsiteFavoriteReaderPath('wnacg', '123')).toBe('/w/read/123');
+    expect(getWebsiteFavoriteReaderPath('hentaipaw', '456')).toBe('/p/read/456');
+    expect(getWebsiteFavoriteReaderPath('ehentai', '789')).toBe('/e/789/scroll');
   });
 });

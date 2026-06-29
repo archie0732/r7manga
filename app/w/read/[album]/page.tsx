@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { NextFavoriteButton } from '@/components/favorite/next-favorite-button';
 import { useEffect, useState, useRef } from 'react';
 import { useAppStore } from '@/stores/app';
 import { useRouter } from 'next/navigation';
@@ -126,7 +127,9 @@ export default function Page({ params }: Props) {
           <Button>支持我們</Button>
         </Link>
       </div>
-
+      <div className="mt-4 flex justify-center">
+        <NextFavoriteButton currentId={id} website="wnacg" />
+      </div>
     </div>
   );
 }
