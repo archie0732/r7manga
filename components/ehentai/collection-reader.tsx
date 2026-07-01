@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Library } from 'lucide-react';
 
-import Image from 'next/image';
-
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { EHENTAI_IMAGE_BATCH_SIZE } from '@/app/api/ehentai/_model/client';
+import { EhentaiPageImage } from '@/components/ehentai/page-image';
 
 import { buildCollectionReadQueue, getCollectionJumpPlan, shouldAutoLoadCollectionBatch } from './collection-reader-utils';
 
@@ -251,13 +250,11 @@ export function CollectionReader({ collection }: Props) {
             </div>
 
             {loadedImages.map((image, imageIndex) => (
-              <Image
+              <EhentaiPageImage
                 key={`${item.id}-${imageIndex.toString()}`}
                 src={image}
                 alt={`${item.title}-${imageIndex + 1}`}
-                width={1200}
-                height={1600}
-                className="h-auto w-full max-w-5xl"
+                title={image}
               />
             ))}
 
